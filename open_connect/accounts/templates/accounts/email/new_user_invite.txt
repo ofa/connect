@@ -1,0 +1,14 @@
+{% extends "email/base_wrapper.txt" %}
+{% load mailing %}
+{% block content %}
+Hello,
+
+You've been invited to join {% brand_title %}.
+
+Please visit {{ origin }} to join and log in.
+
+Thanks,
+
+{% organization %}
+
+{% endblock content %}

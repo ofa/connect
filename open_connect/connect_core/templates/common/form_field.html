@@ -1,0 +1,44 @@
+{% load string %}
+{% if field.is_hidden %}
+    {{ field }}
+{% else %}
+    <div class="form-group{% if field.errors %} error{% endif %}">
+        
+            {% if field|input_type == "Select" %}
+            <label for="id_{{ field.html_name }}">{{ field.label }}{% if field.field.required %}<span class="req">*</span>{% endif %}</label> 
+                <div class="clearfix"><div class="styled-select">{{ field }}</div></div>
+            {% elif field|input_type == "CheckboxInput" %}
+                <div class="styled-checkbox">
+                    {{field}}<label for="id_{{ field.html_name }}">{{ field.label }}{% if field.required %}<span class="req">*</span>{% endif %}</label>
+                </div>
+    
+                
+            {% elif field|input_type == "ClearableFileInput"%}
+            <label for="id_{{ field.html_name }}">{{ field.label }}{% if field.field.required %}<span class="req">*</span>{% endif %}</label>
+            <div class="clearfix fileinput fileinput-new" data-provides="fileinput">
+              <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;"></div>
+              <div>
+                <span class="btn btn-primary btn-file">
+                    <span class="fileinput-new">Select image</span>
+                    <span class="fileinput-exists">Change</span>
+                    {{field}}
+                </span>
+                <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+              </div>
+            </div>
+
+
+            {% else %}
+            <label for="id_{{ field.html_name }}">{{ field.label }}{% if field.field.required %}<span class="req">*</span>{% endif %}</label> 
+                {{ field }}
+            {% endif %}
+
+            
+            {% for error in field.errors %}
+                <span class="help-inline">{{ error }}</span>
+            {% endfor %}
+            {% if field.help_text %}
+                <small class="help-inline">{{ field.help_text }}</small>
+            {% endif %}
+    </div>
+{% endif %}

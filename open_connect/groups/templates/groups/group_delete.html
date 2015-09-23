@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Deleting {{group}}{% endblock %}
+
+{% block content_header %}{% endblock %}
+{% block page_content %}
+    <h4 class="{{group.category.slug}}"> <a href="{% url "group_details" pk=group.pk %}">{{group}}</a></h4>
+    <h1>Delete {{ group }}</h1>
+    <div class="group-container">
+    <form method="post">
+        {{ form.as_p }}
+        <input type="submit" class="btn btn-primary submit-form">
+        {% csrf_token %}
+    </form>
+    </div>
+
+{% endblock %}
+
+{% block js_default %}
+{% if not USE_MINIFY %}
+    {{ block.super }}
+{% endif %}
+{% endblock %}

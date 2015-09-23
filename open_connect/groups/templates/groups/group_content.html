@@ -1,0 +1,87 @@
+{% load static %}
+{% for group in groups %}
+    {% if profile_is_self or not group.private %}
+
+    <div class="item border{% if group.featured %} official{% endif %}{% if group.is_national %} national{% endif %} {{group.category.slug}}" data-official="{% if group.featured %}true{%else%}false{% endif %}" data-national="{% if group.is_national %}true{%else%}false{% endif %}" data-category="{{ group.category.slug }}" data-id="{{group.id}}">
+
+        {% if group.featured %}<span class="right-banner">Official</span>{% endif %}
+        <header class="item-info">
+
+            <div>
+                <h2>
+                    <a href="{% url "group_details" group.pk %}">{{ group.group.name |truncatechars:40}}</a>
+                </h2>
+                <p class="item-desc">
+                    {{ group.description|truncatechars:72|safe }}
+                </p>
+            </div>
+        </header>
+
+        {% comment %}
+
+            {% if group.distance %}<p><small>{{ group.distance|floatformat:1 }} miles away</small></p>{% endif %}
+            {% with group.tags.all as tags %}
+                {% include "groups/tags_embed.html" %}
+            {% endwith %}
+
+        {% endcomment %}
+        <div class="item-image">
+            <a href="{% url "group_details" group.pk %}" style="{% if group.image %}background:url({{ group.image.get_display_image.url }}) no-repeat center;background-size:cover;{% endif %}">
+                {{ group.group.name }} Group Image
+            </a>
+        </div>
+
+
+        {% comment %}-------- STATUS ------{% endcomment %}
+
+        {% if not request.user.is_authenticated and not group.private %}
+        <div class="item-status admin">
+            <a href="{% url "group_details" group.pk %}">Join Group</a>
+        </div>
+        {% else %}
+
+        {% if group.pk in subscribed_ids %}
+            {% comment %}  Is the user in the group?  {% endcomment %}
+            {% if user.is_superuser or group.pk in moderating_ids and perms.groups.change_group %}
+                {% comment %}  Is the user an admin ?  {% endcomment %}
+                <div class="item-status admin">
+                    <a href="{% url "group_details" group.pk %}">Group admin</a>
+                </div>
+            {% else %}
+                {% comment %}  Non-admin member  {% endcomment %}
+                {% comment %}  Unsub only from profile page  {% endcomment %}
+                {% if profile_is_self %}
+                    <div class="item-status leave member leave-group-{{ group.pk }}">
+                        <div class="inner">
+                            <input type="button" class="btn btn-large btn-link leave-group" data-group-id="{{ group.pk }}" value="Leave Group" />
+                        </div>
+                    </div>
+                {% else %}
+                    {% comment %}  Else, just show status  {% endcomment %}
+                    <div class="item-status member">
+                        <a href="{% url "group_details" group.pk %}">Group member</a>
+                    </div>
+                {% endif %}
+            {% endif %}
+
+        {% elif group.id in requested_ids %}
+
+            <div class="item-status pending">
+                <a href="{% url "group_details" group.pk %}">Pending approval</a>
+            </div>
+
+        {% else %}
+
+            <div class="item-status not-member join-group-{{ group.pk }}">
+                <div>
+                    <input type="button" class="btn btn-link btn-large join-group" data-group-id="{{ group.pk }}" value="Join Group" />
+                </div>
+            </div>
+
+
+        {% endif %}
+        {% endif %}
+
+    </div>
+    {% endif %}
+{% endfor %}

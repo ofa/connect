@@ -1,0 +1,113 @@
+
+{% extends "admin_base.html" %}
+{% load static %}
+{% block title %}Group Report{% endblock %}
+
+{% block page_title %}
+    Group Report
+{% endblock page_title %}
+
+{% block css_default %}
+{{ block.super }}
+    <link rel="stylesheet" media="screen" href="{% static 'smalot-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock %}
+
+{% block main_area %}
+        <h1>Group Report</h1>
+        <form class="form form-inline" role="form">
+            
+                <div class="form-group">
+                    <label>From: <input id="id_{{ date_range_form.start_datetime.name }}" name="{{ date_range_form.start_datetime.name }}" class="search-query dtpicker" type="text" value="{{ date_range_form.start_datetime.value|default:"" }}"></label>
+                </div>
+                <div class="form-group">
+                    <label>Until: <input id="id_{{ date_range_form.end_datetime.name }}" name="{{ date_range_form.end_datetime.name }}" class="search-query dtpicker" type="text" value="{{ date_range_form.end_datetime.value|default:"" }}"></label>
+                </div>
+                <div class="form-group">
+                    <label>Per Page: {{ paginate_by_form.per_page }}</label>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary btn" type="submit">Update</button>
+                    <a class="btn btn-info" href="?{{ full_query_string }}&export=1">export</a>
+                </div>
+            
+        </form>
+        <div class="clearfix">{% include "pagination.html" %}</div>
+        <table class="table table-bordered table-condensed table-striped">
+            <thead>
+            <tr>
+                <th><a href="{{ sort_strings.group__name }}">Name</a></th>
+                <th><a href="{{ sort_strings.message_count }}">Messages</a></th>
+                <th><a href="{{ sort_strings.thread_count }}">Threads</a></th>
+                <th><a href="{{ sort_strings.reply_count }}">Replies</a></th>
+                <th><a href="{{ sort_strings.posters }}">Posters</a></th>
+                <th><a href="{{ sort_strings.flagged }}">Flagged messages</a></th>
+                <th><a href="{{ sort_strings.category }}">Category</a></th>
+                <th>Tags</th>
+                <th><a href="{{ sort_strings.state }}">State</a></th>
+                <th><a href="{{ sort_strings.member_count }}">Members</a></th>
+                <th><a href="{{ sort_strings.owner_count }}">Admins</a></th>
+                <th><a href="{{ sort_strings.private }}">Private</a></th>
+                <th><a href="{{ sort_strings.published }}">Published</a></th>
+                <th><a href="{{ sort_strings.moderated }}">Moderated</a></th>
+                <th><a href="{{ sort_strings.featured }}">Featured</a></th>
+                <th><a href="{{ sort_strings.member_list_published }}">Member List Published</a></th>
+                <th><a href="{{ sort_strings.created_at }}">Created</a></th>
+                <th><a href="{{ sort_strings.created_by }}">Created by</a></th>
+                <th><a href="{{ sort_strings.image_count }}">Photos</a></th>
+                <th><a href="{{ sort_strings.image_clicks }}">Photo clicks</a></th>
+                <th><a href="{{ sort_strings.link_count }}">Links</a></th>
+                <th><a href="{{ sort_strings.link_clicks }}">Link clicks</a></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for group in groups %}
+                <tr>
+                    <td><a href="{% url "group_details" group.pk %}">{{ group.group.name }}</a></td>
+                    <td>{{ group.message_count }}</td>
+                    <td>{{ group.thread_count }}</td>
+                    <td>{{ group.reply_count }}</td>
+                    <td>{{ group.posters }}</td>
+                    <td>{{ group.flagged }}</td>
+                    <td>{{ group.category.name|default:"-" }}</td>
+                    <td>
+                        {% for tag in group.tagged_items.all %}
+                            {{ tag.tag }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td>{{ group.state }}</td>
+                    <td>{{ group.member_count }}</td>
+                    <td>{{ group.owner_count }}</td>
+                    <td>{% if group.private %}Yes{% else %}&nbsp;{% endif %}</td>
+                    <td>{% if group.published %}Yes{% else %}&nbsp;{% endif %}</td>
+                    <td>{% if group.moderated %}Yes{% else %}&nbsp;{% endif %}</td>
+                    <td>{% if group.featured %}Yes{% else %}&nbsp;{% endif %}</td>
+                    <td>{% if group.member_list_published %}Yes{% else %}&nbsp;{% endif %}</td>
+                    <td>{{ group.created_at }}</td>
+                    <td>{% if group.created_by %}<a href="{{ group.created_by.get_absolute_url }}">{{ group.created_by }}</a>{% endif %}</td>
+                    <td>{{ group.image_count }}</td>
+                    <td>{{ group.image_clicks|default:"0" }}</td>
+                    <td>{{ group.link_count }}</td>
+                    <td>{{ group.link_clicks|default:"0" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="clearfix">{% include "pagination.html" %}</div>
+{% endblock %}
+
+{% block js_default %}
+    {{block.super}}
+    <script src="{% static 'smalot-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.dtpicker').datetimepicker({
+            format: 'yyyy-mm-dd HH:ii p',
+            autoclose: true,
+            todayBtn: 'linked',
+            todayHighlight: true,
+            minuteStep: 15,
+            showMeridian: true
+        });
+    });
+</script>
+{% endblock js_default %}

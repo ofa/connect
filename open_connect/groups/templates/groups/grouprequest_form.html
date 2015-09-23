@@ -1,0 +1,35 @@
+{% extends "admin_base.html" %}
+{% load static %}
+{% block title %}Moderate your join requests{% endblock %}
+
+{% block main_area %}
+    <h1>Moderate your join requests</h1>
+    {% if not request_count %}
+        <p>You don't have any requests to approve.</p>
+    {% else %}
+        <form method="POST" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}class="form-horizontal">
+            {% include "common/horizontal_form_snippet.html" %}
+            <div class="form-actions">
+                <input type="submit" name="submit" value="Save changes" class="btn btn-success"/>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block js_default %}
+    {{ block.super }}
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $("label[for='id_open_requests']").append(' &mdash; <a href="#" class="check-toggle">Toggle all</a>');
+        $(".check-toggle").click(function(e) {
+            e.preventDefault();
+            var open_requests = $("[name='open_requests']");
+            if (open_requests.first().prop('checked')) {
+                open_requests.prop('checked', false);
+            } else {
+                open_requests.prop('checked', 'checked');
+            }
+        });
+    });
+    </script>
+{% endblock %}

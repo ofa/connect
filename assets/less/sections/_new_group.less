@@ -1,0 +1,108 @@
+.group-form {
+    .default {
+        .default_group_img();
+    }
+    h1 {
+        margin-bottom: .67em;
+    }
+    label {
+        text-transform: uppercase;
+        margin-bottom: .3em;
+        display: block;
+    }
+    .form-group {
+        margin-left: 0;
+        margin-bottom: 2em;
+    }
+    input[type=text] {
+        width: 100%;
+    }
+    .edit-btn {
+        margin-left: 10px;
+    }
+    .radius {
+        margin-bottom: 15px;
+    }
+    .btn-group {
+        > input {
+            display: none;
+        }
+        input:first-child {
+            + .btn {
+                margin-left: 0;
+            }
+        }
+    }
+    //Image upload with preview
+    
+    .help-block {
+        margin-bottom: 1em;
+        width:40%;
+    }
+
+    .btn-file, .help-block {
+        float: left;
+        margin-left: 20px;
+    }
+
+    .btn-file>input {
+        .translate(0,0);
+    }
+
+    .fileinput {
+        display: block;
+    }
+
+    .fileinput .thumbnail {
+        float: left;
+        border: 2px solid #cacacb;
+    }
+
+    .btn-default.fileinput-exists {
+        margin-left: 20px;
+        font-weight: 300;
+        color: #777;
+    }
+    .fileinput-preview.thumbnail {
+        height: 200px;
+        width: 200px;
+        .default {
+            margin-top: (200px - 120px)/2;
+        }
+    }
+    .fileinput-new {
+        cursor:pointer;
+    }
+    .fileinput-new .fileinput-preview.thumbnail {
+        background: #ccc;
+    }
+
+    // Spinner
+
+    .spinner {
+        width: 120px;
+    }
+
+    #map_canvas {
+        img { 
+            max-width: none;
+            //Important! Fixes google maps CSS
+        }
+    }
+    .form-location{
+        margin-top: 2em;
+    }
+    .form-actions {
+        text-align: center;
+        margin-bottom: 18px;
+    }
+    @media (max-width:@screen-sm-min) {
+        form {
+            padding: 0 1.5em;
+        }
+    }
+}
+.tab-pane h3 {
+    margin: 0;
+    line-height: 1;
+}

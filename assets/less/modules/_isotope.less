@@ -1,0 +1,304 @@
+//*** Isotope Filtering ****/
+.isotope-item {
+  z-index: 2;
+}
+
+.isotope-hidden.isotope-item {
+  pointer-events: none;
+  z-index: 1;
+}
+
+//*** Isotope CSS3 transitions ****/
+
+.isotope,
+.isotope .isotope-item {
+  -webkit-transition-duration: 0.8s;
+     -moz-transition-duration: 0.8s;
+      -ms-transition-duration: 0.8s;
+       -o-transition-duration: 0.8s;
+          transition-duration: 0.8s;
+}
+
+.isotope {
+  -webkit-transition-property: height, width;
+     -moz-transition-property: height, width;
+      -ms-transition-property: height, width;
+       -o-transition-property: height, width;
+          transition-property: height, width;
+//  margin: 0 -10px;
+}
+
+.isotope .isotope-item {
+  -webkit-transition-property: -webkit-transform, opacity;
+     -moz-transition-property:    -moz-transform, opacity;
+      -ms-transition-property:     -ms-transform, opacity;
+       -o-transition-property:      -o-transform, opacity;
+          transition-property:         transform, opacity;
+}
+
+//*** disabling Isotope CSS3 transitions ****/
+
+.isotope.no-transition,
+.isotope.no-transition .isotope-item,
+.isotope .isotope-item.no-transition {
+  -webkit-transition-duration: 0s;
+     -moz-transition-duration: 0s;
+      -ms-transition-duration: 0s;
+       -o-transition-duration: 0s;
+          transition-duration: 0s;
+}
+
+.diag-banner {
+  position: absolute;
+  display: block;
+  .rotate(45deg);
+  background: @gray-darker;
+  padding: 4px 28px;
+  margin-right: -28px;
+  margin-top: 14px;
+  top:0;
+  right:0;
+  color: white;
+  .text-uppercase;
+  font-size: .7em;
+  font-weight: 700;
+}
+
+.isotope-list {
+    //----------Group container
+
+    .item {
+        &.border {
+          border: 1px solid @gray-border;
+          background-color: #fff;  
+        }
+        position: relative;
+        opacity: 1;
+        overflow: hidden;
+        .-(@i: length(@categories)) when (@i > 0) {
+            @name: e(extract(@categories, @i));
+            &.@{name} {
+              h2, h2 a {
+                color: @@name;
+                &:hover {
+                  color: darken(@@name,10%);
+                }
+              }
+              .item-status{
+                background: @@name;
+                &.member, &.admin {
+                    background: transparent;
+                    color: @@name;
+                    a {
+                        border: 3px solid @@name;
+                       color: @@name; 
+                       height: 100%;
+                       width: 100%;
+                    }
+                }
+                &.leave {
+                  background: @@name;
+                  color: white;
+                }
+              }
+
+            }
+            .-((@i - 1));
+        } .-;
+        .item-info {
+          font-size: .8em;
+          > div {
+            padding: 1em;
+          }
+        }
+        .right-banner {
+          &:extend(.diag-banner);
+        }
+        .left-banner {
+          &:extend(.diag-banner);
+          margin-left: -28px;
+          margin-right: 0;
+          -webkit-transform: rotateZ(-45deg);
+          right: auto;
+          left:0;
+        }
+
+        h2 a {
+          color: @gray-darker;
+          font-size: 19px;
+          &:hover {
+            text-decoration: none;
+          }
+        }
+        .item-status {
+          text-align: center;
+          background: @gray-darker;
+          color: white;
+          .text-uppercase;
+          font-weight: 700;
+          a {
+            color: white;
+            display: block;
+            min-height: 42px;
+            line-height: 42px;
+          }
+          div {
+            height: 100%;
+            width: 100%;
+            min-height: 42px;
+            line-height: 42px;
+          }
+          .btn-link {
+            color:#fff;
+            min-height: 42px;
+            line-height: 38px;
+            }
+            &.member, &.admin, &.demote {
+                background: transparent;
+                color: @gray-darker;
+                a {
+                  border: 3px solid @gray-darker;
+                   color: @gray-darker; 
+                   height: 100%;
+                   width: 100%;
+                }
+            }
+            &.leave{
+              background: @gray-darker;
+              color:white;
+            }
+            &.promote {
+                a {
+                  background: @brand-primary;
+                }
+
+            }
+        }
+        h2 {
+            line-height: 1;
+            font-weight: 400;
+            margin-top: 0;
+            @media (min-width: @screen-sm-min) {
+              margin-top: 20px;
+            }
+        }
+        h4 {
+            padding: 0;
+        }
+        img {
+            margin-bottom: 1em;
+        }        
+    }
+}
+
+
+.isotope-list.cards {
+    //----------Group container
+
+    .item {
+        width: 46%;
+        height: 300px;
+        float: left;
+        margin: 0 0 10px 10px;
+
+        header {
+          height: 110px;
+        }
+        .item-image {
+          height: 140px;
+          a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-indent: -1000000px;
+          }
+        }
+
+        @media (max-width: (@screen-sm-min - 1)) {
+          position: relative;
+          font-size: .8em;
+          .item-info {
+            overflow: hidden;
+          }
+          .item-status {
+            font-size: .8em;
+          }
+          h2 {
+            font-size: .7em;
+          }
+          .item-desc {
+            display: none;
+          }
+        }
+        @media (min-width: @screen-sm-min) {
+          margin-bottom: 18px;
+          width: 270px;
+          height: 415px;
+          header {
+            height: 150px;
+          }
+          .item-image {
+            height: 215px;
+          } 
+        }
+    }
+}
+
+.isotope-list.list {
+
+  .item {
+        margin-bottom: 18px;
+        width: 100%;
+        @media (min-width:@screen-sm-min) {
+          min-height: 100px;
+        }
+        .right-banner {
+          margin-right: -28px;
+          margin-top: 6px;
+          .rotate(32deg);
+        }
+        h2 {
+          margin-top: 10px;
+        }
+        .item-desc {
+          display: none;
+          max-width: 65%;
+          @media (min-width:@screen-sm-min) {
+            display: block;
+          }
+        }
+        .item-image {
+          display:none;
+        } 
+        .item-status {
+          margin: 0 1em 1em;
+          @media (min-width:@screen-md-min) {
+            width: 195px;
+            font-size: .865em;
+            position: absolute;
+            top: 50%;
+            margin-top: -42/2px;
+            right: 20px;
+            a {
+              padding-top: 12px;
+              line-height: 1;  
+            }
+          }
+          @media (min-width:@screen-lg-min) {
+            width: 230px;
+            font-size: 1em;
+          }
+          
+        }      
+    }
+
+}
+
+.oldie {
+  .isotope-list .item {
+    width: 40%;
+    .right-banner {
+      margin-right: 0;
+    }
+  }
+}

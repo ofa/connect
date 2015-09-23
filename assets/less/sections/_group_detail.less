@@ -1,0 +1,196 @@
+//--- Group detail
+
+.group-detail {
+    #main {
+        padding-top: 1em;
+    }
+    .member-status {
+        @media (min-width:@screen-sm-min) {
+            width: 200px;
+        }
+        float: right;
+        .member-status-block {
+            border: 1px solid white;
+            border-radius: @border-radius-base;
+            padding: .25em .75em;
+            margin-bottom:.5em;
+            &:extend(.hidden-xs all);
+        }
+    }
+    .row-hero {
+        background: @gray-darker;
+        color:white;
+        .container {
+            text-align: center;
+        }
+
+        .group-image {
+            width: 160px;
+            height: 160px;
+            margin: 3em auto 3em;
+            overflow: hidden;
+            border-radius: 500px;
+            border: 3px solid white;
+            .default_group_img();
+            &.default {
+                border: none;
+            }
+        }
+
+        .-(@i: length(@categories)) when (@i > 0) {
+            @name: e(extract(@categories, @i));
+            &.@{name} {
+                .btn-primary {
+                    background-color:@@name;
+                    border-color: @@name;
+                }
+            }
+            .-((@i - 1));
+        } .-;
+    }
+
+    section {
+        margin-bottom: 3em;
+        .clearfix;
+    }
+
+    .see-all {
+        font-size: .9em;
+        display: block;
+        clear: both;
+    }
+
+    .admin-actions {
+        text-align: left;
+        margin-top: 1em;
+    }
+
+    .group-images {
+        .clearfix;
+        .image-list(60px, 10px);
+        @media (min-width:@screen-sm-min) {
+            .image-list(@size:110px);
+        }
+        @media (min-width:@screen-md-min) {
+            .image-list(@size:150px);
+        }
+
+    }
+    .group-members {
+        .image-list(35px,7px);
+        @media (min-width:@screen-sm-min) {
+            .image-list(50px,12px);    
+        }
+        
+    }
+    
+    .location #map_canvas {
+        margin-bottom: 1em;
+    }
+    
+    #id_users_text {
+        &:extend(.form-control all);
+        border: none;
+        @placeholder: lighten(@gray-darker,25%);
+        &::-webkit-input-placeholder {
+           color: @placeholder;
+        }
+
+        &:-moz-placeholder { /* Firefox 18- */
+           color: @placeholder;  
+        }
+
+        &::-moz-placeholder {  /* Firefox 19+ */
+           color: @placeholder;  
+        }
+
+        &:-ms-input-placeholder {  
+           color: @placeholder;  
+        }
+    }
+    .user-add {
+        .form-group {
+            padding: 0;
+        }
+    }
+    h1 {
+        font-size: 28px;
+    }
+    h3 {
+        color: @gray-darker;
+        text-transform: uppercase;
+        padding-bottom: .5em;
+        margin-bottom: 1em;
+        font-size: 16px;
+        text-align: center;
+        font-weight: 700;
+        a {
+            color: @gray-darker;
+        }
+        @media (min-width:@screen-sm-min){
+            font-weight: 400;
+            text-align: left;
+            border-bottom: @gray 1px solid;
+        }
+    }
+    .owners, .members {
+        h3 {
+            text-align: left;
+        }
+    }
+    .user-image {
+        .default_user_img_thumb();
+    }
+    .add-user {
+        @media (min-width:@screen-sm-min){
+            margin-left: 20px;    
+        }
+        
+    }
+    .header-button {
+        text-align: center;
+        margin-bottom: 20px;
+        @media (min-width:@screen-sm-min){
+            float: right;
+            margin-top: -55px;    
+        }
+
+    }
+    .links {
+        a {
+            -ms-word-break: break-all;
+
+             /* Be VERY careful with this, breaks normal words wh_erever */
+             word-break: break-all;
+
+             /* Non standard for webkit */
+             word-break: break-word;
+
+        -webkit-hyphens: auto;
+           -moz-hyphens: auto;
+                hyphens: auto;
+                margin-bottom: 1.25em;
+        }
+    }
+    .resource-item {
+        width: 150px;
+        display: block;
+        float: left;
+        text-align: center;
+        a {
+            font-size: 1em;
+        }
+        @media (max-width: @screen-sm-max) {
+            width: 70px;
+            .resource {
+                width: 70px;
+                height: 70px;
+                background-size: contain;
+            }
+            a {
+                font-size: .8em;
+                color: @gray-dark;
+            }
+        }
+    }
+}

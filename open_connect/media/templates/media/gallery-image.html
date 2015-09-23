@@ -1,0 +1,27 @@
+{% for image in images %}
+    <div class="item border">
+        <div class="item-image">
+            <a class="image expand" href="{{ image.get_absolute_url }}" style="background:url({{ image.get_display_image.url }}) no-repeat center;background-size:cover;">
+                Image
+            </a>
+        </div>
+        <section class="item-info">
+            <div>
+                <div class="styled-checkbox db-checkbox">
+                    <input type="checkbox" name="check-{{ forloop.counter0 }}" id="check-{{ forloop.counter0 }}" data-img-name="{{image.file_name}}" data-img-url="{{ image.image.url }}" >
+                    <label for="check-{{ forloop.counter0 }}" class="db-label">Save to Dropbox?</label>
+                </div>
+                <p>Views: {{ image.view_count }}</p>
+            </div>
+        </section>
+        {% if perms.media.promote_image %}
+            <div class="item-status promotion-{{ image.uuid }} {% if image.promoted %} demote{% else %} promote{% endif %}">
+               {% if image.promoted %}
+                <a href="#" class="demote-image btn btn-sm btn-link" id="{{ image.uuid }}">Demote</a>
+                {% else %}
+                <a href="#" class="promote-image btn btn-sm btn-link" id="{{ image.uuid }}">Promote</a>
+                {% endif %}
+            </div>        
+        {% endif %}
+    </div>
+{% endfor %}

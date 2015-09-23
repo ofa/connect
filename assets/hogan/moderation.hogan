@@ -1,0 +1,47 @@
+<nav class="thread-nav row">
+	<a class="back-to-moderation btn btn-primary" href="/moderation/"><i class="icon-single-let-arrow"></i>Back to Moderation</a>
+</nav>
+
+<section class="thread-info row">
+	<div class="thread-title-mod">
+		{{#group}}
+			<h5 class="thread-group {{category}}"><a href="{{group_url}}">{{group}}</a></h5>
+		{{/group}}
+		{{^group}}
+		    <h4 class="thread-group">{{recipients}}</h4>
+		{{/group}}
+		<h3>Message from Thread: {{subject}}</h3>
+	</div>
+	<h4 class="mod-info">
+        {{#mod.pending}}<i class="icon-checkmark"></i> This message is pending approval.{{/mod.pending}}
+        {{^mod.pending}}<i class="icon-flag"></i>This message was flagged as inappropriate.{{/mod.pending}}
+	</h4>
+</section>
+	{{!--Message to Moderate--}}
+<section class="row">
+	<div class="msg-to-mod panel panel-default">
+		<div id="mod-{{ mod.id }}" class="panel-body">
+		    <div class="panel-inner">
+			        <div class='row-fluid msg-text'>
+			            <h5 class="msg-sender">
+			                <a href="{{mod.sender.sender_url}}">{{ mod.sender.sender }}</a>
+			            </h5>
+			            {{#mod.sender.sender_is_staff}}<h6 class="staff">Staff</h6>{{/mod.sender.sender_is_staff}}
+			            <p class="msg-date">{{mod.date}}</p>
+			            
+			            {{{ mod.text }}}
+			        </div>
+			    </div>
+			</div>
+
+	</div>
+</section>
+<section class="row">
+	<h3>Here is the message in the thread context:</h3>
+	<div class="thread-controls">
+			<a class="expand-all" href="#" title="Expand All Messages"><i class="{{icon_prefix}}collapse-down"></i></a>
+			<a class="collapse-all" href="#" title="Collapse All Messages"><i class="{{icon_prefix}}collapse-up"></i></a>
+	</div>
+	<div id="msg-list" class="msg-list">
+	</div>
+</section>

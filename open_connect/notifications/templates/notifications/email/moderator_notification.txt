@@ -1,0 +1,6 @@
+{% extends "email/base_wrapper.txt" %}
+{% load mailing %}
+{% block content %}You have {{ total_new_messages }} new message{{ total_new_messages|pluralize }} to moderate.
+
+Go to {% origin %}{% url 'mod_admin' %} to approve or decline pending messages on {% brand_title %}.
+{% endblock content %}

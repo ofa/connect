@@ -1,0 +1,9 @@
+<nav id="navmenu-right" class="navmenu navmenu-default navmenu-fixed-right offcanvas" role="navigation">
+        {% with mobile=True %}
+            {% include "nav-sliding-user.html" %}
+        {% endwith %}
+
+        {% with mobile=False %}
+            {% include "nav-sliding-user.html" %}
+        {% endwith %}
+</nav>

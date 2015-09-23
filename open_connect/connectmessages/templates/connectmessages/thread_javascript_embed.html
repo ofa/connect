@@ -1,0 +1,47 @@
+{% load static %}
+
+
+<script type="text/javascript">
+function ext(d,b,e){var c=d[e]||{},a;for(a in b)b[a]&&b[a].constructor&&b[a].constructor===Object?(c[a]=c[a]||{},arguments.callee(c[a],b[a])):c[a]=b[a];d[e]=c}
+ext(window.CONNECT,JSON.parse("{{ js_context|escapejs }}"),"context");
+
+window.CONNECT.user.groups = [
+    {% for group in request.user.groups_joined %}
+        {   name: "{{ group|escapejs }}",
+            shortname: "{{ group|truncatechars:32|escapejs }}",
+            id: {{group.id}},
+            query: "&group={{group.id}}",
+            category: "{{ group.category.slug|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
+
+    
+</script>
+    {% comment %}
+        Preload twttr and insta for oembed
+    {% endcomment %}
+    <script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script src="//platform.instagram.com/en_US/embeds.js"></script>
+{% if USE_MINIFY %}
+    <script type="text/javascript" src="{% static 'js/inbox.min.js' %}?{% now "Ymd" %}"></script>
+{% else %} 
+    <script type="text/javascript" src="{% static 'underscore/underscore.js' %}"></script>
+    <script type="text/javascript" src="{% static 'backbone/backbone.js' %}"></script>
+    <script type="text/javascript" src="{% static 'backbone-deep-model/distribution/deep-model.js' %}"></script>
+    <script type="text/javascript" src="{% static 'vendor/marionette-bundle.js' %}"></script>
+    <script type="text/javascript" src="{% static 'hogan/lib/template.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/templates.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/inbox/Inbox.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/inbox/Inbox.Base.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/inbox/Inbox.State.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/inbox/Inbox.Threads.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/inbox/Inbox.Messages.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/inbox/Inbox.Controller.js' %}"></script>
+{% endif %}
+
+<script>
+    $(function() {
+        Inbox.start();
+    });
+</script>

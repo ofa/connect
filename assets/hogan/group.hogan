@@ -1,0 +1,1 @@
+<a class="{{category}} filter{{#active}} selected{{/active}}" data-groupid="{{id}}" href="#">{{ shortname }}</a>

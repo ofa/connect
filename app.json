@@ -1,0 +1,38 @@
+{
+  "name": "Connect",
+  "description": "A Python/Django-based community platform by Organizing for Action",
+  "keywords": [
+    "community",
+  ],
+  "website": "https://ofa.github.io/connect/",
+  "repository": "https://github.com/ofa/connect",
+  "logo": "",
+  "success_url": "",
+  "scripts": {
+    "postdeploy": "heroku/postdeploy.sh"
+  },
+  "env": {
+    "SECRET_TOKEN": {
+      "description": "",
+      "generator": "secret"
+    },
+    "WEB_CONCURRENCY": {
+      "description": "The number of processes to run.",
+      "value": "4"
+    }
+  },
+  //"image": "heroku/pyhon",
+  "addons": [
+    "heroku-postgresql",
+    "cloudamqp",
+    "memcachier",
+    "newrelic"
+  ],
+  "buildpacks": [
+    {
+      // We want to be able to control buildpacks in a `.buildpack` file so
+      // it's easier to just use the multi buildpack tool
+      "url": "https://github.com/heroku/heroku-buildpack-multi"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block bodyclass %}group-members isotope-list cards{% endblock bodyclass %}
+
+{% block title %}{{group}} members{% endblock %}
+
+{% block content_header %}{% endblock %}
+{% block page_content %}
+    <h4 class="{{group.category.slug}}"> <a href="{% url "group_details" group.pk %}">{{group}}</a></h4>
+    <h1>
+        <span class="count">{{ group_members.count }}</span> member{{ group_members.count|pluralize }}
+        <form class="form-search form" role="form">
+                <input name="q" type="text" class="form-control search-query" value="{{ q|default:"" }}">
+                <button class="btn btn-link btn-search" type="submit"><i class="{{icon_prefix}}search"></i></button>
+        </form>
+    </h1>
+
+        <h3>Group Owners</h3>
+        <div class="group-container">
+        {% for group_member in group_owners %}
+            {% include "groups/group_member_list_member_snippet.html" %}
+        {% endfor %}
+        </div>
+
+        <h3>Group Members</h3>
+        <div class="group-container">
+        {% for group_member in group_members %}
+            {% include "groups/group_member_list_member_snippet.html" %}
+        {% endfor %}
+        </div>
+        {% include "pagination.html" %}
+        
+        {% csrf_token %}
+    </div>
+
+{% endblock %}
+
+{% block js_default %}
+{{ block.super }}
+
+<script type="text/javascript">
+        var imageUpload = '{% url "create_image" %}';
+</script>
+{% if USE_MINIFY %}
+    <script src="{{ STATIC_URL}}js/profile.min.js"></script>
+    {% else %}
+        <script type="text/javascript" src="{% static 'js/sections/profile.js' %}"></script>
+    {% endif %}
+
+{% endblock %}

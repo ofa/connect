@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Update your subscriptions{% endblock %}
+
+{% load trimspace %}
+
+{% block page_title %}
+    Update your subscriptions
+{% endblock %}
+
+{% block page_content %}
+<form method="POST" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}class="form-inline">
+    <div class="col-md-12 col-lg-12">
+        <div class="panel-group" id="subscriptions">
+            {% for form in formset %}
+                {% csrf_token %}
+                {{ form.id }}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <a class="accordion-toggle" data-toggle="collapse" data-parent="#subscriptions" href="#toggle{{ forloop.counter }}">
+                            {{ form.group_name }}
+                        </a>
+                    </div>
+                    <div id="toggle{{ forloop.counter }}" class="panel-body collapse {% if forloop.first %}in{% endif %}">
+                        
+                            <div class="col-md-8 col-lg-8">
+                                <div class="control-group{% if form.period.errors %} error{% endif %}">
+                                    <label class="control-label" for="id_{{ form.period.html_name }}">How often do you want to recieve notifications?</label>
+                                    <div class="controls">{{ form.period }}
+                                        {% for error in form.period.errors %}
+                                            <span class="help-inline">{{ error }}</span>
+                                        {% endfor %}
+                                        {% if form.period.help_text %}
+                                            <small class="help-inline">{{ form.period.help_text }}</small>
+                                        {% endif %}
+                                    </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% endfor %}
+        </div>
+    </div>
+
+    {{ formset.management_form }}
+    <div class="col-md-12 col-lg-12">
+        <div class="form-actions">
+            <input type="submit" name="submit" value="Save changes" class="btn btn-success"/>
+        </div>
+    </div>
+</form>
+{% endblock %}

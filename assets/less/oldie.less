@@ -1,0 +1,99 @@
+@import (reference) "main.less";
+.oldie {
+    .make-grid(sm);
+    .make-grid(md);
+    .make-grid(lg);
+    .container {
+        width: @screen-md-min!important;
+    }
+    .select-styled {
+        &:after {
+            display: none;
+        }
+    }
+    .browse-happy {
+        background: @gray-lighter;
+        padding-top: 180px;
+        text-align: center;
+        min-height: 500px;
+        height: auto !important;
+        height: 500px;
+        h3, h3 {
+            color: darken(@gray, 10%);
+            a {
+                color: darken(@gray, 10%);
+            }
+            font-weight: 700;
+            width: 50%;
+            margin: 0 auto;
+        }
+    }
+    .navbar-collapse {
+        width: auto;
+        border-top: 0;
+        box-shadow: none;
+        &.collapse {
+            display: block !important;
+            height: auto !important;
+            padding-bottom: 0; // Override default setting
+            overflow: visible !important;
+        }
+        &.in {
+            overflow-y: visible;
+        }
+        // Undo the collapse side padding for navbars with containers to ensure
+        // alignment of right-aligned contents.
+        .navbar-fixed-top &, .navbar-static-top &, .navbar-fixed-bottom & {
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+    .navbar-nav {
+        margin: (@navbar-padding-vertical / 2) -@navbar-padding-horizontal;
+        > li > a {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            line-height: @line-height-computed;
+        }
+        // Uncollapse the nav
+        float: left;
+        margin: 0;
+        > li {
+            float: left;
+            > a {
+                padding-top: @navbar-padding-vertical;
+                padding-bottom: @navbar-padding-vertical;
+            }
+        }
+        &.navbar-right:last-child {
+            margin-right: -@navbar-padding-horizontal;
+        }
+        .open ul.dropdown-menu {
+            position: static;
+            float: none;
+            width: auto;
+            margin-top: 0;
+            background-color: transparent;
+            border: 0;
+            box-shadow: none;
+            > li > a, .dropdown-header {
+                padding: 5px 15px 5px 25px;
+            }
+            > li > a {
+                line-height: @line-height-computed;
+                &:hover, &:focus {
+                    background-image: none;
+                }
+            }
+        }
+    }
+    .navbar-left {
+        .pull-left();
+    }
+    .navbar-right {
+        .pull-right();
+    }
+    #threads, .thread-manager {
+        display: none!important;
+    }
+}

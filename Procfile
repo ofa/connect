@@ -1,0 +1,3 @@
+web: bin/start-pgbouncer-stunnel bin/start-nginx newrelic-admin run-program gunicorn -k gevent -c config/gunicorn_config.py connect.wsgi
+scheduler: NEW_RELIC_CONFIG_FILE=/app/newrelic-celery.ini bin/start-pgbouncer-stunnel newrelic-admin run-program python manage.py celeryd -B -E --autoscale=1,7
+worker: NEW_RELIC_CONFIG_FILE=/app/newrelic-celery.ini bin/start-pgbouncer-stunnel newrelic-admin run-program python manage.py celeryd -E --autoscale=1,7

@@ -1,0 +1,1 @@
+"""Middleware for Connect app"""

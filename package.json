@@ -1,0 +1,30 @@
+{
+  "name": "Connect",
+  "version": "1.0.0",
+  "description": "\"Build dependencies for Connect.\"",
+  "license": "MIT",
+  "main": "Gruntfile.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ofa/connect.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/ofa/connect/issues"
+  },
+  "homepage": "https://github.com/ofa/connect",
+  "dependencies": {
+    "grunt": "0.4.5",
+    "grunt-cli": "0.1.13",
+    "grunt-autoprefixer": "3.0.3",
+    "grunt-contrib-copy": "0.8.0",
+    "grunt-contrib-less": "1.0.1",
+    "grunt-contrib-uglify": "0.9.1",
+    "grunt-contrib-watch": "0.6.1",
+    "grunt-hogan": "0.3.0",
+    "load-grunt-config": "0.17.2",
+    "grunt-contrib-jasmine": "0.8.2",
+    "load-grunt-tasks": "3.2.0",
+    "bower": "1.4.1"
+  }
+}

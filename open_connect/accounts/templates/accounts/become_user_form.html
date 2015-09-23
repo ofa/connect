@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Become {{ account }}{% endblock %}
+
+{% block page_title %}
+        Become {{ account }}
+{% endblock page_title %}
+
+{% block page_content %}
+            <strong>This will log you in as {{ user_to_become.email }}. Everything on the site will appear as it does to them except for a banner reminding you that you are viewing the site as someone else.</strong>
+        	<form method="POST" class="form-horizontal">
+        	    {% include "common/horizontal_form_snippet.html" %}
+        	    <div class="form-actions">
+        	        <input type="submit" name="submit" value="Agree" class="btn btn-primary"/>
+        	    </div>
+        	</form>
+{% endblock %}

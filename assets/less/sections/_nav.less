@@ -1,0 +1,60 @@
+
+// Connect nav is constructed a little differently than default bootstrap;
+// Always float the header left regardless of breakpoint.
+.navbar-header {
+  float: left;
+  margin-left: 0;
+}
+.navbar-brand {
+  .connect_brand_img();
+  .text-hide();
+}
+@media (max-width: @grid-float-breakpoint){
+  .navbar-nav {
+    margin-bottom: 0;
+  }
+  .navbar-container {
+      padding: 0 15px;
+  }
+}
+
+.nav-threadlist-mobile, .nav-grouplist-mobile {
+    &:extend(.visible-xs-block);
+    float: left;
+    li {
+        float: left;
+    }
+    margin-right: 0;
+}
+
+.dropdown-menu li {
+  display: block;
+}
+
+.navmenu-fixed-right {
+    z-index: 999999999!important;
+}
+
+.navmenu {
+    section {
+        padding: 0px 20px;
+    }
+    h3 {
+        font-weight: 400;
+    }
+    .filter-threadlist-area {
+        padding-top: 1em;
+        padding-bottom: 1em;
+        background: darken(@gray-darker, 10%);
+        .styled-select-transparent {
+            padding: 0;
+            select {
+                padding: 0;
+            }
+        }
+        &.filter-archive {
+           background: @gray-dark; 
+        }
+    }
+}
+

@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% load static urltools %}
+
+{% block title %}Resources{% endblock %}
+
+{% block bodyclass %}resources-list isotope-list full cards{% endblock bodyclass %}
+
+{% block content_pre %}
+{{block.super}}
+{% endblock %}
+
+{% block svg %}
+    {{ block.super }}
+    {% svgsprite 'resources' %}
+{% endblock %}
+
+{% block nav_top_left %}
+    <ul class="nav nav-grouplist-mobile">
+      <li>
+        <a href="#" data-toggle='offcanvas' data-target='#navmenu-left' data-canvas='body' class="nav-sliding-left filter"><i class="{{icon_prefix}}filter"><span class="sr-only">Filter</span></i></a>
+      </li>
+    </ul>
+    {% include "nav-top-left.html" %}
+{% endblock nav_top_left %}
+
+{% block content_header %}
+
+{% endblock %}
+
+{% block page_content %}
+{# Important! The csrf_token tag must be present on this page. #}
+{% csrf_token %}
+<!---LEFT COL-->
+    <div class="col-sm-3 dark-form filter-col hidden-xs">              
+        <div class="explore-resources">
+            <form method="GET">
+                    <div class="form-group">
+                        <h3>Search by Keyword</h3>
+                    
+                        <input class="col-md-12 col-sm-12" type="text" name="query" id="query" value="{{ query|default:"" }}" placeholder="Enter Keywords" />
+
+                        <h3>Search by Group</h3>
+
+                        <div class="styled-select">
+                            <select name="group_id" id="group_id">
+                                <option value="">All groups</option>
+                                {% for group in user.groups_joined %}
+                                    <option
+                                    {% if group_id %}
+                                        {% if group_id|floatformat:"0" == group.pk|floatformat:"0" %} selected{% endif %}
+                                    {% endif %}
+                                    value="{{group.pk}}">{{ group }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <input type="submit" value="Search" class="btn btn-primary btn-lg btn-block">
+                    </div>
+            </form>
+        </div>
+            <div class="form-group clearfix file-type-group circular-checkbox">
+                <h3>Filter by File Type</h3>  
+                    {% for file_type in file_types %}
+                        <input type="checkbox" name="check-{{ forloop.counter0 }}" id="check-{{ forloop.counter0 }}" data-category="{{file_type}}" >
+                        <label for="check-{{ forloop.counter0 }}" class="checkbox {{file_type}}">
+                       {% if file_type == 'pdf' %}
+                           {{file_type|upper}}
+                           {% else %}  {{file_type|capfirst}}
+                        {% endif %}  <span class="count"></span>
+                        </label>
+                    {% endfor %}
+                    <input type="checkbox" name="check-last" id="check-last" data-category="other" >
+                        <label for="check-last" class="checkbox other">
+                        Other <span class="count"></span>
+                        </label>
+            </div> 
+    </div>
+    <div class="col-sm-9">
+        <header class="page-header">
+        <ul class="pull-right layout-actions">
+                <li>
+                    <a href="#" class="layout layout-list" data-layout="list" title="List View">
+                        <i class="{{icon_prefix}}list"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="layout layout-cards active" data-layout="cards" title="Card View">
+                        <i class="{{icon_prefix}}th-large"></i></a>
+                </li>
+
+                {% if perms.resources.add_resource %}
+                <li>
+                    <a href="{% url "create_resource" %}" class="add" title="Add a new resource">
+                        <i class="{{icon_prefix}}plus"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            <h3>{{ request.group_id }}</h3>
+               
+    {% if query and group_id %}
+        <h4 class="group-heading {{group.category.slug}}">{{group}} Resources with keyword <span>"{{ query }}"</span></h4>
+    {% elif query %}
+        <h1>Resources with keyword <span>"{{ query }}"</span></h1>
+    {% elif group_id %}
+        <h4 class="group-heading {{group.category.slug}}">{{group}} Resources</h4>
+    {% else %}
+        <h1>My Resources</h1>
+    {% endif %}</h1>
+        </header>
+        <div class="resources-container">
+            {% for resource in resources %}
+                <div class="item resource-item {{ resource.file_type | default_if_none:'other'}}">
+                    <div class="resource-info">
+                        <a class="resource resource-{{ resource.file_type | default_if_none:'document'}}" href="{{ resource.get_absolute_url }}" title="{{ resource }}"></a>
+                        <p><a href="{{ resource.get_absolute_url }}" title="{{ resource }}">{{ resource |truncatechars:50 }}</a></p>
+                    </div>
+                    {% if resource.created_by == user %}
+                        <div class="nav-center">
+                            <ul class="resource-actions">
+                                <li><a class="btn btn-info edit" href="{% url "update_resource" uuid=resource.uuid %}">Edit</a></li>
+                                <li><a class="btn btn-info delete" href="{% url "delete_resource" uuid=resource.uuid %}">Delete</a></li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+                    
+            {% endfor %}
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block nav_sliding %}
+    {{block.super}}
+    <nav id="navmenu-left" class="navmenu navmenu-default navmenu-fixed-left offcanvas dark-form" role="navigation">  
+        <section class="explore-resources">
+            <form method="GET">
+                    <div class="form-group">
+                        <h3>Search by Keyword</h3>
+                    
+                        <input class="col-md-12 col-sm-12" type="text" name="query" id="query" value="{{ query|default:"" }}" placeholder="Enter Keywords" />
+
+                        <h3>Search by Group</h3>
+
+                        <div class="styled-select">
+                            <select name="group_id" id="group_id">
+                                <option value="">All groups</option>
+                                {% for group in user.groups_joined %}
+                                    <option
+                                    {% if group_id %}
+                                        {% if group_id|floatformat:"0" == group.pk|floatformat:"0" %} selected{% endif %}
+                                    {% endif %}
+                                    value="{{group.pk}}">{{ group }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <input type="submit" value="Search" class="btn btn-primary btn-lg btn-block">
+                    </div>
+            </form>
+        </section>
+        <section class="form-group clearfix file-type-group circular-checkbox">
+            <h3>Filter by File Type</h3>  
+                {% for file_type in file_types %}
+                    <input type="checkbox" name="check-{{ forloop.counter0 }}-mobile" id="check-{{ forloop.counter0 }}-mobile" data-category="{{file_type}}" >
+                    <label for="check-{{ forloop.counter0 }}-mobile" class="checkbox {{file_type}}">
+                   {% if file_type == 'pdf' %}
+                       {{file_type|upper}}
+                       {% else %}  {{file_type|capfirst}}
+                    {% endif %}  <span class="count"></span>
+                    </label>
+                {% endfor %}
+                <input type="checkbox" name="check-last" id="check-last" data-category="other" >
+                    <label for="check-last" class="checkbox other">
+                    Other <span class="count"></span>
+                    </label>
+        </section> 
+    </nav>
+{% endblock nav_sliding %}
+
+{% block js_default %}
+{{ block.super }}
+<script>
+    var file_types = [ 'other', {% for file_type in file_types %}"{{file_type}}"{% if forloop.last %}{% else %}, {% endif %}{%endfor%} ];
+</script>
+
+{% if USE_MINIFY %}
+<script type="text/javascript" src="{% static 'js/resources.min.js' %}"></script>    
+{% else %}
+<script type="text/javascript" src="{% static 'js/sections/resources.js' %}"></script>
+{% endif %}
+
+{% endblock %}

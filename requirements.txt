@@ -1,0 +1,30 @@
+#####
+# Requirements needed on Heroku
+#
+# Due to issues wiht some packages compiling on dev machines we break out
+# requirements that are needed on Heroku (requirements.txt) and on dev machines
+# (dev-requirements.txt)
+
+
+# cffi or cryptography have to be explictly set in requirements for heroku
+# python buildpack to install the relevant libraries
+cffi==1.1.1
+
+# pylibmc has to be explictly added to requirements for heroku's python
+# buildpack
+pylibmc==1.4.3
+
+# Since we don't want to require libmemcached on dev machines, only require
+# packages that need memcached on heroku
+django-heroku-memcacheify==0.8
+
+
+# We include the gunicorn-related packages in this file as they don't compile
+# well outside of heroku
+gevent==1.0
+greenlet==0.4.1
+gunicorn==18.0
+
+
+# Include the common requirements
+-r common-requirements.txt

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block bodyclass %}admin full{% endblock bodyclass %}
+{% block content_header %}{% endblock %}
+
+{% block page_content %}
+
+<div class="admin-content col-sm-12">
+     {% block main_area %}{% endblock main_area %}
+</div>
+{% endblock %}

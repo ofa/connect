@@ -1,0 +1,40 @@
+.image-list(@size:170px, @margin:30px){
+    list-style: none;
+    .clearfix;
+    margin-top: -@margin;
+    li {
+        float: left;
+        a { 
+            display: block;
+            height: @size;
+            width: @size;
+            overflow: hidden;
+            margin-right:@margin;
+            margin-top: @margin;
+            text-indent: -10000000px;
+        }
+    }
+}
+
+.icon-list(@size:170px, @margin:30px){
+    list-style: none;
+    .clearfix;
+    margin-top: -@margin;
+    li {
+        float: left;
+        a { 
+            display: block;
+            height: @size;
+            width: @size;
+            overflow: hidden;
+            margin-right:@margin;
+            margin-top: @margin;
+        }
+        // .icon {
+        //     height: @size
+        // }
+        span {
+            text-indent: -10000000px;
+        }
+    }
+}

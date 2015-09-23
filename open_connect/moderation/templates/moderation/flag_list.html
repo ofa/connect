@@ -1,0 +1,83 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block title %}Flag Log{% endblock %}
+
+{% block page_title %}
+    Flag Log
+{% endblock %}
+
+{% block css_default %}
+{{ block.super }}
+    <link rel="stylesheet" media="screen" href="{% static 'smalot-bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock %}
+
+{% block main_area %}
+<h1>Flag Log</h1>
+
+<form class="form form-inline" role="form">
+
+                <div class="form-group">
+                    <label>From: <input id="id_{{ date_range_form.start_datetime.name }}" name="{{ date_range_form.start_datetime.name }}" class="search-query dtpicker" type="text" value="{{ date_range_form.start_datetime.value|default:"" }}"></label>
+                </div>
+                <div class="form-group">
+                    <label>Until: <input id="id_{{ date_range_form.end_datetime.name }}" name="{{ date_range_form.end_datetime.name }}" class="search-query dtpicker" type="text" value="{{ date_range_form.end_datetime.value|default:"" }}"></label>
+                </div>
+                <div class="form-group">
+                    <label>Per Page: {{ paginate_by_form.per_page }}</label>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary btn" type="submit">Update</button>
+                </div>
+        </form>
+        <div class="clearfix">{% include "pagination.html" %}</div>
+
+<table class="table table-bordered table-condensed table-striped">
+    <thead>
+        <tr>
+            <th><a href="{{ sort_strings.moderation_action__messagemoderationaction__message__text }}">Message</a></th>
+            <th><a href="{{ sort_strings.moderation_action__messagemoderationaction__message__status }}">Current status</a></th>
+            <th><a href="{{ sort_strings.flagged_by__first_name }}">Flagged by</a></th>
+            <th><a href="{{ sort_strings.created_at }}">Flagged at</a></th>
+            <th><a href="{{ sort_strings.moderation_action__moderator__first_name }}">Moderated by</a></th>
+            <th><a href="{{ sort_strings.moderation_action__modified_at }}">Moderated at</a></th>
+            <th><a href="{{ sort_strings.moderation_action__messagemoderationaction__newstatus }}">Action</a></th>
+        </tr>
+    </thead>
+    {% for flag in flags %}
+        {% with flag.moderation_action as action %}
+            {% with action.messagemoderationaction as msg_action %}
+    <tr>
+        <td><a href="{{ msg_action.message.get_absolute_url }}">{{ msg_action.message.snippet }}</a></td>
+        <td>{{ msg_action.message.status }}</td>
+        <td><a href="{{ flag.flagged_by.get_absolute_url }}">{{ flag.flagged_by }}</a></td>
+        <td>{{ flag.created_at }}</td>
+        <td><a href="{{ action.moderator.get_absolute_url }}">{{ action.moderator }}</a></td>
+        <td>{{ action.modified_at }}</td>
+        <td>{{ msg_action.newstatus }}</td>
+    </tr>
+                {% endwith %}
+        {% endwith %}
+    {% endfor %}
+</table>
+
+{% include "pagination.html" %}
+
+{% endblock %}
+
+{% block js %}
+    {{block.super}}
+    <script src="{% static 'smalot-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.dtpicker').datetimepicker({
+            format: 'yyyy-mm-dd HH:ii p',
+            autoclose: true,
+            todayBtn: 'linked',
+            todayHighlight: true,
+            minuteStep: 15,
+            showMeridian: true
+        });
+    });
+</script>
+{% endblock js %}

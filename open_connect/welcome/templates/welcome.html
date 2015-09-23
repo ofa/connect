@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Login{% endblock %}
+
+{% block bodyclass %}login{% endblock %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-md-4 col-md-offset-4 login-content">
+			<div class="connect-symbol">
+				<i class="{{icon_prefix}}user"></i>
+			</div>
+			<h1 class="connect-logo">{{brand_title}}</h1>
+		    <a class="btn btn-primary login ga" href="{{ login_url }}" data-campaign="Auth Flow" data-action="Click - Login">Log in</a>
+		    
+		    <a class="btn btn-info create ga" href="{{ login_url }}" data-campaign="Auth Flow" data-action="Click - Create Account">Create an Account</a>
+		</div>
+	</div>
+{% endblock %}
+
+{% block foot %}
+<footer id="ft" class="footer">
+    {% block foot_nav %}{% endblock %}
+    <div class="disclaimers container">
+        <div class="disclaimer-license">
+            <small class="disclaimer"></small>
+            <small class="license">&copy; {% now "Y" %}</small>
+        </div>
+    </div>
+</footer>
+{% endblock %}

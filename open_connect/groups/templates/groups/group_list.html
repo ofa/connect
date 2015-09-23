@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block bodyclass %}group-list isotope-list full cards{% endblock bodyclass %}
+
+{% block title %}Explore Groups{% endblock %}
+
+{% block content_pre %}
+{{block.super}}
+{% endblock %}
+
+{% block nav_top_left %}
+    <ul class="nav navbar-nav nav-grouplist-mobile">
+      <li>
+        <a href="#" data-toggle='offcanvas' data-target='#navmenu-left' data-canvas='body' class="nav-sliding-left filter"><i class="{{icon_prefix}}filter"><span class="sr-only">Filter</span></i></a>
+      </li>
+    </ul>
+    {% include "nav-top-left.html" %}
+{% endblock nav_top_left %}
+
+{% block content_header %}{% endblock %}
+
+{% block page_content %}
+<!---LEFT COL-->
+    <div class="col-sm-3 dark-form column-search hidden-xs">              
+        <div class="explore-groups">
+            <form method="GET">
+                <h3>Explore Groups</h3>
+                    <div class="form-group">
+                        
+                        <input class="col-md-12 col-sm-12" type="text" name="q" id="q" value="{{ q|default:"" }}" placeholder="Enter Keywords" />
+                        
+                        <input class="col-md-12 col-sm-12" type="text" name="location" value="{{ location|default:"" }}" placeholder="Location" />
+                        
+                        <p class="help-block">Enter an address, city, or ZIP</p>
+                        
+                        <input type="submit" value="Search" class="btn btn-primary btn-lg btn-block">
+                    </div>
+            </form>
+        </div>
+        <div class="form-group clearfix categories-group circular-checkbox">
+            <h3>Filter by Category</h3>
+                {% for category in categories %}
+                    <input type="checkbox" name="check-{{ forloop.counter0 }}" id="check-{{ forloop.counter0 }}" data-category="{{ category.slug }}" >
+                    <label for="check-{{ forloop.counter0 }}" class="checkbox {{category.slug}}">
+                    {{ category.name }} <span class="count"></span>
+                    </label>
+                {% endfor %}
+        </div> 
+    </div>
+    <div class="col-sm-9 column-content">
+        <header class="page-header">
+
+            <ul class="pull-right layout-actions">
+                <li>
+                    <a href="#" class="layout layout-list" data-layout="list" title="List View">
+                        <i class="{{icon_prefix}}list"></i>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="layout layout-cards active" data-layout="cards" title="Card View">
+                        <i class="{{icon_prefix}}th-large"></i></a>
+                </li>
+                {% if perms.groups.add_group %}
+                <li>
+                    <a href="{% url "create_group" %}" class="add" title="Add a New Group">
+                        <i class="{{icon_prefix}}plus"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+            <h1>    {% if located and q %}
+        Groups for <span>{{ q }}</span> near <span>{{ location }}</span>
+    {% elif located and location %}
+        Groups near <span>{{ location }}</span>
+    {% elif q %}
+        Groups for <span>{{ q }}</span>
+    {% elif located %}
+        Groups near you
+    {% else %}
+        Groups
+    {% endif %}</h1>
+        </header>
+        <div class="group-container">
+           {% include "groups/group_content.html" %}
+        </div>
+    </div>
+
+    {# Important! The csrf_token tag must be present on this page. #}
+    {% csrf_token %}
+{% endblock %}
+
+{% block nav_sliding %}
+    {{block.super}}
+    <nav id="navmenu-left" class="navmenu navmenu-default navmenu-fixed-left offcanvas dark-form" role="navigation">
+            <section class="explore-groups">
+            <form method="GET">
+                <h3>Explore Groups</h3>
+                    <div class="form-group">
+                        
+                        <input class="col-md-12 col-sm-12" type="text" name="q" id="q" value="{{ q|default:"" }}" placeholder="Enter Keywords" />
+                        
+                        <input class="col-md-12 col-sm-12" type="text" name="location" value="{{ location|default:"" }}" placeholder="Location" />
+                        
+                        <p class="help-block">Enter an address, city, or ZIP</p>
+                        
+                        <input type="submit" value="Search" class="btn btn-primary btn-lg btn-block">
+                    </div>
+            </form>
+        </section>
+        <section class="form-group clearfix categories-group circular-checkbox">
+            <h3>Filter by Issue</h3>
+                {% for category in categories %}
+                    <input type="checkbox" name="check-{{ forloop.counter0 }}-mobile" id="check-{{ forloop.counter0 }}-mobile" data-category="{{ category.slug }}" >
+                    <label for="check-{{ forloop.counter0 }}-mobile" class="checkbox {{ category.slug }}">
+                    {{ category.name }} <span class="count"></span>
+                    </label>
+                {% endfor %}
+        </section>
+    </nav>
+
+{% endblock nav_sliding %}
+
+{% block js_default %}
+<script>
+    var categoryList = [ {% for category in categories %}{% if category.slug %}"{{category.slug}}",{% endif %}{%endfor%} ];
+    var tourMode = !{{user.has_viewed_tutorial|lower|default:"true" }};
+</script>
+{{ block.super }}
+{% if USE_MINIFY %}
+<script type="text/javascript" src="{% static 'js/groups.min.js' %}"></script>    
+{% else %}
+<script type="text/javascript" src="{% static 'js/sections/groups.js' %}"></script>
+{% endif %}
+
+{% if user.has_viewed_tutorial == False %}
+    <script type="text/javascript" src="{% static 'intro.js/intro.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/sections/tour.js' %}"></script>  
+{% endif %}
+
+
+{% endblock %}

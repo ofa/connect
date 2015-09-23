@@ -1,0 +1,115 @@
+{% load widget_tweaks %}
+  {% if embedded %}<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>{% endif %}
+  <form method="POST" {% if embedded %}action="
+   {% if not thread %}
+    {% if not recipient %}
+      {% if not group %}
+        {% url "create_message" %}
+      {% else %}
+        {% url "create_group_message" group.pk %}
+      {% endif %}
+    {% else %}
+        {% url "create_direct_message" recipient.uuid %}
+    {% endif %}
+    {% else %}
+          {% if thread.thread_type == 'group' %}
+              {% url "create_reply" thread.pk %}
+          {% else %}
+              {% url "create_direct_message_reply" thread.pk %}
+          {% endif %}
+    {% endif %}"
+    {% endif %}  enctype="multipart/form-data" id="message_form"
+
+  {% if not thread %}
+    {% if not recipient %}
+      {% if not group %}
+        data-message-type="new-message"
+      {% else %}
+        data-message-type="group-message" data-group="{{group.pk}}"
+      {% endif %}
+    {% else %}
+        data-message-type="direct-message" data-recipient="{{recipient.uuid}}"
+    {% endif %}
+    {% else %}
+          {% if thread.thread_type == 'group' %}
+              data-message-type="group-message-reply" data-group="{{thread.group.pk}}"
+          {% else %}
+              data-message-type="direct-message-reply" data-recipient="{{recipient.uuid}}"
+          {% endif %}
+    {% endif %}
+    > {% comment %} End of Form tag!{% endcomment %}
+    
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+    {% comment %}---------- TO -------------{% endcomment %}
+    
+    <div class="form-group">
+        <label class="control-label">To:</label>
+        <div class="controls">
+            
+          {% if thread.group or group %}<h4>{{ group }}{{thread.group}}</h4>{% endif %}
+          
+          {% if recipient %}<h4>{{ recipient }}</h4>{% endif %}
+
+          {% if not thread and not group and not recipient %}
+            <div class="styled-select">{{ form.group }}</div>
+            {% for error in form.group.errors %}
+            <span class="help-inline">{{ error }}</span>
+            {% endfor %}
+          {% endif %}
+
+        </div>
+    </div>
+
+    {% comment %}------------- SUBJECT ---------------{% endcomment %}
+
+    <div class="form-group">
+        <label class="control-label" for="id_{{ form.subject.html_name }}">Subject:</label>
+        <div class="controls">
+            
+          {% if thread %}<h4>{{thread.subject}}</h4>
+          {% else %}
+            
+           {% render_field form.subject class+="form-control" %}
+               {% for error in form.subject.errors %}
+                   <span class="help-inline">{{ error }}</span>
+               {% endfor %}
+               {% if form.subject.help_text %}
+                   <small class="help-inline">{{ form.subject.help_text }}</small>
+               {% endif %}
+          {% endif %}
+
+        </div>
+    </div>
+
+    {% comment %}------------- TEXT -------------------{% endcomment %}
+     <div class="form-group{% if form.text.errors %} error{% endif %}">
+     
+         <div class="controls">{% render_field form.text class+="form-control redactor" %}
+             {% for error in form.text.errors %}
+                 <span class="help-inline">{{ error }}</span>
+             {% endfor %}
+             {% if form.text.help_text %}
+                 <small class="help-inline">{{ form.text.help_text }}</small>
+             {% endif %}
+         </div>
+     </div>
+     {% comment %}------------- ATTACHMENTS -------------------{% endcomment %}
+     {{ form.images }}
+
+         <div class="form-actions">
+             <input type="submit" id="send" name="submit" value="Send message" class="btn btn-primary"/>
+             <span class="disclaimer">
+                 {% if recipient and user.direct_messages_sent_since >= 10 %}
+                    Your message is pending approval.<br>
+                 {% endif %}
+                 All messages must comply with the <a href="{% url "terms_and_conditions" %}">Connect Terms of Service</a>
+             </span>
+             <div class="loading">Sending...</div>
+         </div>
+     </form>
+  {% if connectmessages and not embedded %}
+    {% include "connectmessages/thread_content.html" %}
+  {% endif %}

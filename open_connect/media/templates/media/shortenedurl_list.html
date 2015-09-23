@@ -1,0 +1,34 @@
+{% extends "admin_base.html" %}
+
+{% block bodyclass %}{{block.super}} popular-urls{% endblock bodyclass %}
+
+{% block title %}Link popularity{% endblock %}
+
+{% block main_area %}
+<h1>Link popularity</h1>
+
+{% include "pagination.html" %}
+        <table class="table table-striped table-bordered table-condensed">
+            <thead>
+            <tr>
+                <th><a href="{{ sort_strings.created_at }}">Created</a></th>
+                <th><a href="{{ sort_strings.url }}">Source</a></th>
+                <th><a href="{{ sort_strings.short_code }}">Short URL</a></th>
+                <th><a href="{{ sort_strings.message_count }}">Message Count</a></th>
+                <th><a href="{{ sort_strings.click_count }}">Clicks</a></th>
+            </tr>
+            </thead>
+            {% for url in urls %}
+            <tr>
+                <td>{{ url.created_at }}</td>
+                <td>{{ url.url|urlize }}</td>
+                <td><a href="{% url "shortened_url_redirect" url.short_code %}">{{ url.short_code }}</a></td>
+                <td>{{ url.message_count }}</td>
+                <td>{{ url.click_count }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% include "pagination.html" %}
+    
+    {% csrf_token %}
+{% endblock %}

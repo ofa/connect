@@ -1,0 +1,65 @@
+//******* Group List / Explore Page
+ 
+.group-list {
+    #wrap {
+        background: @gray-lighter;
+    }
+    .container .page-header {
+        margin-bottom: 2.5em;
+    }
+    #main {
+        overflow: hidden;
+    }
+    .column-content, .column-search {
+        @media  (min-width: @screen-sm-min) {
+           padding-top: 2em; 
+        }
+        .full-height();
+    }
+    .page-header {
+        margin-top: 0;
+    }
+    .page-header .navbar-nav {
+        margin-top: -10px;
+         > li > a {
+            font-weight: 300;
+            font-size: 2em;
+            padding: 8px;
+            &.btn-primary:hover {
+                background: darken(@brand-primary, 10%);
+                text-decoration: none;
+            }
+        }
+    }
+    .circular-checkbox();
+    .categories-group label {
+        .-(@i: length(@categories)) when (@i > 0) {
+            @name: e(extract(@categories, @i));
+            &.@{name} {
+              &:before {
+                  border-color:@@name;
+              }
+              &:after {
+                  background-color:@@name;
+              }
+            }
+            .-((@i - 1));
+        } .-;
+    }
+}
+
+.oldie {
+    .group-list {
+        .categories-group {
+
+            .-(@i: length(@categories)) when (@i > 0) {
+                @name: e(extract(@categories, @i));
+                .@{name} {
+                  color:@@name;
+                  
+                }
+                .-((@i - 1));
+            } .-;
+        }
+    }
+}

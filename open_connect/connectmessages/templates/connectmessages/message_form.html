@@ -1,0 +1,49 @@
+{% extends "base.html" %} {% load static %} {% block bodyclass %} {% if not thread %}compose{% else %}reply{% endif %}{% endblock %} {% block title %}Create A Message{% endblock %} {% block page_title %} {% if not thread %}Create A Message {% else %}Reply to {{ thread.subject }} {% endif %} {% endblock page_title %} {% block page_content %}
+<div class="col-md-12">{% include "connectmessages/message_form_include.html" %}</div>
+{% endblock %}
+{% block js_default %}
+{{ block.super }}
+<script>
+$(document).ready(function() {
+    var tokenvalue = $("[name='csrfmiddlewaretoken']").attr("value");
+    
+    function handle_image_upload_response(image, json) {
+        message_form.append("<input type='hidden' name='images' value='" + json.id + "' />");
+    }
+
+    $("#id_text").redactor({
+        minHeight: 200,
+        buttons: ["bold", "italic", "|", "link", "image"],
+        allowedTags: ["br", "a", "em", "strong", "img", "b", "i"],
+        allowedAttr: [
+            ["a", ["class", "href", "title", "target", "data-embed"]],
+            ["img", ["class", "href", "src", "target", "id"]]
+        ],
+        linebreaks: true,
+        plugins: ["oembed"],
+        imageUpload: CONNECT.services.upload,
+        imageUploadCallback: handle_image_upload_response,
+        uploadImageFields: {
+            "csrfmiddlewaretoken": tokenvalue
+        },
+        convertImageLinks: true,
+        convertVideoLinks: true
+    });
+
+    var message_form = $("#message_form");
+
+    $('#message_form').submit(function() {
+        var type = $(this).data("message-type");
+        var to;
+
+        if (type !== "new-message") {
+            to = $(this).data("group") == undefined ? $(this).data('recipient') : $(this).data("group");
+        } else {
+            to = $(this).find("id_group").val();
+        }
+
+        ga('send', 'event', 'Compose Action', 'Message sent', type + ', ' + to);
+    });
+});
+</script>
+{% endblock %}

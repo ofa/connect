@@ -1,0 +1,21 @@
+{% extends "email/base_wrapper.html" %}
+{% load mailing %}
+{% block content %}
+
+{% for notification in notifications %}{% with notification.message as message %}
+<b>Thread: {{ message.thread.subject }}</b><br>
+{{ message.text|safe }}
+<br><br>
+{% if not message.thread.is_system_thread %}
+Sent by {% if message.sender.is_staff%}Staff Member {% endif %}<a href="{% origin %}{% url 'user_details' message.sender.uuid %}">{{ message.sender }}</a>
+{% if message.thread.group.pk %} to group <a href="{% origin %}{% url 'group_details' message.thread.group.pk %}">{{ message.thread.group }}</a>{% endif %}<br>
+<a href="{% origin %}{{ message.thread.get_absolute_url }}"><b>View Full Thread</b></a> |
+<a href="{% origin %}{% url 'create_reply' message.thread.id %}"><b>Reply to Group</b></a>
+{% endif %}
+{% if not forloop.last %}
+<br><br>
+{% endif %}
+
+{% endwith %}{% endfor %}
+
+{% endblock content %}

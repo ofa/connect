@@ -1,0 +1,56 @@
+{% for message in connectmessages reversed %}
+    <div class="hidden-xs panel-group msg-{{ message.id }}
+        {% if connectmessages|length > 6 %}
+            {% if forloop.first %}scrunch{% endif %}
+            {% if not forloop.last and not forloop.first %}scrunch-hide{% endif %}
+        {% endif %}">
+        
+        <div class="panel panel-default{% if message.read == False or forloop.last %} open{% endif %}">
+            <div class="panel-heading">
+            {% if not hide_message_controls %}
+                {% if connectmessages|length > 6 %}
+                    {% if forloop.first %}
+                    <div class="scrunch-toggle">{{ connectmessages|length|add:"-1"}} other messages in this thread, click to view</div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#featured-msg" href="#{{ message.id }}">
+                    <span class="msg-sender">{{ message.sender }}</span>
+                    <span class="msg-snippet">{{message.snippet|truncatechars:30}}</span>
+                    <span class="msg-date native">{{ message.created_at|date:"n/j/y H:i:s" }}</span>
+                </a>
+            </div>
+            <div id="{{ message.id }}" class="panel-body collapse{% if message.read == False or forloop.last%} in{% endif %}">
+                <div class="panel-inner">
+
+                {# Message Controls #}
+
+                {% if not hide_message_controls %}
+
+                    {# FLAG #}
+
+                    <a class="btn pull-right reply flag flag-{{ message.pk }}" href="{% url "flag_message" message.pk %}"><i class="glyphicon glyphicon-flag"></i></a>
+
+                    {# REPLY #}
+                    {% if not thread.closed %}
+                    <a class="btn reply btn-primary pull-right" data-reply-url="{% if message.thread.thread_type == 'group' %}{% url "create_reply" thread.pk %}{% else %}{% url "create_direct_message_reply" thread.pk %}{% endif %}" href="{% if message.thread.thread_type == 'group' %}{% url "create_reply" thread.pk %}{% else %}{% url "create_direct_message_reply" thread.pk %}{% endif %}" title="reply"><i class="glyphicon glyphicon-arrow-left"></i> Reply</a>    
+                    {% endif %}
+                {% endif %}
+                    <div class='row-fluid msg-text'>
+                        <h6><a href="{% url "user_details" message.sender.uuid %}">{{ message.sender }}</a></h6>
+                        <p class="msg-date native">{{ message.created_at|date:"n/j/y H:i:s" }}</p>
+
+                            {% if thread.first_message.status == 'pending' %}
+                            Pending Moderator Approval<br>
+                            {% elif thread.first_message.status == 'vetoed' %}
+                            Vetoed<br>
+                            {% endif %}
+                        <!-- Has this message been read? {{ message.read }} -->
+                        {% autoescape off %} {{ message.text }} {% endautoescape %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% csrf_token %}

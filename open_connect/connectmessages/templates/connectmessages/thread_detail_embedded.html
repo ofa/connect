@@ -1,0 +1,13 @@
+<div class="accordion thread-{{thread.id}} {{thread.group.category.slug}}" data-thread-id="{{thread.id}}" id="featured-msg">
+    {% include "connectmessages/thread_actions.html" %}
+    {% if thread.thread_type == 'group' %}
+        <h5 class="thread-group"><a href="{% url "group_details" thread.group.pk %}">{{ thread.group }}</a></h5>
+    {% endif %}
+    <h3>{{ thread.subject }}</h3>
+	    {% if thread.thread_type == 'group' %}
+    {% else %}
+    <h5 class="thread-group"><a href="{% url "user_details" thread.first_message.sender.uuid %}">Message from {{ thread.first_message.sender }}</a></h5>
+    {% endif %}
+    {% include "connectmessages/thread_content.html" %}
+</div>
+{% include "connectmessages/message_oembed_include.html" %}

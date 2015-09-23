@@ -1,0 +1,73 @@
+<div class="row row-actions">
+	<div class="col-sm-5">
+	    <div class="select-styled{{^total_threads}} no-threads{{/total_threads}}">
+	    	{{#total_threads}}
+	        <select id="threadActions" name="actions">
+	        	
+		            <option value="">Choose an action</option>
+		            {{^unselect}}
+	           			<option value="selectAll">Select All</option>
+					{{/unselect}}
+					{{#unselect}}
+	            		<option value="unselectAll">Unselect All</option>
+	            	{{/unselect}}
+		            {{^archive}}
+						<option value="archiveSelected">Archive selected</option>
+					{{/archive}}
+					<option value="markReadSelected">Mark Selected as Read</option>
+	        </select>
+	        {{/total_threads}}
+			{{^total_threads}}
+				<div class="no-threads-text">No threads available</div>
+			{{/total_threads}}
+	    </div>
+	</div>
+	<div class="col-sm-3 col-sm-offset-4 hidden-xs">
+	    <a href="" class="btn btn-block btn-primary compose pull-right fill">
+	        <i class="{{icon_prefix}}pencil"></i> Compose</a>
+	</div>
+</div>
+{{#messages_to_mod}}
+<div class="alert-item item mod-msgs" data-alert="messages_to_mod">
+    <span class="msg-count">{{messages_to_mod}}</span>
+    <h4>
+       <a href="{{msg_mod_url}}">You have messages to moderate.</a>
+    </h4>
+</div>
+{{/messages_to_mod}}
+{{#groups_to_mod}}
+<div class="alert-item item mod-groups" data-alert="groups_to_mod">
+    <span class="msg-count">{{groups_to_mod}}</span>
+    <h4>
+       <a href="{{group_mod_url}}">You have group subscriptions to moderate.</a>
+    </h4>
+</div>
+{{/groups_to_mod}}
+{{#unselect}}
+<div class="select-info">{{numSelected}} threads have been selected.{{^allMode}} <a href="#" class="all-mode">Select all {{total_threads}} threads in {{area}}?</a>{{/allMode}}</div>
+{{/unselect}}
+<div class="threadlist" id="threadlist">
+</div>
+{{#total_threads}}
+<section class="thread-foot">
+	<div class="pg">
+		{{#prev}}
+		<a href="#" class="pg-prev" title="Previous page">&#8592;</a>
+		{{/prev}}
+		<div class="pg-text">
+			Viewing {{start}} - {{end}}{{#has_other_pages}} of <span class="pg-total">{{total_threads}}</span>{{/has_other_pages}}
+		</div>
+		{{#next}}
+		<a href="#" class="pg-next" title="Next page">&#8594;</a>
+		{{/next}}
+	</div>
+	{{/total_threads}}
+	<nav class="disclaimer-links">
+	    <ul>
+	        <li><a href="#" title="Frequently Asked Questions">FAQ</a></li>
+	        <li><a href="#" title="Terms of Service">Terms<span class="hidden-xs"> of Service</span></a></li>
+	        <li class="hidden-xs"><a href="#" title="Privacy Policy">Privacy</a></li>
+	        <li><a href="#" title="Contact Us">Contact</a></li>
+	    </ul>
+	</nav>
+</section>

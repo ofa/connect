@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+{% load static urltools %}
+{% block bodyclass %}group-detail hero{% endblock bodyclass %}
+
+{% block content_header %}{% endblock %}
+
+{% block title %}{{ group }}{% endblock %}
+
+{% block page_title %} {% endblock page_title %}
+{% block svg %}
+{{block.super}}
+{% endblock %}
+
+{% block content_pre %} {{block.super}} {% endblock %}
+
+{% block content_hero %} {% csrf_token %}
+<div class="row row-hero {{group.category.slug}}">
+    <div class="container">
+        {# MEMBER STATUS BLOCK #} {% if user.is_superuser or group in user.groups_moderating or perms.groups.can_edit_any_group %}
+
+        <div class="member-status admin">
+            <div class="member-status-block">ADMIN</div>
+            {% if perms.groups.change_group %}
+                <a href="{% url "update_group" group.pk %}" class="btn-primary btn btn-block hidden-xs">Edit Group</a>
+                <a href="{% url "update_group" group.pk %}" class="visible-xs-block">Edit Group</a>
+            {% endif %}
+        </div>
+        {% else %} {% if group not in user.groups_joined %}
+        <!-- {% if group.id in requested_ids %}
+                    <div class="member-status pending">
+                        <div class="member-status-block">PENDING</div>
+                    </div>
+                {% else %} -->
+        <div class="member-status not-member join-group-{{ group.pk }}">
+            <input type="button" class="btn btn-primary btn-block hidden-xs join-group" data-group-id="{{ group.pk }}" value="JOIN" />
+        </div>
+        {% endif %} {% else %}
+        <div class="member-status member leave-group-{{ group.pk }}">
+            <div class="member-status-block">MEMBER</div>
+            <input type="button" class="btn btn-primary btn-block leave-group hidden-xs" data-group-id="{{ group.pk }}" value="Leave" />
+            <input type="button" class="visible-xs-block leave-group" data-group-id="{{ group.pk }}" value="Leave" />
+        </div>
+        {% endif %} {% endif %} {# END MEMBER STATUS BLOCK #}
+
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+
+                <div class="group-image{% if not group.image %} default{% endif %}" {% if group.image %}style="background:url({% url "custom_image_version" image_uuid=group.image.uuid image_type="display_image" %}) no-repeat center; background-size:cover"{% endif %}></div>
+
+                <h1>{{ group }}</h1>
+
+                <h4>{{group.category}}</h4>
+
+                <h4>Started: {{group.created_at|date:"F j, Y"}}</h4>
+
+                {% if group.display_location %}
+                <h5>{{ group.display_location }}</h5>{% endif %}
+            </div>
+        </div>
+        {% if perms.accounts.add_invite %}
+        <div class="row admin-actions">
+            {% if group not in user.groups_joined %}
+            <div class="visible-xs-block col-xs-12 join-group-{{ group.pk }}">
+                <input type="button" class="btn btn-block btn-primary btn-large join-group" data-group-id="{{ group.pk }}" value="JOIN" />
+            </div>
+            {% endif %}
+            <div class="col-sm-8">
+                <form method="POST" class="user-add" action="{% url "group_quick_user_add" group.pk %}">
+                    {% csrf_token %}
+                    <div class="form-group col-xs-10">
+                        <label for="id_users_text" class="sr-only">Add Users</label>
+                        {{ useradd_form.users }}
+                    </div>
+                    <div class="form-group col-xs-2">
+                        <button type="submit" class="add-user btn btn-primary">Add</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-4">
+                <a href="{% url "group_invite" group.pk %}" class="btn btn-block btn-primary">Invite By Email</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock content_hero %}
+
+{% block page_content %}
+<style>
+#map_canvas {
+    height:200px;
+}
+</style>
+{# LEFT COL #}
+<div class="col-sm-3">
+
+    {# MEMBERS #}
+    <div class="row">
+        <section class="owners col-xs-6 col-sm-12">
+            <h3>{% if group.member_list_published %}<a href="{% url "group_members" group.pk %}">{% endif %}Owners: {{ group_owners.count }}{% if group.member_list_published %}</a>{% endif %}</h3>
+            <ul class="group-members visible-xs-block">
+                {% for user in group_owners|slice:":3" %}
+                    <li>
+                        <a title="{{user}}" class="user-image" {% if user.image %}style="background:url({% url "thumbnail" image_uuid=user.image.uuid %}) no-repeat center; background-size:cover"{% endif%} href="{{ user.get_absolute_url }}">{{user}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <ul class="group-members hidden-xs">
+                {% for user in group_owners|slice:":12" %}
+                    <li>
+                        <a title="{{user}}" class="user-image" {% if user.image %}style="background:url({% url "thumbnail" image_uuid=user.image.uuid %}) no-repeat center; background-size:cover"{% endif %} href="{{ user.get_absolute_url }}">{{user}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </section>
+        
+        <section class="members col-xs-6 col-sm-12">
+            {% if group.member_list_published %}
+                <h3><a href="{% url "group_members" group.pk %}">Members: {{group.get_members.count}}</a></h3>
+                <ul class="group-members visible-xs-block">
+                    {% for user in group.get_members_avatar_prioritized|slice:":3" %}
+                        <li>
+                            <a title="{{user}}" class="user-image" {% if user.image %}style="background:url({% url "thumbnail" image_uuid=user.image.uuid %}) no-repeat center; background-size:cover"{% endif %} href="{{ user.get_absolute_url }}">{{user}}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <ul class="group-members hidden-xs">
+                    {% for user in group.get_members_avatar_prioritized|slice:":12" %}
+                        <li>
+                            <a title="{{user}}" class="user-image" {% if user.image %}style="background:url({% url "thumbnail" image_uuid=user.image.uuid %}) no-repeat center; background-size:cover"{% endif %} href="{{ user.get_absolute_url }}">{{user}}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a class="see-all" href="{% url "group_members" group.pk %}">See all members &rsaquo;</a>
+            {% else %}
+                <h3>Members: {{group.get_members|length}}</h3>
+            {% endif %}
+        </section>
+    </div>
+
+
+    {# LOCATION #}
+    {% if group.latitude %}
+    <section class="location hidden-xs">
+        <h3>Location</h3>
+        <div class="location"></div>
+        <div id="map_canvas"></div>
+        {% if group.display_location %}
+        <p>{{ group.display_location }}</p>{% endif %}
+    </section>
+    {% endif %}
+
+    {# TAGS #}
+    {% with group.tags.all as tags %} {% if tags %}
+    <section class="tags">
+        <h3>Tags</h3>
+        <p>{% for tag in tags %}{{ tag }}{% if not forloop.last %}, {% endif %}{% endfor %}.</p>
+    </section>
+    {% endif %} {% endwith %}
+
+    {# SUBSCRIBE #}
+    {% if subscription_form %}
+    <section class="subscription">
+        <h3>Group Subscription</h3>
+        <form method="POST" action="{% url "update_subscription" group_id=group.pk %}">
+            {{ subscription_form.as_p }} {% csrf_token %}
+            <input type="hidden" name="return_url" value="{% url "group_details" group.pk %}" />
+            <div class="form-actions">
+                <input type="submit" class="btn btn-primary" value="Update" />
+            </div>
+        </form>
+    </section>
+    {% endif %}
+
+</div>
+
+{# RIGHT COL #}
+
+<div class="col-sm-8 col-sm-offset-1">
+
+    {# DESCRIPTION #} {% if group.description %}
+    <section class="description">
+        <h3>Description</h3>
+        <div class="visible-xs-block">{{ group.description|safe|truncatewords_html:60}}</div>
+        <div class="hidden-xs">{{ group.description|safe|truncatewords_html:100}}</div>
+    </section>
+    {% endif %} {# IMAGES #} {% if group_images %}
+    <section class="images">
+        <h3><a href="{% url "group_images" group.pk %}">Images</a>
+        </h3>
+        <ul class="group-images">
+            {% for image in group_images|slice:':4' %}
+            <li>
+                <a href="{{ image.get_absolute_url }}" style="background:url({% url "thumbnail" image.uuid %}) no-repeat center; background-size: cover;">
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        <a class="see-all" href="{% url "group_images" group.pk %}">See all images &rsaquo;</a>
+    </section>
+    {% endif %}
+    {% if group in user.groups_joined and resources %}
+    <section class="resources">
+        <h3><a class="see-all" href="{% url "resources" %}?group_id={{group.pk}}">Resources</a></h3>
+            <ul>
+               {% for resource in resources|slice:':3'%}
+                <li class="item resource-item {{ resource.file_type | default_if_none:'other'}}">
+                    <div class="resource-info">
+                        <a href="{{ resource.get_absolute_url }}" class="resource resource-{{ resource.file_type | default_if_none:'document'}}" title="{{ resource }}">
+                            </a>
+                        <p><a href="{{ resource.get_absolute_url }}" title="{{ resource }}">{{ resource |truncatechars:40 }}</a></p>
+                    </div>
+                <li>
+                {% endfor %}
+            </ul> 
+              
+            <a class="see-all" href="{% url "resources" %}?group_id={{group.pk}}">See all resources &rsaquo;</a>
+    </section>
+    {% endif %}
+
+    {# THREADS #}
+
+    <section class="threads">
+    {% if public_threads %}
+        <h3><a href="{% url "threads" %}inbox/group/{{group.pk}}/">Latest Threads</a></h3>
+         {% if group in user.groups_joined %}<div class="header-button">
+           <a class="btn btn-primary compose" href="{% url "create_group_message" group.id %}">Send a Message</a></div>
+        {% endif %}
+        <ul>
+            {% for thread in public_threads %} {% include "groups/group_threads.html" %} {% endfor %}
+        </ul>
+        <a href="{% url "threads" %}inbox/group/{{group.pk}}/">See all latest threads &rsaquo;</a>
+    {% else %}
+        {% if group in user.groups_joined or user.is_superuser or group in user.groups_moderating or perms.groups.can_edit_any_group %}
+               <h3>Threads</h3>
+               <div class="header-button">
+                   <a class="btn btn-primary compose" href="{% url "create_group_message" group.id %}">Send a Message</a>
+               </div>   
+        {% endif %}
+    {% endif %}
+    </section>
+
+
+    {# LINKS #} {% if group.links %}
+    <section class="links">
+        <h3>Links</h3>
+        <h5>Popular links posted to this group.</h5>
+        <ul>
+            {% for link in group.links|slice:':5' %}
+            <li><a href="{{ link.get_absolute_url }}">{{ link.url }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </section>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+{% block js_default %}
+{{ block.super }}
+<script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script src="//platform.instagram.com/en_US/embeds.js"></script>
+{% if USE_MINIFY %}
+     <script type="text/javascript" src="{% static 'js/group-detail.min.js' %}"></script>
+{% else %}
+    <script type="text/javascript" src="{% static 'js/sections/group-detail.js' %}"></script>
+{% endif %}
+
+{% if group.latitude %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    google.load("maps", "3", {
+        "callback": mapsLoaded,
+        other_params: "sensor=false"
+    });
+});
+
+function mapsLoaded() {
+    var mapOptions = {
+        zoom: 2,
+        scrollwheel: false,
+        navigationControl: false,
+        mapTypeControl: false,
+        scaleControl: false,
+        draggable: false,
+        streetViewControl: false,
+        zoomControl: false,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    geocoder = new google.maps.Geocoder();
+    map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+    var lat = parseFloat({{group.latitude}}, 10),
+        lng = parseFloat({{group.longitude}}, 10),
+        meters = parseFloat({{group.radius}}, 10) * 1.6093 * 1000,
+        latLng = new google.maps.LatLng(lat, lng);
+
+    placeMarker(latLng, meters);
+
+    function placeMarker(location, size) {
+        var radius = size;
+        circle = new google.maps.Circle({
+            center: location,
+            radius: radius,
+            editable: false,
+            fillColor: '#008FC5',
+            strokeColor: '#008FC5'
+        });
+
+        circle.setMap(map);
+        map.fitBounds(circle.getBounds());
+
+        return circle;
+    }
+}
+</script>
+
+{% endif %}
+{% include 'autocomplete_light/static.html' %}
+{% endblock %}

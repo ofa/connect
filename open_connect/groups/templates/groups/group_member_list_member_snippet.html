@@ -1,0 +1,26 @@
+
+{% load static %}
+<div class="item border">
+                {% if group_member.is_staff %}<span class="staff">
+                    STAFF<span class="badge"></span>MEMBER
+                    </span>{% endif %}
+    <div class="item-image">
+        <a href="{{ group_member.get_absolute_url }}" {% if group_member.image %}style="background:url({% url 'custom_image_version' group_member.image.uuid 'display_image' %}) no-repeat;background-size:cover;"{% endif %}></a>
+    </div>
+    <section class="item-info">
+        <div>
+            <ul class="actions">
+                <li>
+                    <a class="compose" href="{% url "create_direct_message" group_member.uuid %}"><i class="{{icon_prefix}}envelope"></i><span class="sr-only">Contact</span></a>
+                </li>
+                {% if user_is_owner %}
+                    <li>
+                        <a class="remove" href="{% url "remove_user_from_group" group_id=group.pk user_uuid=group_member.uuid %}"><i class="{{icon_prefix}}remove-circle"></i><span class="sr-only">Remove</span></a>
+                    </li>
+                {% endif %}
+            </ul>
+            <a href="{{ group_member.get_absolute_url }}">{{ group_member }}</a>
+
+        </div>
+    </section>
+</div>

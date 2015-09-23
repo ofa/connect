@@ -1,0 +1,6 @@
+{
+  "dist": ["uglify"],
+  "prep": ["hogan", "less", "dist", "autoprefixer", "copy"],
+  "heroku": ["prep"],
+  "default": ["prep"]
+}

@@ -1,0 +1,8 @@
+{% extends "email/base_wrapper.txt" %}
+{% block content %}
+{% for notification in notifications %}{% with notification.message as message %}
+{% if not message.thread.is_system_thread %}Thread: {{ message.thread.subject }}
+Sender: {{ message.sender }}{% if message.sender.is_staff%} (Staff){% endif %}{% endif %}
+{{ message.clean_text }}
+{% endwith %}{% endfor %}
+{% endblock content %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block bodyclass %}
+	inbox
+{% endblock bodyclass %}
+
+{% block page_title %}
+	{{ thread.subject }}
+{% endblock page_title %}
+
+{% block page_content %}
+<div class="col-md-12">
+	<div class="accordion thread-{{thread.id}}" data-thread-id="{{thread.id}}" id="featured-msg">
+	    {% include "connectmessages/thread_actions.html" %}
+	    <h5 class="thread-group"><a href="{% url "group_details" thread.group.pk %}">{{ thread.group }}</a></h5>
+	    {% include "connectmessages/thread_content.html" %}
+	</div>
+</div>
+{% endblock %}
+
+{% block js_default %}
+{{ block.super }}
+{% include "connectmessages/thread_javascript_embed.html" %}
+{% include "connectmessages/message_oembed_include.html" %}
+{% endblock %}

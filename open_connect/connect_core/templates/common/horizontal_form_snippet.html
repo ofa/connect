@@ -1,0 +1,25 @@
+{% load string %}
+    {% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors|join:", " }}</div>{% endif %}
+    {% for field in form %}
+        {% if field.is_hidden %}
+            {{ field }}
+        {% else %}
+            <div class="form-group{% if field.errors %} error has-error{% endif %}">
+                <label class="control-label col-sm-2 col-md-2" for="id_{{ field.html_name }}">{{ field.label }}</label>
+                <div class="col-sm-10 col-md-10">
+                    {% if field|input_type == "Select" %}
+                        <div class="clearfix"><div class="styled-select">{{ field }}</div></div>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <span class="help-inline help-block">{{ error }}</span>
+                    {% endfor %}
+                    {% if field.help_text %}
+                        <small class="help-inline help-block">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}

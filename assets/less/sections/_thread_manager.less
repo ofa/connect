@@ -1,0 +1,97 @@
+
+.thread-manager {
+    flex: 1 0;
+    .dark-form();
+    .hidden-xs;
+    padding: 24px;
+    overflow-y: scroll;
+    h3 {
+        font-size: 13px;
+        font-weight: 900;
+    }
+}
+
+.thread-areas {
+    @pad:24px;
+    font-size: 18px;
+    margin-left:-@pad;
+    margin-right:-@pad;
+    a {
+        padding: 13px @pad;
+        display: block;
+        position: relative;
+    }
+    .area-active {
+        background: @gray;
+        @media (min-width:@screen-sm-min){
+            &:after {
+                content: "";
+                position: absolute;
+                height: 0;
+                width:0;                
+                border: 25px solid transparent;
+                border-width: 25px 12px;
+                border-right-color: white;
+                right: 0;
+                top: 0;
+            }
+        }
+    }
+}
+
+.thread-filter {
+    font-size: 15px;
+    ul {
+        list-style: none;
+    }
+    a {
+        position: relative;
+        display: block;
+        @size: 18px;
+        @color: @gray;
+        padding: 4px 0 4px @size*1.5;
+        &:before, &:after{
+            display: block;
+            position: absolute;
+            content:"";
+            border: @color 2px solid;
+            border-radius: 50%;
+            width: @size;
+            height: @size;
+            top: 50%;
+            margin-top: -(@size/2);
+            left: 0;
+        }
+        &:after {
+            border: none;
+            background: @color;
+            border-radius: 50%;
+            transform-origin: center;
+            transform: scale(.00001);
+            transition: all .3s cubic-bezier(0.895, 0.03, 0.685, 0.22);
+        }
+        &.selected {
+            &:after {
+                transform: scale(1);
+            }
+        }
+        .-(@i: length(@categories)) when (@i > 0) {
+            @name: e(extract(@categories, @i));
+            &.@{name} {
+              &:before {
+                  border-color:@@name;
+              }
+              &:after {
+                  background-color:@@name;
+              }
+            }
+            .-((@i - 1));
+        } .-;       
+    }
+    .filter-clear-all:before {
+       content: "x";
+        border: none;
+        font-weight: 800;
+        left: 4px;
+    }
+}

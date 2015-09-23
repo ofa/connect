@@ -1,0 +1,123 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block css_default %}
+{{ block.super }}
+    <style>
+    .admin-content input[type=radio] {
+        margin-left: 0px;
+    }
+    </style>
+{% endblock %}
+
+{% block title %} Message Moderation{% endblock %}
+
+{% block main_area %}
+<h1>{% if group %} {{ group }} Message Moderation {% else %} Message Moderation{% endif %}</h1>
+      {% if request.user.groups_moderating|length > 1 %}
+          <p>
+          {% if group %}
+            <a href="{% url 'mod_admin' %}">Moderate All</a>
+          {% else %}
+            Moderate All
+          {% endif %}
+          ({{ request.user.messages_to_moderate.count }} Message{{ request.user.messages_to_moderate.count|pluralize }} To Moderate)
+          </p>
+        
+          {% for available_group in request.user.groups_moderating %}
+              {% with available_group.total_unmoderated_messages as total_unmoderated_messages %}
+                  {% if total_unmoderated_messages %}
+            <p>
+            {% if available_group.pk == group.pk %}
+                Moderate {{ available_group }}
+            {% else %}
+                <a href="{% url 'mod_bygroup' available_group.pk %}">Moderate {{ available_group }}</a>
+            {% endif %}
+            ({{ total_unmoderated_messages }} Message{{ total_unmoderated_messages|pluralize }} To Moderate)
+            </p>
+                  {% endif %}
+              {% endwith %}
+          {% endfor %}
+      {% endif %}
+      
+
+  {% if object_list %}
+    {% include "pagination.html" %}
+
+    <form class="form-horizontal" action="{% url 'mod_submit' %}" method="post">
+      {% csrf_token %}
+      {% if group %}
+          <input type="hidden" name="next" value="{% url 'mod_bygroup' group.id %}">
+      {% else %}
+          <input type="hidden" name="next" value="{% url 'mod_admin' %}">
+      {% endif %}
+      <formset>
+      <table class="table table-striped table-condensed">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Sender</th>
+            <th>Thread&nbsp;Subject&nbsp;&amp;&nbsp;Group</th>
+            <th>Snippet</th>
+            
+            <th>Actions&nbsp;<small>(<a href="#" class="approve-all">Approve</a>&nbsp;|&nbsp;<a href="#" class="veto-all">Veto</a>&nbsp;|&nbsp;<a href="#" class="reset-all">Reset</a>)</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for message in object_list %}
+          <tr style="height: 45px">
+            <td>{{ message.status|capfirst }}</td>
+            <td><div style="overflow: hidden; text-overflow: ellipsis"><a href="{% url 'user_details' message.sender.uuid %}">{{ message.sender.get_real_name }}</a></div></td>
+            
+            <td><div style="overflow: hidden; text-overflow: ellipsis"><a class="mod-msg" href="{% url 'threads' %}mod/{{message.thread.pk}}/msg/{{ message.pk }}">{{ message.thread.subject }}</a><br>{% if message.thread.group %}<a class="mod-group" href="{% url 'group_details' message.thread.group.pk %}">{{ message.thread.group }}</a>{% else %}<div class="mod-direct">Direct Message</div>{% endif %}</div></td>
+            
+            <td><div style="overflow: hidden; text-overflow: ellipsis">{{ message.snippet }}
+            </div></td>
+
+
+            
+            <td style="width: 210px; overflow: hidden">
+            <div class="radio-styled">
+              <input type="radio" class="mod-radio approve-radio" name="message-{{ message.pk }}" id="id_approve_message{{ message.pk }}" value="approved"><label for="id_approve_message{{ message.pk }}" class="radio inline">Approve</label>
+            </div>
+          <div class="radio-styled">
+            <input type="radio" class="mod-radio veto-radio" name="message-{{ message.pk }}" id="id_veto_message{{ message.pk }}" value="vetoed"><label class="radio inline" for="id_veto_message{{ message.pk }}">Veto</label>
+          </div>
+          </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+  
+      <div class="form-actions">
+          <input type="submit" name="submit" value="Save changes" class="btn btn-primary"/>
+      </div>
+    
+      </formset>
+    </form>
+    {% include "pagination.html" %}
+  {% else %}
+      <h4>No Pending Messages</h4>
+  {% endif %}
+{% endblock %}
+
+{% block js_default %}
+    {{ block.super }}
+    <script type="text/javascript">
+$('.approve-all').click(function(){
+    $('.mod-radio').prop("checked", false);
+    $('.approve-radio').prop("checked", true);
+    return false;
+})
+$('.veto-all').click(function(){
+    $('.mod-radio').prop("checked", false);
+    $('.veto-radio').prop("checked", true);
+    return false;
+})
+$('.reset-all').click(function(){
+    $('.mod-radio').prop("checked", false);
+    return false;
+})
+    </script>
+    
+{% endblock %}

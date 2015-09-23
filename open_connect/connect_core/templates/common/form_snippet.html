@@ -1,0 +1,6 @@
+{% load string %}
+{% csrf_token %}
+{% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors|join:", " }}</div>{% endif %}
+{% for field in form %}
+    {% include "common/form_field.html" %}
+{% endfor %}

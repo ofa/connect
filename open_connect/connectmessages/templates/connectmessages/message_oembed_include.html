@@ -1,0 +1,10 @@
+<script type="text/javascript">
+    msg_links = $(".msg-text a");
+    msg_links.oembed();
+    msg_links.each(function(i, link) {
+        var url = $(link).attr('data-redirect');
+        if (url != undefined) {
+            $(link).attr('href', url);
+        }
+    });
+</script>

@@ -1,0 +1,41 @@
+{{^scrunched}}
+<div class="panel-heading">
+    {{#scrunchToggle}}<div class="scrunch-toggle"> {{scrunchLength}} other messages in this thread, click to view</div>{{/scrunchToggle}}
+    {{^scrunchToggle}}
+    <a class="accordion-toggle">
+        {{^active}}<span class="msg-sender{{#sender.sender_is_staff}} staff{{/sender.sender_is_staff}}">{{ sender.sender }}</span>
+        <span class="msg-snippet">{{ snippet }}</span>
+        <span class="msg-date">{{ date }}</span>
+        {{/active}}
+    </a> 
+    {{/scrunchToggle}}
+</div>
+<div id="{{ id }}" class="panel-body collapse{{#active}} in{{/active}}">
+    <div class="panel-inner">
+        {{^is_system_message}}
+        <a class="flag" href="{{ flag_url }}" data-group="{{ group }}" title="Flag this message for inappropriate content"><i class="{{icon_prefix}}flag"><span class="sr-only">Flag</span></i></a>
+        {{/is_system_message}}   
+
+        <div class="row-fluid msg-text">
+                {{#pending}}
+                <div class="msg-pending">This message is pending approval</div>
+                {{/pending}}
+                <h5 class="msg-sender">
+                    {{^is_system_message}}
+                    <a href="{{sender.sender_url}}">{{ sender.sender }}</a>
+                    {{/is_system_message}}
+                    {{#is_system_message}}
+                    Connect Admin
+                    {{/is_system_message}}
+                </h5>
+                {{#sender.sender_is_staff}}<h6 class="staff">Staff</h6>{{/sender.sender_is_staff}}
+
+
+                <p class="msg-date">{{ date}}</p>
+                
+                <div class="msg-content">{{{ text }}}</div>
+
+        </div>
+    </div>
+</div>
+{{/scrunched}}

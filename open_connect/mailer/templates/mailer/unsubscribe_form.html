@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Unsubscribe From All Notifications{% endblock %}
+
+{% load trimspace %}
+
+{% block page_title %}
+    Unsubscribe From All Notifications
+{% endblock %}
+
+{% block page_content %}
+<p>{{ brand_title }} is built for organizers who want to communicate between each other, but we realize that some users may not want to receive email notifications from us.</p>
+{% if account %}
+<p>If you'd instead like to change notifications preferences from specific groups <a href="{{ account.change_notification_url }}">click here</a></a>
+{% endif %}
+<p>
+    <input type="text" disabled value="{{ email }}">
+</p>
+{% if account %}
+<p>
+<a class="btn btn-success" href="{{ account.change_notification_url }}">Change Group Notification Preferences</a>
+{% endif %}
+<form action="" method="post">{% csrf_token %}
+
+    <input type="submit" class="btn btn-danger" value="Unsubscribe From All Messages" />
+</form>
+</p>
+{% endblock page_content %}

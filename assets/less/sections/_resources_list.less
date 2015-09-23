@@ -1,0 +1,148 @@
+//******* Resources List / My resources
+
+.resource {
+    margin: 0 auto;
+    height: 140px;
+    width: 140px;
+    display: inline-block;
+
+    .-(@i: length(@resources)) when (@i > 0) {
+        @name: e(extract(@resources, @i));
+        &.resource-@{name} {
+          .resource-icons(@name);
+        }
+        .-((@i - 1));
+    } .-;
+    .isotope-list.list & {
+        margin: 0;
+        height: 32px;
+        width: 32px;
+        background-size: contain;
+        float: left;
+    }
+
+}
+ 
+.resources-list {
+    #wrap {
+        background: @gray-lighter;
+    }
+    .container .page-header {
+        margin-bottom: 2.5em;
+    }
+    #main {
+        overflow: hidden;
+    }
+    .col-md-3, .col-md-9 {
+        padding-top: 2em;
+        .full-height;
+        min-height: 900px;
+    }
+
+    .group-heading {
+        font-weight: 700;
+        .text-uppercase();
+        font-size: 14px; 
+    }
+
+    .filter-col {
+        .full-height();
+    }
+    
+    &.isotope-list {
+        .item {
+            a {
+                color: @text-color;
+            }
+        }
+        &.cards .item {
+            text-align: center;
+            height: 270px;
+            margin-bottom: 3em;
+
+            .resource-info {
+                min-height: 195px;
+            }
+        }
+        &.list {
+            .item {
+                .clearfix;
+
+                min-height: 30px;
+
+                p {
+                    line-height: 34px;
+                    margin: 0 20px;
+                    float: left;
+                }
+
+                .nav-center {
+                    display: block;
+                    float: right;
+                    ul {
+                        margin: 0;
+                        padding: 0;
+                    }
+                }
+
+            }
+            .item + .item {
+                border-top: 1px solid lighten(@text-color, 50%);
+                padding-top: 1.25em;
+            }
+        }
+    }
+
+    .btn-info {
+        background: transparent;
+        border:1px solid @text-color!important;
+        color: @text-color!important;
+        min-width: 85px;
+        &:hover {
+            color: white!important;
+        }
+    }
+    .circular-checkbox();
+    .file-type-group label {
+        .-(@i: length(@resources)) when (@i > 0) {
+            @name: e(extract(@resources, @i));
+            &.@{name} {
+              &:before {
+                  border-color:@@name;
+              }
+              &:after {
+                  background-color:@@name;
+              }
+            }
+            .-((@i - 1));
+        } .-;
+    }
+
+    .resource-actions { 
+        li {
+            display: inline;
+        }
+        @media (max-width: @screen-sm-min) {
+            .btn {
+                padding-left: 5px;
+                padding-right: 5px;
+                font-size: 1em;
+            }
+        }
+    }
+
+}
+
+.oldie {
+    .resources-list {
+        .file-type-group {
+            .-(@i: length(@resources)) when (@i > 0) {
+                @name: e(extract(@resources, @i));
+                .@{name} {
+                  color:@@name;
+                }
+                .-((@i - 1));
+            } .-;
+        }
+    }
+}

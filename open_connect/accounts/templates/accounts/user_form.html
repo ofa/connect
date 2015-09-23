@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block bodyclass %}profile-update{% endblock %}
+{% block title %}Update your profile{% endblock %}
+
+{% block page_content %}
+        <form method="POST" enctype="multipart/form-data" class="form-horizontal">
+            {% with user_form as form %}
+            {% include "common/horizontal_form_snippet.html" %}
+            {% endwith %}
+            {% with image_form as form %}
+            {% include "common/horizontal_form_snippet.html" %}
+            {% endwith %}
+            <div class="form-actions">
+                <input type="submit" name="submit" value="Update" class="btn btn-primary"/>
+            </div>
+        </form>
+{% endblock %}
+{% block js_default %}
+    {{ block.super }}
+<script src="{% static 'js/vendor/redactor.min.js' %}"></script>
+<script>
+ $(document).ready(
+    function()
+    {
+        var tokenvalue = $('[name="csrfmiddlewaretoken"]').attr('value');
+        $('#id_biography').redactor({
+            minHeight: 200,
+            buttons: ['bold', 'italic', '|', 'link'],
+            allowedTags: ['br', 'a', 'img', 'em', 'strong', 'b', 'i'],
+            linebreaks: true,
+            uploadFields: {
+                'csrfmiddlewaretoken': tokenvalue,
+            }
+        });
+    }
+);
+ </script>
+ {% endblock %}

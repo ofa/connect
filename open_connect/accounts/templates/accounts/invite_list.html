@@ -1,0 +1,71 @@
+{% extends "admin_base.html" %}
+{% load static %}
+
+{% block title %}Invites{% endblock %}
+
+{% block main_area %}
+    <span class="pull-right">
+        {% if perms.accounts.add_invite %}<a href="{% url "create_invite" %}" class="btn btn-primary"><i class="{{icon_prefix}}plus"></i> Create Invite</a>{% endif %}
+    </span>
+    <h1>Invites</h1>
+    <div class="clearfix">
+        <form class="form form-inline pull-right" role="form">
+            <div class="form-group input-group">
+                <label style="margin-right:20px;" class="sr-only" for="search">Query: </label><input type="search" name="q" value="{{ q }}" placeholder="Query">
+            </div>
+            <div class="form-group input-group">
+                <label style="margin-right:20px;">Per Page: {{ paginate_by_form.per_page }}</label>
+                <button class="btn btn-info btn update" type="submit">Update</button>
+            </div>
+        </form>
+    </div>
+    {% include "pagination.html" %}
+    <table class="table table-bordered table-condensed table-striped" style="margin-top:30px; clear:both">
+        <thead>
+        <tr>
+            <th><a href="{{ sort_strings.email }}">Email</a></th>
+            <th><a href="{{ sort_strings.code }}">Code</a></th>
+            <th><a href="{{ sort_strings.is_staff }}">Staff?</a></th>
+            <th><a href="{{ sort_strings.is_superuser }}">Superuser?</a></th>
+            <th>Groups</th>
+            <th><a href="{{ sort_strings.created_at }}">Created at</a></th>
+            <th><a href="{{ sort_strings.created_by }}">Created by</a></th>
+            <th><a href="{{ sort_strings.notified }}">Notified at</a></th>
+            <th><a href="{{ sort_strings.consumed_at }}">Consumed at</a></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for invite in invites %}
+            <tr>
+                <td>{{ invite.email|urlize }}</td>
+                <td>{{ invite.code }}</td>
+                <td><i class="{{icon_prefix}}{% if invite.is_staff %}ok-sign{% else %}minus-sign{% endif %}"></i></td>
+                <td><i class="{{icon_prefix}}{% if invite.is_superuser %}ok-sign{% else %}minus-sign{% endif %}"></i></td>
+                <td>{% for group in invite.groups.all %}<a href="{% url "group_details" group.pk %}">{{ group }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+                <td>{{ invite.created_at }}</td>
+                <td><a href="{% url "user_details" user.uuid %}">{{ invite.created_by }}</a></td>
+                <td>{{ invite.notified|default:"-" }}</td>
+                <td>{{ invite.consumed_at|default:"-" }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% include "pagination.html" %}
+{% endblock %}
+
+{% block js_default %}
+    {{ block.super }}
+    <script src="{% static 'smalot-bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}" type="application/javascript"></script>
+    <script type="application/javascript">
+        $(document).ready(function() {
+            $('.dtpicker').datetimepicker({
+                format: 'yyyy-mm-dd HH:ii p',
+                autoclose: true,
+                todayBtn: 'linked',
+                todayHighlight: true,
+                minuteStep: 15,
+                showMeridian: true
+            });
+        });
+    </script>
+{% endblock %}

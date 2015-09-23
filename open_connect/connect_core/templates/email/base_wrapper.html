@@ -1,0 +1,67 @@
+{% load mailing %}
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title></title>
+    </head>
+    <body>
+       <style type="text/css">
+           a { color:#008FC5; }
+           @media only screen and (max-device-width: 480px) {
+               .hide-img {display: none;}
+           }
+       </style>
+       <table width="100%" align="center" cellpadding="0" cellspacing="0" bgcolor="white" style="padding-top:10px;">
+           <tr>
+
+               <td align="center">
+                Connect
+               </td>
+           </tr>
+           <tr>
+               <td style="font-family:arial, helvetica, sans-serif; font-size:14px; color:#333333; padding-top:20px; padding-bottom:20px; line-height:1.4;">
+                    
+{% block content %}
+{% endblock content %}
+<br><br><br>
+               </td>
+           </tr>
+       
+
+         
+           <tr>
+               <td align="center">
+
+<table border="1" bordercolor="777777" cellpadding="10" cellspacing="0" style="border: 1px solid #777">
+         <tr>
+             <td border="0" style="border: 0; padding: 10px" align="center">
+                 <font size="1" face="'Helvetica Neue',Helvetica,Segoe,'Segoe UI','Segoe WP',Calibri,Arial,clean,sans-serif" style="font-size: 11px; text-transform: uppercase;" color="555555">
+                 {% organization %}
+                 </font>
+             </td>
+         </tr>
+     </table>
+
+ <tr>
+               <td align="center">
+                 
+
+               </td>
+           </tr>
+           <tr>
+               <td align="center">
+                   <br>
+                   <p style="font-size:10px; color:#555555; margin-top:2px; font-family:arial, helvetica, sans-serif;">
+                     This email was sent to: <b>{{ email }}</b>.
+                     {% if recipient %}
+                     If you'd like to change your notification preferences, <a href="{{ recipient.change_notification_url }}">click here</a>.
+                     {% endif %}
+                     <br>
+<a href="{% unsubscribe_link email %}" style="color:#000001;">Click here</a> to unsubscribe from all notifications.</p>
+                   </p>
+               </td>
+           </tr>
+       </table>
+
+{% tracking_pixel email notification.id %}
+    </body>
+</html>

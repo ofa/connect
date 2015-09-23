@@ -1,0 +1,8 @@
+{% extends "email/base_wrapper.txt" %}
+{% load mailing %}
+{% block content %}
+{{ message.clean_text }}
+
+{% if not message.thread.is_system_thread %}Sent by {% if message.sender.is_staff%}Staff Member {% endif %}{{ message.sender }}{% if message.group.pk %} to group {{ message.group }}{% endif %}{% else %}Sent by {% brand_title %}{% endif %}
+
+{% endblock content %}

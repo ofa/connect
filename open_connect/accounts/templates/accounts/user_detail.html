@@ -1,0 +1,118 @@
+{% extends "base.html" %} {% load static urltools %} {% block bodyclass %}profile isotope-list cards{% endblock %} {% block title %}{{ account }}{% endblock %} {% block svg %} {% endblock svg %} {% block content_header %}{% endblock %} {% block content_pre %} {{ block.super }} {% if show_banned_warning %}
+<div class="banner user-banned">This account has been banned</div>
+{% endif %} {% endblock content_pre %} {% block page_content %} {% csrf_token %}
+<div class="row user-profile">
+    {% if profile_is_self %}
+    <a href="{% url 'update_user' %}" class="edit-mobile link-mobile visible-xs-block"> Edit My Profile</a> {% else %} {% if not account.is_banned and perms.accounts.can_ban %}
+    <a href="{% url 'ban_user' user_uuid=account.uuid %}" class="ban-mobile link-mobile visible-xs-block"> Ban User</a> {% elif account.is_banned and perms.accounts.can_unban %}
+    <a href="{% url 'unban_user' user_uuid=account.uuid %}" class="unban-mobile link-mobile visible-xs-block">Unban User</a> {% endif %}
+    {% if user.can_impersonate and not profile_is_self %}
+    <a href="{% url 'become_user' user_uuid=account.uuid %}?next={{ request.get_full_path }}" class="become-mobile link-mobile visible-xs-block"> Become User</a> {% endif %}
+
+    {% if perms.accounts.change_user %}
+    <a href="{% url 'admin:accounts_user_change' account.pk %}" class="update-mobile link-mobile visible-xs-block"> Update user</a> {% endif %} {% endif %}
+
+    <div class="col-sm-3 user-image">
+        <a class="image{% if account.image %} expand{% endif %}" {% if account.image %}href="{{ account.image.get_absolute_url }}" style="background-image:url({% url 'custom_image_version' account.image.uuid 'display_image' %});background-size:cover;" {% endif %}>
+        </a>
+    </div>
+    <div class="col-sm-9 user-description">
+        <header class="row">
+            <div class="col-sm-9">
+                <h1 {% if not account.is_staff %}class="no-staff" {% endif %}>{{ account }}</h1> {% if account.is_staff %}
+                <h4 class="staff">STAFF MEMBER</h4>{% endif %}
+            </div>
+            {% if account.facebook_url or account.twitter_handle %}
+            <ul class="social">
+                {% block user_social %} {% if account.facebook_url %}
+                <li class="facebook"><a href="{{ account.facebook_url }}" target="_blank">Facebook</a>
+                </li>
+                {% endif %} {% if account.twitter_handle %}
+                <li class="twitter"><a href="https://twitter.com/{{ account.twitter_handle }}" target="_blank">Twitter</a>
+                </li>
+                {% endif %} {% endblock user_social %}
+            </ul>
+            {% endif %}
+        </header>
+        <div class="row">
+            <div class="col-sm-9">
+                {{ account.biography|safe }} {% if profile_is_self and not account.biography %}
+                <a href="{% url 'update_user' %}">You don't have a biography, click here to add one.</a> {% endif %}
+                <br> {% if account.website_url %}
+                <a class="user-site" href="{{ account.website_url }}">{{ account.website_url }}</a> {% endif %}
+            </div>
+            <div class="col-sm-3">
+                {% if profile_is_self %} {# Show links for when a user is viewing their own profile. #}
+                <a href="{% url 'update_user' %}" class="hidden-xs btn btn-block btn-primary"> Edit My Profile</a> {% else %} {# Show links for users viewing another person's profile. #} {# If this account is messageable by all users or if the user has the "initiate direct message" permission, show the direct message button #} {% if show_message_button %}
+                <a href="{% url 'create_direct_message' account.uuid %}" class="btn btn-block btn-primary compose"> Send a message</a> {% endif %} {% if not account.is_banned and perms.accounts.can_ban %}
+                <a href="{% url 'ban_user' user_uuid=account.uuid %}" class="hidden-xs btn btn-block btn-primary"> Ban User</a> {% elif account.is_banned and perms.accounts.can_unban %}
+                <a href="{% url 'unban_user' user_uuid=account.uuid %}" class="hidden-xs btn btn-block btn-primary">Unban User</a> {% endif %} {% if user.can_impersonate and not profile_is_self %}
+                <a href="{% url 'become_user' user_uuid=account.uuid %}?next={{ request.get_full_path }}" class="hidden-xs btn btn-block btn-primary"> Become User</a> {% endif %} {% if perms.accounts.change_user %}
+                <a href="{% url 'admin:accounts_user_change' account.pk %}" class="hidden-xs btn btn-block btn-primary"> Update user</a> {% endif %}
+                {% if perms.accounts.can_modify_permissions and not profile_is_self %}
+                <a href="{% url 'update_user_permissions' user_uuid=account.uuid %}" class="hidden-xs btn btn-block btn-primary"> Update Permissions</a> {% endif %}
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row groups-subscription">
+    {% if profile_is_self %}
+    <div class="col-sm-5 col-md-3 user-subscriptions">
+        <h3 class="my-subscription-section">My Subscriptions</h3>
+        <div class="styled-select">
+            <select name="sub_group_select" id="sub_group_select">
+                {% for form in subscription_formset %}
+                <option value="group_{{ forloop.counter }}">{{ form.group_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <form action="{% url 'update_subscriptions' %}?next={% url 'user_profile' %}" method="POST">
+            {% csrf_token %} {% for form in subscription_formset %}
+            <div class="form-group group-select" id="group_{{ forloop.counter }}">
+                {{ form.id }}
+                <h4 class="{{ form.instance.group.category.slug }}">{{ form.group_name }}</h4>
+                <div class="controls">{{ form.period }} {% for error in form.period.errors %}
+                    <span class="help-inline">{{ error }}</span> {% endfor %} {% if form.period.help_text %}
+                    <small class="help-inline">{{ form.period.help_text }}</small> {% endif %}
+                </div>
+            </div>
+            {% endfor %} {{ subscription_formset.management_form }}
+            <input type="submit" name="submit" value="Save changes" class="btn btn-primary" />
+        </form>
+        {% if request.user.can_moderate %}
+        <h3>Moderation Subscription</h3>
+        <form action="{% url 'mod_notification_frequency' %}" method="POST" class="mod-subscription">
+            {% csrf_token %}
+            <div class="form-group">
+                <h4 class="state_and_local">Messages To Moderate Notification Frequency</h4>
+                <div class="controls">
+                    {{ mod_update_form.moderator_notification_period }}
+                    <input type="submit" name="submit" value="Save changes" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+    {% endif %} {% if profile_is_self or account.show_groups_on_profile %}
+    <div class="{% if profile_is_self %}col-sm-7 col-md-9{% else %}col-sm-12{% endif %} user-groups">
+        <h3 class="my-groups-section">{% if profile_is_self %}My
+                    {% else %}{{ account }}'s {% endif %}Groups</h3> {% if profile_is_self %}
+        <div class="help-block">
+            {% if account.show_groups_on_profile %} Your groups are shown on your profile.
+            <a href="{% url 'update_user' %}">Change?</a> {% else %} Your groups are hidden.
+            <a href="{% url 'update_user' %}">Change?</a> {% endif %}
+        </div>
+        {% endif %}
+        <div class="group-container show-groups">
+            {% with groups_joined as groups %} {% include "groups/group_content.html" %} {% endwith %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} {# Important! The csrf_token tag must be present on this page. #} {% csrf_token %} {% block js_default %} {{ block.super }} {% if USE_MINIFY %}
+<script type="text/javascript" src="{% static 'js/profile.min.js' %}"></script>
+{% else %}
+<script type="text/javascript" src="{% static 'js/sections/profile.js' %}"></script>
+{% endif %} {% endblock %}

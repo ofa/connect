@@ -1,0 +1,11 @@
+{% extends "email/base_wrapper.html" %}
+{% load mailing %}
+{% block content %}
+<p>{{ recipient }}-</p>
+<p>
+    You have {{ total_new_messages }} new message{{ total_new_messages|pluralize }} to moderate on {% brand_title %}.{% if total_new_messages < total_messages %} You have {{ total_messages }} to moderate total.{% endif %}
+</p>
+<p>
+    <a href="{% origin %}{% url 'mod_admin' %}">Click here</a> to approve or decline pending messages on Connect.
+</p>
+{% endblock content %}

@@ -1,0 +1,58 @@
+body.login {
+    .login_image();
+    color: white;
+    min-height: 100vh;
+    #ft {
+        background: transparent;
+    }
+    .connect-logo {
+        .text-hide();
+        .connect_login_img();
+    }
+
+}
+.connect-symbol {
+    background: @brand-primary;;
+    @size: 40px;
+    height: @size;
+    width: @size;
+    line-height: @size;
+    border-radius: 50%;
+    margin: 90px auto 0;
+    position: relative;
+    &:before {
+        content: "";
+        border-radius: 50%;
+        position: absolute;
+        z-index: -1;
+        
+        height: @size*1.4;
+        width: @size*1.4;
+        top: 50%;
+        left: 50%;
+        margin-left: -(@size*1.4/2);
+        margin-top: -(@size*1.4/2);
+        border: 2px solid @brand-primary;
+    }
+}
+.login-content {
+    text-align: center;
+    .btn {
+        display: block;
+        font-weight: 400;
+        margin-bottom: 2em;
+        padding-top: 1em;
+        padding-bottom: 1em;
+        font-size: 1.25em;
+        .transition(background-color .3s);
+        &:hover {
+            .transition(background-color .3s);
+        }
+        &.btn-info {
+            background: @brand-info;
+            &:hover {
+                background: darken(@brand-info, 3%);
+            }
+        }
+    }
+}

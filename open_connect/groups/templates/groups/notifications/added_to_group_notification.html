@@ -1,0 +1,40 @@
+{% load mailing cache %}
+{% cache 60 group_invite_html group %}
+<table width="100%" align="center" cellpadding="0" cellspacing="0"><tr><td align="center" style="text-align: center;">
+
+<p style="color: #56565a; font-size:28px; font-family: 'Gotham', Arial, sans-serif; text-decoration: none; font-weight:lighter;">
+You've been added to the group
+</p>
+<p>
+<a style="color: {{ group.category.color }}; font-size:28px; font-family: 'Gotham', Arial, sans-serif; text-decoration: none; font-weight:lighter;" href="{{ group.full_url }}">{{ group.group.name }}</a>
+</p>
+
+{% if group.image %}
+<div><!--[if mso]>
+    <center>
+  <![endif]-->
+{% spaceless %}
+  <a href="{{ group.full_url }}">
+    {% email_image_max_width group.image 300 'style="margin: 0 auto;"' %}
+  </a>
+{% endspaceless %}
+  <!--[if mso]>
+    </center>
+<![endif]--></div>
+
+<br>
+{% endif %}
+
+<div><!--[if mso]>
+  <v:rect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{ group.full_url }}" style="height:50px;v-text-anchor:middle;width:300px;" stroke="f" fillcolor="{{ group.category.color }}">
+    <w:anchorlock/>
+    <center>
+  <![endif]-->
+      <a href="{{ group.full_url }}"
+style="background-color:{{ group.category.color }};color:#ffffff;display:inline-block;font-family: 'Gotham', Arial, sans-serif;font-size:14px;line-height:50px;text-align:center;text-decoration:none;width:300px;-webkit-text-size-adjust:none;">GO TO GROUP PAGE</a>
+  <!--[if mso]>
+    </center>
+  </v:rect>
+<![endif]--></div>
+</td></tr></table>
+{% endcache %}

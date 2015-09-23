@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Delete a resource{% endblock %}
+
+
+{% block form_content %}
+        <form method="POST" enctype="multipart/form-data" class="form-horizontal">
+            {% include "common/horizontal_form_snippet.html" %}
+            You are about to delete this resource: {{ object }}<br>
+            Are you sure you wish to continue?
+            <div class="form-actions">
+                <input type="submit" name="submit" value="Delete" class="btn btn-danger"/>
+                <a class="btn btn-primary" href="{% url "resources" %}">Cancel</a>
+            </div>
+        </form>
+{% endblock %}
+
+
+{% block js_default %}
+    {{ block.super }}
+{% include 'autocomplete_light/static.html' %}
+{% endblock %}

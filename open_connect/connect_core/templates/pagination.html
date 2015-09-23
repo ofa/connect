@@ -1,0 +1,27 @@
+{% if page_obj.has_other_pages %}
+    {% load string %}
+    {% with paginator.page_range|padded_slice:page_obj.number as page_range %}
+        <ul class="pagination">
+            {% if 1 not in page_range %}
+                <li><a href="?page=1">&laquo;&laquo;</a></li>
+            {% endif %}
+
+            {% if page_obj.has_previous %}
+                <li><a href="?{{ page_obj.previous_page_number.querystring }}">&laquo;</a></li>
+            {% endif %}
+            {% for page in page_obj.pages %}
+                {% if page %}
+                    <li{% ifequal page page_obj.number %} class="active"{% endifequal %}><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li><a href="?{{ page_obj.next_page_number.querystring }}">&raquo;</a></li>
+            {% endif %}
+
+            {% if paginator.page_range > 10 and page_obj.has_next %}
+                <li><a href="?page=last">&raquo;&raquo;</a></li>
+            {% endif %}
+        </ul>
+    {% endwith %}
+{% endif %}

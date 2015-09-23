@@ -1,0 +1,59 @@
+<ul class="nav navmenu-nav nav-account {% if mobile %}nav-mobile visible-xs-block{% else %}nav-desktop hidden-xs{% endif %}">
+    {% if mobile %}
+	{% comment %} Nested on mobile only{% endcomment %}
+    <li class="dropdown logged-in">
+        <a class="dropdown-toggle dropdown-user" data-toggle="dropdown" href="#">
+            <span class="username">{{user}}</span>
+            <span class="useremail">{{user.email}}</span>
+        </a>
+        <ul class="dropdown-menu navmenu-nav nav-account">
+      	{% endif %}
+        {% for nav_item in nav2_items %}
+        {% if nav_item.link and nav_item.label %}
+            {% if 'menu' not in nav_item %}
+            <li{% if nav_item.class or nav_item.label == nav_active_item %} class="{% if nav_item.class %}{{nav_item.class}}{% endif %}{% ifequal nav_item.label nav_active_item %} active{% endifequal %}"{% endif %}><a href="{{ nav_item.link }}">{{ nav_item.label }}</a></li>
+            {% else %}
+            <li class="dropdown{% ifequal nav_item.label nav_active_item %} active{% endifequal %}">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="{{ nav_item.link }}">{{ nav_item.label }}</a>
+                <ul class="dropdown-menu navmenu-nav" id="swatch-menu">
+                    {% for dd_item in nav_item.menu %}
+                        {% if dd_item.link and dd_item.label %}
+                        <li{% ifequal dd_item.label dd_active_item %} class="active"{% endifequal %}><a href="{{ dd_item.link }}">{{ dd_item.label }}</a></li>
+                        {% elif 'divider' in dd_item %}
+                        <li class="divider"></li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </li>
+            {% endif %}
+        {% endif %}
+        {% endfor %}
+		{% if mobile %}
+        </ul>
+        {% endif %}
+    </li>
+    {% if mobile %}
+    <li class="divider"></li>
+    {% for nav_item in nav_items %}
+    {% if nav_item.link and nav_item.label %}
+        {% if 'menu' not in nav_item %}
+        <li{% if nav_item.class or nav_item.label == nav_active_item %} class="{% if nav_item.class %}{{nav_item.class}}{% endif %}{% ifequal nav_item.label nav_active_item %} active{% endifequal %}"{% endif %}><a href="{{ nav_item.link }}">{{ nav_item.label }}</a></li>
+        {% else %}
+        <li class="dropdown{% ifequal nav_item.label nav_active_item %} active{% endifequal %}">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="{{ nav_item.link }}">{{ nav_item.label }}</a>
+            <ul class="dropdown-menu navmenu-nav" id="swatch-menu">
+                {% for dd_item in nav_item.menu %}
+                    {% if dd_item.link and dd_item.label %}
+                    <li{% ifequal dd_item.label dd_active_item %} class="active"{% endifequal %}><a href="{{ dd_item.link }}">{{ dd_item.label }}</a></li>
+                    {% elif 'divider' in dd_item %}
+                    <li class="divider"></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </li>
+        {% endif %}
+    {% endif %}
+    {% endfor %}
+    {% block addl_links %}<li class="divider"></li>{% endblock addl_links %}
+    {% endif %}
+</ul>

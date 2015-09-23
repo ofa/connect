@@ -1,0 +1,65 @@
+{% extends "base.html" %} {% load static %} {% block bodyclass %}inbox full{% endblock %}
+{% block title %}Inbox{% endblock title %}
+{% block content_messages %}{% endblock %}
+
+{% block nav_top_left %}
+    <ul class="nav navbar-nav nav-threadlist-mobile">
+        <li>
+            <a href="#" data-toggle='offcanvas' data-target='#navmenu-left' data-canvas='body' class="nav-sliding-left"><i class="{{icon_prefix}}filter"></i></a>
+        </li>
+        <li>
+            <a href="{% url "create_message" %}" title="Compose">
+                <i class="{{icon_prefix}}pencil"></i>
+            </a>
+        </li>
+    </ul>
+    {% include "nav-top-left.html" %}
+{% endblock nav_top_left %}
+
+{% block content_header %}{% endblock %} {% block content_hero %}{% endblock %} {% block container_class %}thread-main{% endblock %} {% block page_content_wrapper %} {% csrf_token %}
+<!--[if lt IE 9]>
+<div class="browse-happy">
+<h2>Connect's inbox feature doesn't support your browser. <a href="http://browsehappy.com/" target="_blank"></h2><h3>Click here</a> to download a modern browser.</h3>
+</div>
+<![endif]-->
+{% comment %} THREAD MANAGER {% endcomment %}
+<div id="manager" class="thread-manager">
+    <section id="areas" class="thread-areas">
+        {% comment %} Thread Areas {% endcomment %}
+    </section>
+    <h3>Filter by Group</h3>
+    <section id="groups" class="thread-filter">
+        {% comment %} Filters {% endcomment %}
+    </section>
+</div>
+
+{% comment %} THREAD LIST {% endcomment %}
+<div id="threads">
+    {% for message in messages %}
+    <div class="alert alert-dismissable{% if message.tags %} alert-{{ message.tags }}{% endif %}">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+    <div id="threads-container">
+    
+    </div>
+</div>
+
+<div id="thread-detail" class="thread-detail hidden">
+    {% comment %} READING PANE {% endcomment %}
+</div>
+</div>
+
+{% endblock %} {% block nav_sliding %}
+{{block.super}}
+<nav id="navmenu-left" class="navmenu navmenu-default navmenu-fixed-left offcanvas dark-form" role="navigation">
+    <section id="areas-mobile" class="thread-areas">
+        {% comment %} Thread Areas {% endcomment %}
+    </section>
+    <h3>Filter by Group</h3>
+    <section id="groups-mobile" class="thread-filter">
+        {% comment %} Filters {% endcomment %}
+    </section>
+</nav>
+{% endblock %} {% block js_default %} {{block.super}} {% include "connectmessages/thread_javascript_embed.html" %} {% endblock %} {% block foot %}{% endblock foot %}

@@ -1,0 +1,20 @@
+{
+    "_assets": "./assets/",
+    "_dist": "./open_connect/connect_core/static/connect/",
+    "_bower": "./bower_components/",
+    "_hogan": "<%= _assets %>hogan",
+    "_less": "<%= _assets %>less/",
+    "_js": "<%= _assets %>js/",
+    "_vend": "<%= _assets %>vendor/",
+    "_css": "<%= _dist %>css/",
+    "_minJS": "<%= _dist %>js/",
+    "_lessPaths": [
+        "<%= _bower %>bootstrap/less/",
+        "<%= _bower %>jasny-bootstrap/less/",
+        "<%= _bower %>jquery-oembed-all/",
+        "<%= _bower %>magnific-popup/dist/",
+        "<%= _less %>",
+        "<%= _less %>/sections/",
+        "<%= _less %>/modules/"
+    ]
+}

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block bodyclass %}group-gallery isotope-list cards{% endblock bodyclass %}
+
+{% block title %}Images posted to {{ group }}{% endblock %}
+
+{% block page_title %}
+    {{ group }} gallery
+{% endblock page_title %}
+
+{% block title_action %}
+    {% include "media/db-buttons.html" %}
+{% endblock title_action %}
+
+{% block page_content %}
+
+  <div class="col-md-12">
+    {% include "media/db-actions.html" %}
+      {% include "common/pagination.html" %}
+      <div class="gallery-container">
+            {% include "media/gallery-image.html" %}
+      </div>
+      {% include "common/pagination.html" %}
+      {% csrf_token %}</div>
+{% endblock %}
+
+{% block js_default %}
+<script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropins.js" id="dropboxjs" data-app-key="nx53b6nt2ais248"></script>
+
+{% if USE_MINIFY %}
+    <script src="{{ STATIC_URL}}js/gallery.min.js"></script>
+{% else %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'magnific-popup/dist/jquery.magnific-popup.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'isotope/jquery.isotope.min.js' %}"></script>
+    <script src="{{ STATIC_URL}}js/Isogroup.js"></script>
+    <script src="{{ STATIC_URL}}js/gallery.js"></script>
+    <script src="{{ STATIC_URL}}js/dropbox-saver.js"></script>
+{% endif %}
+
+<script type="text/javascript">
+
+// Promote / demote images
+$(document).ready(function () {
+    
+    var csrfmiddlewaretoken = $("[name='csrfmiddlewaretoken']").val();
+
+    function demote_image(uuid) {
+        $.post("{% url "demote_image" %}", {'uuid': uuid, csrfmiddlewaretoken: csrfmiddlewaretoken}, function(data) {
+            $(".promotion-" + uuid).html('The image has been demoted');
+        });
+    }
+
+    function promote_image(uuid) {
+        $.post("{% url "promote_image" %}", {'uuid': uuid, csrfmiddlewaretoken: csrfmiddlewaretoken}, function(data) {
+            $(".promotion-" + uuid).html('The image has been promoted');
+        });
+    }
+
+    $(".demote-image").click(function() {
+        demote_image(this.id);
+        ga('send', 'event', 'Gallery Action', 'Image demoted', this.id);
+    });
+
+    $(".promote-image").click(function() {
+        promote_image(this.id);
+        ga('send', 'event', 'Gallery Action', 'Image promoted', this.id);
+    });
+});
+</script>    
+
+{% endblock %}

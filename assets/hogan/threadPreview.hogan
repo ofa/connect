@@ -1,0 +1,43 @@
+<div class="styled-checkbox">
+    <input {{#active}}checked{{/active}} type="checkbox" name="check-{{id}}" id="check-{{ id }}">
+    <label for="check-{{ id }}">Select thread</label>
+</div>
+{{^is_system_thread}}
+<div class="row">
+	<div class="col-sm-4 col-xs-8">
+	
+	{{^group}}<i class="{{icon_prefix}}user"></i>{{/group}}
+		<div class="msg-subject">{{subject}}</div>
+		
+		    {{#group}}
+		        <h4 class="{{category}}">{{group}}</h4>
+		    {{/group}}
+		    {{^group}}
+		        <h4>{{recipients}}</h4>
+		    {{/group}}
+		</div>
+	
+	<div class="col-sm-6 hidden-xs">
+		<div class="msg-snippet">{{snippet}}</div>
+	</div>
+	
+	<div class="col-sm-2 col-xs-4">
+		<div class="msg-date">
+			{{dateFormatted}}
+		</div>
+	</div>
+</div>
+{{/is_system_thread}}
+{{#is_system_thread}}
+<div class="row">
+	<div class="col-xs-8">
+		<i class="{{icon_prefix}}wrench"></i>
+		<div class="msg-subject">{{subject}}</div>
+	</div>
+	<div class="col-xs-4">
+		<div class="msg-date">
+			{{dateFormatted}}
+		</div>
+	</div>
+</div>
+{{/is_system_thread}}

@@ -1,0 +1,19 @@
+{% load static %}
+{% if mobile %}<nav id="navmenu-left" class="navmenu navmenu-default navmenu-fixed-left offcanvas dark-form" role="navigation">{% endif %}
+<section class="thread-filter">
+    <h3>Filter by Group</h3>
+
+    <ul class="navmenu-nav groups-filter">
+        <li><a class="filter-clear-all" data-groupid="clear" href="#">Clear all filters</a>
+        </li>
+
+        {% for group in request.user.groups_joined %}
+        <li>
+            <a class="{{group.category.slug}} filter filter_group_{{group.id}}" data-groupid="{{group.id}}" href="#">{{ group|truncatechars:32 }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% if mobile %}
+</nav>
+{% endif %}

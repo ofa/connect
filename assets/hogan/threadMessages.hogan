@@ -1,0 +1,32 @@
+<nav class="thread-nav row">
+	<div class="back-to-inbox btn btn-primary">Back to Inbox</div>
+	<div class="compose btn btn-primary btn-glass hidden-xs">Compose</div>
+</nav>
+
+<section class="thread-info row">
+	<div class="thread-title">
+		{{^is_system_thread}}
+		{{#group}}
+			<h5 class="thread-group {{category}}"><a href="{{group_url}}">{{group}}</a></h5>
+		{{/group}}
+		{{^group}}
+		    <h4 class="thread-group">{{recipients}}</h4>
+		{{/group}}
+		{{/is_system_thread}}
+	
+		<h1>{{subject}}</h1>
+	</div>
+	<div class="thread-controls">
+		<a class="expand-all" href="#" title="Expand All Messages"><i class="{{icon_prefix}}collapse-down"></i></a>
+		<a class="collapse-all" href="#" title="Collapse All Messages"><i class="{{icon_prefix}}collapse-up"></i></a>
+		{{^archived}}
+			<a href="#" class="btn btn-info archive">Archive</a>
+		{{/archived}}
+		{{^is_system_thread}}
+			<a class="btn reply btn-primary" href="{{ reply_url }}" title="reply">{{#group}}Reply to Group{{/group}}{{^group}}Reply{{/group}}</a>
+		{{/is_system_thread}}
+	</div>	
+</section>
+
+<div id="msg-list" class="msg-list row">
+</div>

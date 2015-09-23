@@ -1,0 +1,20 @@
+
+//-----
+// Experimental Mixin - requires LESS 1.6
+
+/*.categoryLoop(@element,@property){
+	.-(@i: length(@categories)) when (@i > 0) {
+	    @name: e(extract(@categories, @i));
+	    @{element} {
+	    	@{property}:@@name;	
+	    }
+	    .-((@i - 1));
+	} .-;
+}
+
+
+.myTest {
+  font-size: 20px;
+  .categoryLoop(h3,background-color);
+}*/
+

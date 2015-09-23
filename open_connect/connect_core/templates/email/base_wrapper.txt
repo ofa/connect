@@ -1,0 +1,8 @@
+{% load mailing %}{% block content %}
+{% endblock content %}
+
+---------------------------------------------------------------------
+All messages must comply with the Connect Terms of Service. {% origin %}{% url "terms_and_conditions" %}
+
+This email was sent to: {{ email }}
+{% if recipient %}To update your subscription preferences or unsubscribe go to: {% unsubscribe_link email %}{% else %}To unsubscribe from future notifications go to: {% unsubscribe_link email %}{% endif %}

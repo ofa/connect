@@ -1,0 +1,43 @@
+{% block nav_toggle %}
+    <ul class="nav navbar-nav pull-right">
+        {% comment %} Username + toggle {% endcomment %}
+        <li class="divider-left login hidden-xs">
+            <a href="#" data-toggle='offcanvas' data-target='#navmenu-right' data-canvas='body' class="nav-sliding-right ">
+                <span class="username">{% block username %}{% if user.is_authenticated %}{{ user }}{% endif %}{% endblock username %}</span>
+                <i class="{{icon_prefix}}menu-hamburger"></i>
+            </a>
+        </li>
+        {% comment %} Mobile toggle - No username {% endcomment %}
+        <li class="divider-left visible-xs-inline-block">
+            <a class="nav-sliding-right" href="#" data-toggle='offcanvas' data-target='#navmenu-right' data-canvas='body'>
+                <i class="{{icon_prefix}}menu-hamburger"></i>
+            </a>
+        </li>
+    </ul>
+{% endblock %}
+{% block navbar_nav %}
+    <ul class="nav navbar-nav collapse navbar-collapse pull-right">
+        {% block nav_items %}
+            {% for nav_item in nav_items %}
+                {% if nav_item.link and nav_item.label %}
+                    {% if 'menu' not in nav_item %}
+                        <li{% if nav_item.class or nav_item.label == nav_active_item %} class="{% if nav_item.class %}{{nav_item.class}}{% endif %}{% ifequal nav_item.label nav_active_item %} active{% endifequal %}" {% endif %}><a href="{{ nav_item.link }}">{{ nav_item.label }}</a></li>
+                    {% else %}
+                    <li class="dropdown{% ifequal nav_item.label nav_active_item %} active{% endifequal %}">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="{{ nav_item.link }}">{{ nav_item.label }} <b class="caret"></b></a>
+                        <ul class="dropdown-menu" id="swatch-menu">
+                            {% for dd_item in nav_item.menu %} {% if dd_item.link and dd_item.label %}
+                            <li{% ifequal dd_item.label dd_active_item %} class="active" {% endifequal %}><a href="{{ dd_item.link }}">{{ dd_item.label }}</a></li>
+                            {% elif 'divider' in dd_item %}
+                             <li class="divider"></li>
+                            {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endblock %}
+        {% block nav_addl %}{% endblock nav_addl %}
+    </ul>
+{% endblock %}

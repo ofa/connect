@@ -1,0 +1,40 @@
+.block-list {
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding-left: 0;
+    padding-right: 0;
+    @media (min-width:@screen-sm-min){
+        background: @gray-lighter;
+    }
+}
+
+.block-item {        
+    background-position: 50% 50%;
+    padding: 20px;
+    display: block;
+    @media (min-width:@screen-sm-min){
+        background: @gray-lighter;
+    }
+    cursor: pointer;
+    border-bottom: 1px solid @gray-border;
+    color: @text-color;
+    a {
+    	color: @text-color;
+    }
+    h4 {
+        font-size: 12px;
+        text-transform: uppercase;
+        color: lighten(@text-color, 15%);
+        font-weight: 700;
+    }
+    &:hover {
+        background: lighten(@gray-lighter, 1%);
+    }
+    &.thread-active {
+        background: white;
+    }
+    &:last-child {
+    	border-bottom: none;
+    }
+
+}

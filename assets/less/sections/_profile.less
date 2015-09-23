@@ -1,0 +1,156 @@
+.profile {
+    .underline() {
+        color: @text-color;
+        padding-bottom: .5em;
+        margin-bottom: 1em;
+        border-bottom: 1px solid @gray;
+    }
+    .user-description header {
+        .underline;
+        position: relative;
+    }
+    h1 {
+        font-size: 28px;
+    }
+    .staff {
+        &:before {
+            .staff_img;
+            content: "";
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            top: 3px;
+            position: relative;
+            margin-right: 5px;
+        }        
+    }
+    h3 {
+        @media (min-width: @screen-sm-min) {
+            .underline;
+        }
+        text-transform: uppercase;
+        font-size: 16px;
+    }
+    .user-actions img {
+        margin-bottom: 2em;
+    }
+    .group-select h4 {
+        margin: 1em 0;
+    }
+    .user-image .image {
+        display: block;
+        width: 100%;
+        height: 0;
+        padding-bottom: 100%;
+        .default_user_img();
+    }
+    .social {
+        .icon-list(30px, 10px);
+        font-size: 24px;
+        display: inline-block;
+        @media (min-width: @screen-sm-min) {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+        a {
+            color: @gray-border;
+            text-align: center;
+            padding: 4px;
+            &:hover {
+                text-decoration: none;
+            }
+        }
+        .facebook a {
+            .facebook-icon();
+        }
+        .twitter a {
+            .twitter-icon();
+        }
+    }
+    .form-group ul {
+        margin-left: 1px;
+    }
+    .user-site {
+        margin-top: 1em;
+    }
+    @media (min-width: @screen-sm-min) {
+        .help-block {
+            float: right;
+            margin-top: -3.25em;
+        }
+        .user-profile {
+            margin: 2em 0 4em;
+        }
+    }
+    @media (max-width: @screen-sm-min) {
+        #main > .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+        header,
+        h1,
+        h2,
+        h3,
+        h4,
+        .user-description {
+            text-align: center;
+        }
+        h3 {
+            font-weight: 700;
+            margin: 2em auto;
+        }
+        .staff {
+            display: inline-block;
+            font-size: .85em;
+            margin-bottom: 2em;
+        }
+        .user-image {
+            width: 80%;
+            margin: 2em auto;
+            clear: both;
+        }
+        .user-description,
+        .user-subscriptions {
+            margin: 2em 1em;
+        }
+        .social-mobile {
+            margin-top: 2em;
+        }
+        .help-block {
+            text-align: center;
+        }
+        form {
+            margin-bottom: 2em;
+        }
+        .link-mobile {
+            float: right;
+            margin: 1em;
+            display: block;
+        }
+    }
+}
+
+.oldie {
+    .profile {
+        .staff {
+            .staff_img();
+        }
+        .social li {
+            .icon {
+                height: 16px;
+                width: 16px;
+            }
+            span {
+                display: block;
+            }
+        }
+    }
+}
+
+.ie9,
+.ie10 {
+    .social li .icon {
+        background-size: 190px 190px;
+    }
+}

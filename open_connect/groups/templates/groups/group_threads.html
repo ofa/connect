@@ -1,0 +1,27 @@
+    <div class="panel-group msg-{{ thread.id }}">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#featured-msg" href="#{{ thread.id }}">
+
+                    <div class="row-fluid msg-subject">
+                           {{ thread.subject }}
+                   </div>
+
+                </a>
+            </div>
+            <div id="{{ thread.id }}" class="panel-body collapse{% if forloop.last %} in {% endif %}">
+                <div class="panel-inner">
+                    {% for message in thread.messages %}
+                    {% if forloop.counter < 4%}
+                    <div class='row-fluid msg-text'>
+                        <h6><a href="{% url "user_details" message.sender.uuid %}">{{ message.sender }}</a></h6>
+                        <p class="msg-date native">{{ message.created_at|date:"n/j/y H:i:s" }}</p>
+                        {% autoescape off %} {{ message.text }} {% endautoescape %}
+                    </div>
+                    {% if not forloop.last %}<hr>{% endif %}
+                    {% endif %}
+                    {%endfor%}
+                </div>
+            </div>
+        </div>
+    </div>

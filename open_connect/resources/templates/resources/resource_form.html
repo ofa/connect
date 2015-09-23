@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load static string %}
+
+{% block title %}{% if object %}Edit{% else %}Upload{% endif %} a File{% endblock %}
+
+{% block content_header %}{% endblock %}
+
+{% block bodyclass %}resource-form{% endblock bodyclass %}
+
+{% block page_content %}
+
+        <div class="row">
+        	<div class="col-md-6 col-md-offset-3">
+				<h1>{% if object %}Edit{% else %}Upload{% endif %} a File</h1>
+	        	<form method="POST" enctype="multipart/form-data" class="form-horizontal">
+              {% csrf_token %}
+	        	    {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors|join:", " }}</div>{% endif %}
+					{% for field in form %}
+  					{% if field|input_type == "ClearableFileInput"%}
+              <div class="fileinput {% if object %}fileinput-exists{% else %}fileinput-new{% endif %} input-group" data-provides="fileinput">
+                 <div class="form-control" data-trigger="fileinput"><span class="fileinput-filename">{% if object %}{{field.value}}{% endif %}</span></div>
+                <span class="input-group-addon btn btn-primary btn-file">
+                <span class="fileinput-new">Select file</span>
+                <span class="fileinput-exists">Change</span>
+                <input type="file" name="{{field.name}}" {% if object %}value="{{field.value}}"{% endif %}></span>
+              </div>
+              {% if field.errors %}<br><div class="alert alert-error">{{ field.errors }}</div>{% endif %}
+
+            {% else %}
+                  {% include "common/form_field.html" %}
+            {% endif %}
+					{% endfor %}
+	        	    <div class="form-actions">
+	        	        <input type="submit" name="submit" value="Update" class="btn btn-primary"/>
+	        	    </div>
+	        	</form>
+        	</div>
+        </div>
+{% endblock %}
+
+
+{% block js_default %}
+      {{ block.super }}
+
+	{% include 'autocomplete_light/static.html' %}
+{% endblock %}

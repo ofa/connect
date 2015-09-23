@@ -1,0 +1,4 @@
+{% load mailing %}
+{{ user }} has requested to join the group {{ group }}
+<br><br>
+To approve or reject this request go to <a href="{% origin %}{% url 'moderate_requests' %}">{% origin %}{% url 'moderate_requests' %}</a>

@@ -1,0 +1,34 @@
+{% load static %}
+{% if USE_MINIFY %}
+  <script src="{% static 'js/compose.min.js' %}"></script>
+{% else %}
+{{ block.super }}
+  <script type="text/javascript" src="{% static 'jquery-oembed-all/jquery.oembed.js' %}"></script>
+  <script src="{% static 'js/vendor/redactor.js' %}"></script>
+  <script src="{% static 'js/oembed-plugin.js' %}"></script>
+{% endif %}
+<script>
+$(document).ready(function() {
+    var tokenvalue = $('[name="csrfmiddlewaretoken"]').attr('value');
+
+    $('#id_text').redactor({
+        minHeight: 200,
+        buttons: ['bold', 'italic', '|', 'link', 'image'],
+        allowedTags: ['br', 'a', 'em', 'strong', 'img'],
+        linebreaks: true,
+        plugins: ['oembed'],
+        imageUpload: '{% url "create_image" %}',
+        imageUploadCallback: handle_image_upload_response,
+        uploadFields: {'csrfmiddlewaretoken': tokenvalue},
+        imageGetJson: false,
+        convertImageLinks: true,
+        convertVideoLinks: true
+    });
+
+    var message_form = $("#message_form");
+
+    function handle_image_upload_response(image, json) {
+        message_form.append('<input type="hidden" name="images" value="' + json.id + '" />');
+    }
+});
+ </script>

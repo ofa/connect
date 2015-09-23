@@ -1,0 +1,8 @@
+#####
+# Requirements needed on dev machines
+#
+# Due to issues wiht some packages compiling on dev machines we break out
+# requirements that are needed on Heroku (requirements.txt) and on dev machines
+# (dev-requirements.txt)
+
+-r common-requirements.txt

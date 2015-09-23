@@ -1,0 +1,174 @@
+{% load static cache urltools %}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en" itemscope itemtype="http://schema.org/Article"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en" itemscope itemtype="http://schema.org/Article"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en" itemscope itemtype="http://schema.org/Article"> <![endif]-->
+<!--[if IE 9]>    <html class="no-js ie9" lang="en" itemscope itemtype="http://schema.org/Article"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]<!-->
+<html class="no-js" lang="en" itemscope itemtype="http://schema.org/Article">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>{% block page_title_brand %}{{ brand_title }} | {% endblock page_title_brand %}{% block title %}{% endblock %}</title>
+
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.png' %}">
+    <!--[if lt IE 9]>
+        <script src="{% static 'html5shiv/dist/html5shiv.js' %}"></script>
+        <script src="{% static 'jRespond/js/jRespond.min.js' %}"></script>
+    <![endif]-->
+    {# Google Analytics Snippet is in header #}
+    <script src="{% static 'modernizr/modernizr.js' %}"></script>
+    <script>
+
+    window.CONNECT = window.CONNECT||{};
+    window.CONNECT.user = window.CONNECT.user||{};
+    window.CONNECT.user['anonymous'] = {{ user.is_anonymous|yesno:"true,false" }};
+    {% if user.is_authenticated %}
+    {# UUID of the Current User #}
+    window.CONNECT.user['uuid'] = '{{ request.user.uuid|default:"NA" }}';
+    {# A hash unique to the user only known to connect & the user #}
+    window.CONNECT.user['hash'] = '{{ request.user.private_hash|default:"NA" }}';
+    {% endif %}
+    window.CONNECT.icon_prefix = "{{icon_prefix}}";
+    window.CONNECT.services = {
+        threads: '{% url "thread_json" %}',
+        mod_msg: '{%url "mod_admin" %}',
+        mod_groups: '{%url "moderate_requests" %}',
+        upload: '{% url "create_image" %}',
+        compose:'{% url "create_message" %}',
+        unread: '{% url "unread_message_count" %}',
+        explore: '{% url "explore" %}',
+        tour: '{% url "user_tutorial" %}',
+        subscribe: '{% url "group_subscribe" %}',
+        unsubscribe: '{% url "group_unsubscribe" %}'
+    };
+
+    </script>
+
+    {% if USE_MINIFY %}
+    <link rel="stylesheet" media="screen" href="{% static 'css/main.min.css' %}?{% now "Ymd" %}">
+    <!--[if lt IE 9]>
+    <link rel="stylesheet" media="screen" href="{% static 'css/oldie.min.css' %}">
+    <![endif]-->
+    {% else %}
+    <link rel="stylesheet" media="screen" href="{% static 'css/main.css' %}?{% now "Ymd" %}">
+    <!--[if lt IE 9]>
+    <link rel="stylesheet" media="screen" href="{% static 'css/oldie.css' %}">
+    <![endif]-->
+    {% endif %}
+
+</head>
+
+<body class="{% block bodyclass %}{% endblock %}">
+    <div id="wrap" class="wrap">
+        {% block header %}    
+            <div class="navbar navbar-default navbar-fixed-top">
+                <div class="navbar-container">
+                    {% comment %}
+                        Left portion of the nav
+                    {% endcomment %}
+                    {% block nav_top_left %}
+                        {% include "nav-top-left.html" %}
+                    {% endblock nav_top_left %}
+                    {% comment %}
+                        pull everything right, in a wrapper around both blocks, to maintain order
+                    {% endcomment %}
+                    {% block nav_top_right %}
+                        {% include "nav-top-right.html" %}
+                    {% endblock nav_top_right %}
+                </div>
+            </div>
+        {% endblock %}
+        {% block content_pre %}
+        {% if user.impersonating %}
+        <div class="banner user-impersonate">You are currently viewing the site as {{ user.email }}. <a href="{% url "unbecome_user" %}?next={{ request.get_full_path }}">Click here to return to your account.</a></div>
+        {% endif %}
+        {% endblock %}
+    {% block content_messages %} {% for message in messages %}
+        <div class="container">
+            <div class="row">
+                <div class="alert alert-dismissable{% if message.tags %} alert-{{ message.tags }}{% endif %}">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    {{ message }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endblock %}
+
+        {% block content_hero %}{% endblock %}
+        <div class="{% block container_class %}container{% endblock %}" id="main">
+
+            {% block content %} {% block messages %}{% endblock %} {% block content_top %}{% endblock %} {% block content_header %}
+            <div class="row">
+                <div class="col-sm-12">
+                    <header class="page-header">
+                        <h1>{% block page_title %}{{ title }}{% endblock %}</h1>
+                        {% block title_action %}{% endblock %}
+                    </header>
+                </div>
+            </div>
+            {% endblock %} {% block page_content_wrapper %}
+            <div class="row">
+                {% block page_content %}
+                <div class="col-md-12">
+                    
+                </div>
+                {% endblock %}
+            </div>
+            {% endblock %} {% endblock %}
+        </div>
+    </div>
+
+    
+{% block nav_sliding %}
+    {% include "nav-sliding.html" %}
+{% endblock %}
+
+{% block foot %}
+<footer id="ft" class="footer">
+    <div class="disclaimers container">
+        <nav class="disclaimer-links">
+            <ul>
+                <li><a href="#" title="Frequently Asked Questions">FAQ</a></li>
+                <li><a href="#" title="Terms of Service">Terms<span class="hidden-xs"> of Service</span></a></li>
+                <li><a href="#" title="Privacy Policy">Privacy</a></li>
+                <li><a href="#" title="Contact Us">Contact</a></li>
+            </ul>
+        </nav>
+    </div>
+</footer>
+{% endblock %}
+
+{% block js_default %}
+    
+    {% if USE_MINIFY %}
+        <script src="{% static 'js/base.min.js' %}?{% now "Ymd" %}"></script>
+    {% else %}
+        <script src="{% static 'jquery/dist/jquery.js' %}"></script>
+        <script src="{% static 'bootstrap/dist/js/bootstrap.js' %}"></script>
+        <script src="{% static 'bootbox/bootbox.js' %}"></script>
+        <script src="{% static 'jasny-bootstrap/js/offcanvas.js' %}"></script>
+        <script src="{% static 'jasny-bootstrap/js/fileinput.js' %}"></script>
+        <script src="{% static 'magnific-popup/dist/jquery.magnific-popup.js' %}"></script>
+        <script src="{% static 'jquery-oembed-all/jquery.oembed.js' %}"></script>
+        <script src="{% static 'vendor/redactor/redactor.js' %}"></script>
+        <script src="{% static 'js/modules/oembed-plugin.js' %}"></script>
+        <script src="{% static 'isotope/jquery.isotope.js' %}"></script>
+        <script src="{% static 'momentjs/moment.js' %}"></script>
+        <script src="{% static 'js/modules/Badge.js' %}"></script>
+        <script src="{% static 'js/modules/Connect.js' %}"></script>
+        <script src="{% static 'js/modules/Compose.js' %}"></script>
+        <script src="{% static 'js/modules/Isogroup.js' %}"></script>
+        <script src="{% static 'js/modules/Filter.js' %}"></script>
+        <script src="{% static 'js/modules/join-leave.js' %}"></script>
+        <script src="{% static 'js/modules/dropbox-saver.js' %}"></script>
+        <script src="{% static 'js/modules/analytics.js' %}"></script>
+    {% endif %}
+
+{% endblock js_default %}
+
+</body>
+</html>

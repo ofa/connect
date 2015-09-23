@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}My groups{% endblock %}
+
+{% block bodyclass %}
+    isotope-list cards
+{% endblock bodyclass %}
+
+{% block page_title %}
+    My Groups
+{% endblock page_title %}
+
+{% block title_action %}
+    <span class="pull-right"><a href="{% url "groups" %}" class="btn btn-primary btn-sm">All Groups</a></span>
+{% endblock title_action %}
+
+{% block page_content %}
+        <div class="col-md-12 col-lg-12">
+            <div class="group-container">
+               {% include "groups/group_content.html" %}
+            </div>
+        </div>
+
+    {# Important! The csrf_token tag must be present on this page. #}
+    {% csrf_token %}
+{% endblock %}
+
+{% block js_default %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'isotope/jquery.isotope.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/groups.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var csrf_token = $("[name='csrfmiddlewaretoken']").val();
+    $(".join-group").click(function() {
+        $.post("{% url "group_subscribe" %}", {group_id: $(this).attr('data-group-id'), csrfmiddlewaretoken: csrf_token}, function(data) {
+            $(".join-group-" + data.group_id).html(data.message);
+        }, "json");
+    });
+    $(".leave-group").click(function() {
+        $.post("{% url "group_unsubscribe" %}", {group_id: $(this).attr('data-group-id'), csrfmiddlewaretoken: csrf_token}, function(data) {
+            $(".leave-group-" + data.group_id).html(data.message);
+        }, "json");
+    });
+});
+</script>
+{% endblock %}

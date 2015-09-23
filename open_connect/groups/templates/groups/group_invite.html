@@ -1,0 +1,57 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Invite To {{ group }}{% endblock %}
+
+{% block page_title %}
+    Invite To {{ group }}
+{% endblock page_title %}
+
+{% block main_area %}
+    {% if verify %}
+        <div class="confirminvites">
+            {% if existing %}
+            <h3>These users will be added to {{ group }}:</h3>
+            <ul>
+                {% for record in existing %}
+                    <li>{{ record }} {{ record.email }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            {% if new %}
+            <h3>The following email addresses will receive invites to join {{ brand_title }} and will be added to {{ group }} on their first login:</h3>
+            <ul>
+                {% for address in new %}
+                    <li>{{ address }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+        </div>
+    {% endif %}
+    <form method="POST" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}class="form-horizontal">
+        <div class="inviteform" {% if verify %}style="display: none"{% endif %}>
+            {% include "common/horizontal_form_snippet.html" %}
+        </div>
+        <div class="form-actions">
+            <input type="submit" name="submit" value="Invite" class="btn btn-primary"/>
+            {% if verify %}
+                <a class="redo btn btn-warning" href="#">Make A Change</a>
+            {% endif %}
+        </div>
+    </form>
+
+{% endblock %}
+
+{% block js_default %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $('.redo').click(function(event){
+            event.preventDefault();
+            $('.inviteform').toggle();
+            $('.redo').toggle();
+            $('.confirminvites').toggle();
+            $('#id_verified').remove();
+        })
+    </script>
+{% endblock js_default %}

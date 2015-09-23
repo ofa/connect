@@ -1,0 +1,140 @@
+// CONFIGURING CONNECT'S ASSETS
+
+// Images are presented as mixins so you can customize how you like.
+// Want to use a retina mixin? Do it. SVG with PNG fallback? Go for it.
+// Plain ol' CSS? Icon-font? Whatever you want.
+
+//********** LOGIN HERO
+
+//The full-size background image on the login page
+
+.login_image(){
+    background: url('../img/login.jpg') no-repeat center black;
+    background-size: cover;
+}
+
+
+//********** BRAND LOGO
+// For use in the upper left corner of the top nav. The "home" button.
+.connect_brand_img() {
+    .svg-bg('../img/connect-logo', 130px, 30px);
+    width: 130px;
+    height: @navbar-height; //same height as navbar
+    background-position: center;
+}
+
+.connect_login_img() {
+    .svg-bg('../img/connect-logo-white', 260px, 52px,contain);
+    width: 60%;
+    height: 0;
+    padding-bottom: 12%;
+    margin: 40px auto;
+}
+
+//********** STAFF IMAGE
+//Small image next to a user's name indicating they are staff / an admin / a moderator
+.staff_img() {
+    .svg-bg('../img/staff-default', 32px, 32px, contain);
+}
+
+//********** DEFAULT USER IMAGE
+//The image to be shown when a user does not upload a profile image
+.default_user_img() {
+    .svg-bg('../img/user-default', 60px, 60px);
+    background-color: #ccc;
+    background-position: center;
+}
+
+.default_user_img_thumb(){
+    .svg-bg('../img/user-default', 60px, 60px, 20px 20px);
+    background-color: #ccc;
+    background-position: center;
+}
+
+//********** DEFAULT GROUP IMAGE
+//The image to be shown when a group admin does not upload a group image
+.default_group_img() {
+    .svg-bg('../img/group-default', 107px, 100px);
+    background-color: #ccc;
+    margin: 0 auto;
+    line-height: 200px;
+}
+
+//********** SOCIAL IMAGES
+//For user profile pages
+
+//li.facebook a
+.facebook-icon() {
+    .svg-bg('../img/social/facebook', 30px, 30px);
+    .text-hide();
+    &:hover, &:active {
+        opacity: .5;
+    }
+}
+
+//li.twitter a
+.twitter-icon() {
+    .svg-bg('../img/social/twitter', 30px, 30px);
+    .text-hide();
+    &:hover, &:active {
+        opacity: .5;
+    }
+}
+
+//********** COLORS: BORDERS
+
+//Borders on elements like the Group Cards on the Explore page,
+//and the threads in the threadlist.
+@gray-border: darken(@gray-lighter, 9%);
+
+//********** CATEGORIES
+//ADDING A NEW CATEGORY:
+//Groups and group messages can be filtered by category. Configure yours as needed.
+//IMPORTANT: THE VARIABLE AND SLUG SHOULD MATCH THE `slug` IN YOUR CATEGORY *exactly* for the classing to work correctly
+// 1. Create a variable below that matches the category's slug in the application,
+// and assign it a color:
+
+@category_1: spin(@brand-success, 12%);
+@category_2: spin(@brand-warning, 30%);
+@category_3: spin(@brand-primary, 40%);
+@category_4: @brand-warning;
+@category_5: @brand-info;
+@category_6: @brand-primary;
+@category_7: @brand-danger;
+@category_8: @brand-success;
+
+// 2. Add the slug (no @) to the list below.
+
+@categories: 'category_1',
+'category_2',
+'category_3',
+'category_4',
+'category_5',
+'category_6',
+'category_7',
+'category_8';
+
+//********** Resource Mapping
+//ADDING A NEW RESOURCE:
+// 1. Create a variable below that matches the category's slug in the application,
+// and assign it a color:
+@document: @brand-info;
+@spreadsheet: @brand-success;
+@pdf: @brand-primary;
+@image: @brand-warning;
+@video: @brand-danger;
+@other: spin(@brand-success, 12%);
+
+// 2. Add the slug (no @) to the list below. That's it!
+
+@resources: 'document',
+'spreadsheet',
+'pdf',
+'image',
+'video',
+'other';
+
+//3. Customize the icon location / type as needed
+.resource-icons(@name) {
+    .svg-bg("../img/resources/@{name}", 140px, 140px);
+}

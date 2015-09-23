@@ -1,0 +1,15 @@
+
+//SVG and multiple backgrounds have very similar browser support; see https://css-tricks.com/using-svg/ 
+.svg-bg(@filename, @width, @height, @backgroundSize: @width @height){
+  background-image: url('@{filename}.png');
+  background-image: url('@{filename}.svg'), none;
+  background-repeat: no-repeat;
+  background-size: @backgroundSize;
+}
+
+.full-height(){
+  @media (min-width:@screen-sm-min) {
+    margin-bottom: -99999px;
+    padding-bottom: 99999px;  
+  }
+}

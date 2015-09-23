@@ -1,0 +1,207 @@
+//---------READING PANE--------
+.thread-detail {
+    position: absolute;
+    min-height: 100%;
+    width: 100%;
+    background: white;
+    z-index: @zindex-navbar - 20;
+    top: 0;
+    left: 0;
+    @media (max-width: @screen-xs-max) {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .compose {
+        .pull-right;
+    }
+    .row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .btn {
+        font-size: 12px;
+        @media (min-width: @screen-md-min) {
+            min-width: 140px;
+        }
+        @media (min-width: @screen-md-min) {
+            min-width: 180px;
+        }
+    }
+    h1 {
+        font-size: 30px;
+    }
+    .panel-default {
+        margin-bottom: 0;
+        box-shadow: none;
+        .panel-header {
+            border: none!important;
+        }
+    }
+    .panel-default + .panel-default {
+        border-top: none;
+    }
+}
+
+a.done[data-embed=true] {
+    display: none;
+}
+
+.msg-list {
+    .-(@i: length(@categories)) when (@i > 0) {
+        @name: e(extract(@categories, @i));
+        &.@{name}
+        {
+            h5 {
+                color: @@name;
+                a {
+                    color: @@name;
+                }
+            }
+        }
+        .-((@i - 1));
+    }
+    .-;
+    h5 {
+        font-weight: 400;
+    }
+}
+.thread-info {
+    position: relative;
+}
+@media (min-width: @screen-sm-min) {
+    .thread-controls {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        width: 50%;
+    }
+}
+.thread-title {
+    .make-sm-column(6);
+    .btn + .btn {
+        margin-left: 30px;
+    }
+}
+.flag {
+    color: #999;
+    float: right;
+    font-size: 26px;
+    &:hover {
+        text-decoration: none;
+        color: @brand-warning;
+    }
+}
+.thread-title-mod h3 {
+    margin: 12px 0;
+}
+.thread-controls {
+    text-align: right;
+    // a {
+    //     color: #aaa;
+    //     &:hover {
+    //         text-decoration: none;
+    //         color: darken(#aaa, 20%);
+    //     }
+    // }
+}
+.expand-all, .collapse-all {
+    font-size: 120%;
+    margin-right: 10px;
+}
+.thread-group {
+    .text-uppercase;
+    color: #999;
+    font-size: 12px;
+    font-weight: 700;
+}
+.msg-content {
+    max-width: 100%;
+}
+.scrunch-toggle {
+    color: @brand-primary;
+    font-size: 13px;
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+    padding: 1px 4px;
+}
+.oembedall-container iframe {
+    max-width: 100%;
+}
+.msg-snippet {
+    color: lighten(@text-color, 10%);
+}
+.accordion-toggle {
+    .transition(all 0.3s);
+    display: block;
+    min-height: 30px;
+    &:hover {
+        text-decoration: none;
+    }
+    .msg-sender, .msg-date, .msg-snippet {
+        opacity: 1;
+        .transition(opacity 0.3s);
+        overflow: hidden;
+        display: inline-block;
+    }
+    .msg-sender {
+        width: 100px;
+        @media (min-width: @screen-lg-min) {
+            width: 150px;
+        }
+    }
+    .msg-snippet {
+        display: none;
+        @media (min-width: @screen-md-min) {
+            display: inline-block;
+            width: 250px;
+        }
+        @media (min-width: @screen-lg-min) {
+            width: 300px;
+        }
+    }
+    .msg-date {
+        float: right;
+    }
+}
+.msg-attachment {
+    a {
+        display: block;
+        float: left;
+        margin-bottom: 10px;
+        margin-right: 15px;
+    }
+    img {
+        max-width: 300px;
+        max-height: 150px;
+        height: auto;
+    }
+    a:last-child {
+        margin-right: 0;
+    }
+}
+.msg-recipients {
+    font-style: italic;
+}
+.disclaimer-archive, .mod-info {
+    font-size: 12px;
+    font-weight: 600;
+    margin: 16px 0;
+}
+.mod-info {
+    i {
+        vertical-align: middle;
+        padding-right: 6px;
+    }
+    .icon-flag {
+        font-size: 22px;
+        color: @brand-warning;
+    }
+    .icon-checkmark {
+        color: @brand-primary;
+    }
+}
+.disclaimer-archive {
+    text-align: center;
+    margin: 32px 0;
+}

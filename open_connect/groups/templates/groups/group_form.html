@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block bodyclass %}group-form{% endblock bodyclass %}
+
+{% block title %}{% if group.pk %}Update {{ group }}{% else %}Create a group{% endif %}{% endblock %}
+
+{% block content_header %}{% endblock %}
+
+{% block page_content %}
+    <form method="POST" enctype="multipart/form-data" class="form-horizontal">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">{% if group %}<h1>Edit {{ group }}</h1>{% else %}<h1>Create a group</h1>{% endif %}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-5 col-md-offset-1">
+                {% with authgroup_form as form %}
+                    {% include "common/form_snippet.html" %}
+                {% endwith %}
+                {% with group_form as form %}
+                    {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors|join:", " }}</div>{% endif %}
+                    {% for field in form %}
+                        {% if forloop.counter <= 4 %}
+                            {% include "common/form_field.html" %}
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
+
+                <div class="form-group">
+                    <label>Location</label>
+                </div>
+                <div class="form-group">
+                    <div class="styled-checkbox">
+                        <input id="location_toggle" name="location_toggle" type="checkbox" checked>
+                        <label for="location_toggle">This group has a location</label>
+                    </div>
+                </div>
+
+
+            </div>
+
+            {% comment %}
+  background:url(){% else %}background:url(){% endif %}
+{% endcomment %}
+
+
+            <div class="col-md-4 col-md-offset-1">
+                {% with image_form as form %}
+                    {% for field in form %}
+                        <label for="id_{{ field.html_name }}">{{ field.label }}{% if field.field.required %}<span class="req">*</span>{% endif %}</label>
+                        <div class="clearfix fileinput {% if group.image %}fileinput-exists{% else %}fileinput-new{% endif %}" data-provides="fileinput">
+                            <div class="fileinput-preview thumbnail" data-trigger="fileinput">
+                                {% if not group.image %}<div class="default"></div>{% endif %}
+                                {% if group.image %}<img src="{% url "custom_image_version" image_uuid=group.image.uuid image_type="thumbnail" %}">{% endif %}
+                            </div>
+                            <div>
+                                <span class="help-block">Choose an image to use as the group's profile picture.</span>
+                              <span class="btn btn-primary btn-file">
+                                  <span class="fileinput-new">Select image</span>
+                                  <span class="fileinput-exists">Change</span>
+                                  {{field}}
+                              </span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endwith %}
+                {% with group_form as form %}
+                    {% if form.non_field_errors %}<div class="alert alert-error">{{ form.non_field_errors|join:", " }}</div>{% endif %}
+                    {% for field in form %}
+                        {% if forloop.counter > 4 %}
+                            {% include "common/form_field.html" %}
+                        {% endif %}
+                    {% endfor %}
+                {% endwith %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5 col-md-offset-1">
+                <div class="form-group address form-location">
+                    <label>Address</label>
+                    <div class="input-group">
+                        <input type="text" id="id_group_form-address" class="form-control">
+                          <span class="input-group-btn">
+                            <button class="btn btn-primary" type="button">Go</button>
+                          </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-md-offset-1">
+                <div class="form-group radius form-location">
+                    <label>Coverage radius, in miles</label>
+                    <div class="input-group input-group-stacked spinner">
+                        <input type="text" class="form-control">
+                          <span class="input-group-btn">
+                            <a class="btn btn-link up" id="up">Increase</a>
+                            <a class="btn btn-link down" id="down">Decrease</a>
+                          </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+
+                <div id="map_canvas" class="form-location"></div>
+                <small class="form-location">You can drag points on the circle to modify the group's radius.</small>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="form-actions">
+                    {% if group.pk and perms.groups.delete_group %}<a class="col-md-2 col-md-push-3" href="{% url "delete_group" pk=group.pk %}">Delete group</a>{% endif %}<input type="submit" name="submit" value="{% if not group %}Create group{% else %}Save changes{% endif %}" class="btn btn-primary submit-form"/>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block js_default%}
+    <script id="alertTemplate" type="text/html">
+    {% templatetag openvariable %}=[[ ]]={% templatetag closevariable %}
+    <div class="alert alert-dismissable alert-success alert-new hidden"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>[[message]]</div>
+</script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    {{ block.super }}
+    <script type="text/javascript">
+        {% if group %}
+            var isNew = false;
+        {% else %}
+            var isNew = true;
+        {% endif %}
+    </script>
+{% if USE_MINIFY %}
+        <script type="text/javascript" src="{% static 'js/newgroup.min.js' %}"></script>
+    {% else %}
+        <script type="text/javascript" src="{% static 'js/modules/Spinner.js' %}"></script>
+        <script type="text/javascript" src="{% static 'js/modules/Map.js' %}"></script>
+    {% endif %}
+    {% include 'autocomplete_light/static.html' %}
+    <script>
+        $(function(){
+            $('#id_group_form-description').redactor({
+                minHeight: 300,
+                buttons: ['bold', 'italic', '|', 'link'],
+                allowedTags: ['br', 'a', 'em', 'strong'],
+                linebreaks: true
+            });
+        });
+    </script>
+{% endblock %}
