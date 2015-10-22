@@ -1,9 +1,9 @@
 #####
 # Requirements needed on Heroku
 #
-# Due to issues wiht some packages compiling on dev machines we break out
-# requirements that are needed on Heroku (requirements.txt) and on dev machines
-# (dev-requirements.txt)
+# Due to issues with some packages compiling on dev machines we break out
+# requirements that are needed on Heroku (requirements.txt), on dev machines
+# (dev-requirements.txt), and for documentation (doc-requirements.txt)
 
 
 # cffi or cryptography have to be explictly set in requirements for heroku

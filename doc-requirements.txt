@@ -1,0 +1,7 @@
+#####
+# Requirements needed for generating pydoc (ReadTheDocs in particular)
+#
+# Due to issues with some packages compiling on docuemtation machines we break
+# out requirements into various requirements.txt files
+
+-r common-requirements.txt

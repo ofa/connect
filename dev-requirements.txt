@@ -6,3 +6,7 @@
 # (dev-requirements.txt)
 
 -r common-requirements.txt
+
+# Some 64 bit systems (ReadTheDocs build system in particular) won't compile
+# readline due to the lack of a curses library
+readline==6.2.4.1
