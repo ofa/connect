@@ -231,12 +231,16 @@ class GroupListView(CommonViewMixin, ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
-        """Update view context"""
+        """Group list view context object populator"""
         context = super(GroupListView, self).get_context_data(**kwargs)
 
         context['q'] = self.request.GET.get('q', '')
         context['categories'] = Category.objects.filter(
-            pk__in=self.object_list.values('category_id'))
+            # Because we use `queryset.extra(select=,where=)` and the `where=`
+            # explictly mentions "group_groups" we cannot include that query as
+            # part of the query that gets our categories.
+            pk__in=list(self.object_list.values_list(
+                'category_id', flat=True)))
         context['location'] = self.request.GET.get('location')
         context['located'] = self.located
 
