@@ -43,7 +43,8 @@ urlpatterns = patterns(
     # pylint: disable=line-too-long
     url(r'^favicon\.ico$',
         RedirectView.as_view(
-            url=urljoin(settings.STATIC_URL, 'img/favicon.ico'))),
+            url=urljoin(settings.STATIC_URL, 'img/favicon.ico'),
+            permanent=True)),
     url(r'^autocomplete/', include('autocomplete_light.urls')),
     url(r'^reports/', include('open_connect.reporting.urls')),
     url(r'^explore/$', GroupListView.as_view(), name='explore'),

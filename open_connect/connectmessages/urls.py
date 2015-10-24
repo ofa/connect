@@ -77,6 +77,7 @@ urlpatterns = patterns(
 
     # Non-existent directories in backbone paths should redirect
     url(r'^(id|(inbox|archive|unread)/group|mod)/$',
-        RedirectView.as_view(url='/messages/'), name='thread'),
+        RedirectView.as_view(
+            url='/messages/', permanent=False), name='thread'),
 
 )
