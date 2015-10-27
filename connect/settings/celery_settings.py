@@ -11,10 +11,16 @@ env = environ.Env(
 
     # Set the celery broker to the django ORM by default
     BROKER_URL=(str, 'django://'),
-    BROKER_POOL_LIMIT=(int, 10),
-    BROKER_HEARTBEAT=(int, 10),
+
+    # Some Celery defaults found at https://www.cloudamqp.com/docs/celery.html
+    BROKER_POOL_LIMIT=(int, 1),
+    BROKER_HEARTBEAT=(int, 30),
+    BROKER_CONNECTION_TIMEOUT=(int, 30),
+    CELERY_EVENT_QUEUE_EXPIRES=(int, 60),
     CELERY_ALWAYS_EAGER=(bool, True),
-    CELERY_TIMEZONE=(str, 'UTC')
+    CELERY_TIMEZONE=(str, 'UTC'),
+    CELERY_SEND_EVENTS=(bool, False),
+    CELERY_RESULT_BACKEND=(str, None)
 )
 
 
@@ -30,9 +36,14 @@ else:
 
 BROKER_POOL_LIMIT = env('BROKER_POOL_LIMIT')
 BROKER_HEARTBEAT = env('BROKER_HEARTBEAT')
+BROKER_CONNECTION_TIMEOUT = env('BROKER_CONNECTION_TIMEOUT')
 
+CELERY_SEND_EVENTS = env('CELERY_SEND_EVENTS')
+CELERY_EVENT_QUEUE_EXPIRES = env('CELERY_EVENT_QUEUE_EXPIRES')
 CELERY_ALWAYS_EAGER = env('DEBUG')
 
+# By default Connect does not consume results
+CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND')
 
 CELERYBEAT_SCHEDULE = {
     'send-daily-notifications': {
