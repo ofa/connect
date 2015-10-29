@@ -6,11 +6,11 @@
         Create an invite
 {% endblock page_title %}
 
-{% block form_content %}
-        	<form method="POST" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}class="form-horizontal">
-        	    {% include "common/horizontal_form_snippet.html" %}
-        	    <div class="form-actions">
-        	        <input type="submit" name="submit" value="Create" class="btn btn-primary"/>
-        	    </div>
-        	</form>
+{% block page_content %}
+            <form method="POST" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}class="form-horizontal">
+                {% include "common/horizontal_form_snippet.html" %}
+                <div class="form-actions">
+                    <input type="submit" name="submit" value="Create" class="btn btn-primary"/>
+                </div>
+            </form>
 {% endblock %}

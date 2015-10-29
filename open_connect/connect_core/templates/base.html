@@ -143,7 +143,7 @@
 {% endblock %}
 
 {% block js_default %}
-    
+
     {% if USE_MINIFY %}
         <script src="{% static 'js/base.min.js' %}?{% now "Ymd" %}"></script>
     {% else %}

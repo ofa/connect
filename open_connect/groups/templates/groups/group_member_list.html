@@ -43,7 +43,7 @@
         var imageUpload = '{% url "create_image" %}';
 </script>
 {% if USE_MINIFY %}
-    <script src="{{ STATIC_URL}}js/profile.min.js"></script>
+    <script src="{% static 'connect/js/profile.min.js' %}"></script>
     {% else %}
         <script type="text/javascript" src="{% static 'js/sections/profile.js' %}"></script>
     {% endif %}

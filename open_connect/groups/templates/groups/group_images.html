@@ -29,14 +29,14 @@
 <script type="text/javascript" src="https://www.dropbox.com/static/api/1/dropins.js" id="dropboxjs" data-app-key="nx53b6nt2ais248"></script>
 
 {% if USE_MINIFY %}
-    <script src="{{ STATIC_URL}}js/gallery.min.js"></script>
+    <script src="{% static 'connect/js/gallery.min.js' %}"></script>
 {% else %}
     {{ block.super }}
     <script type="text/javascript" src="{% static 'magnific-popup/dist/jquery.magnific-popup.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'isotope/jquery.isotope.min.js' %}"></script>
-    <script src="{{ STATIC_URL}}js/Isogroup.js"></script>
-    <script src="{{ STATIC_URL}}js/gallery.js"></script>
-    <script src="{{ STATIC_URL}}js/dropbox-saver.js"></script>
+    <script src="{% static 'js/modules/js/Isogroup.js' %}"></script>
+    <script src="{% static 'js/sections/gallery.js' %}"></script>
+    <script src="{% static 'js/modules/dropbox-saver.js' %}"></script>
 {% endif %}
 
 <script type="text/javascript">
