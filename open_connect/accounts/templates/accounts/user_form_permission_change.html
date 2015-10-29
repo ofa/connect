@@ -7,7 +7,12 @@
 {% endblock page_title %}
 
 {% block page_content %}
-            <form method="POST" class="form-horizontal">
+            <style type="text/css">
+             .permission-form select[multiple] {
+                min-height: 400px;
+             }
+            </style>
+            <form method="POST" class="form-horizontal permission-form">
                 {% include "common/horizontal_form_snippet.html" %}
                 <div class="form-actions">
                     <input type="submit" name="submit" value="Save" class="btn btn-primary"/>

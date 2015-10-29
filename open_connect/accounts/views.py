@@ -158,7 +158,6 @@ class UpdateUserPermissionView(CommonViewMixin, UpdateView):
     # Permissions that can be edited by this view, in the format
     # ('app_label', 'permission_codename')
     editable_permissions = (
-        ('accounts', 'can_impersonate'),
         ('accounts', 'add_invite'),
         ('accounts', 'can_unban'),
         ('accounts', 'can_ban'),
@@ -167,15 +166,12 @@ class UpdateUserPermissionView(CommonViewMixin, UpdateView):
         ('accounts', 'can_view_group_report'),
         ('accounts', 'can_moderate_all_messages'),
         ('accounts', 'can_initiate_direct_messages'),
-        ('accounts', 'can_modify_permissions'),
         ('media', 'can_promote_image'),
         ('media', 'can_access_admin_gallery'),
         ('media', 'can_access_admin_gallery'),
         ('groups', 'add_group'),
         ('groups', 'change_group'),
         ('groups', 'can_edit_any_group'),
-        ('groups', 'add_category'),
-        ('groups', 'change_category'),
         ('resources', 'add_resource'),
         ('resources', 'can_add_resource_anywhere')
     )

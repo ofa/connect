@@ -61,6 +61,11 @@ def connect_processor(request):
                 {'label': 'User Admin',
                  'link': reverse('admin:accounts_user_changelist')}
             )
+        if user.has_perm('groups.change_category') and user.is_staff:
+            admin_items.append(
+                {'label': 'Category Admin',
+                 'link': reverse('admin:groups_category_changelist')}
+            )
         if user.has_perm('accounts.can_view_user_report'):
             admin_items.append({
                 'label': 'User Report', 'link': reverse('users_report')
