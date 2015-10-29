@@ -17,6 +17,7 @@ from django.http import (
 from django.views.generic import (
     RedirectView, DetailView, ListView, FormView, UpdateView
 )
+from django.views.generic.detail import SingleObjectMixin
 from django.views.decorators.http import require_POST
 from pure_pagination import PaginationMixin
 
@@ -94,51 +95,57 @@ class UserDetailView(DetailView):
         return self.user
 
 
-class UserUpdateView(MultipleFormsView):
+class UserUpdateView(SingleObjectMixin, MultipleFormsView):
     """View for updating a user."""
     form_classes = OrderedDict({
         'user_form': UserForm,
         'image_form': UserImageForm
     })
+    context_object_name = 'user_editing'
     form_class = UserForm
+    model = User
+    slug_field = 'uuid'
+    slug_url_kwarg = 'user_uuid'
     template_name = 'accounts/user_form.html'
 
-    def get_context_data(self, **kwargs):
-        """Set the active nav item to the current object."""
-        context = super(UserUpdateView, self).get_context_data(**kwargs)
-        context['nav_active_item'] = self.request.user
-        context['title'] = self.request.user
-        context['user'] = self.request.user
-        return context
+    def dispatch(self, request, *args, **kwargs):
+        """Dispatch the UserUpdateView View"""
+        # pylint: disable=attribute-defined-outside-init
+        self.object = self.get_object()
+
+        if (self.object != request.user and
+                not request.user.has_perm('accounts.change_user')):
+            raise Http404
+        return super(UserUpdateView, self).dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self, form_class_name):
         """Get kwargs for the forms."""
         kwargs = super(UserUpdateView, self).get_form_kwargs(form_class_name)
         if form_class_name == 'user_form':
-            kwargs['instance'] = self.request.user
+            kwargs['instance'] = self.object
         elif form_class_name == 'image_form':
-            kwargs['instance'] = self.request.user.image
+            kwargs['instance'] = self.object.image
         return kwargs
 
     def get_forms(self, form_classes):
         """Get forms."""
         forms = super(UserUpdateView, self).get_forms(form_classes)
-        if not self.request.user.groups_moderating.exists():
+        if not self.object.groups_moderating.exists():
             del forms['user_form'].fields['receive_group_join_notifications']
         return forms
 
     def form_valid(self, forms, all_cleaned_data):
         """Process a valid form and redirect user."""
         # Force the current user to be bound to the form for security
-        forms['user_form'].instance = self.request.user
+        forms['user_form'].instance = self.object
         # Save the image
         image = None
         if forms['image_form'].cleaned_data['image']:
-            forms['image_form'].instance.user = self.request.user
+            forms['image_form'].instance.user = self.object
             image = forms['image_form'].save()
             forms['user_form'].instance.image = image
-        if not image and self.request.user.image:
-            self.request.user.image = None
+        if not image and self.object.image:
+            self.object.image = None
 
         forms['user_form'].save()
 
@@ -166,6 +173,7 @@ class UpdateUserPermissionView(CommonViewMixin, UpdateView):
         ('accounts', 'can_view_group_report'),
         ('accounts', 'can_moderate_all_messages'),
         ('accounts', 'can_initiate_direct_messages'),
+        ('accounts', 'change_user'),
         ('media', 'can_promote_image'),
         ('media', 'can_access_admin_gallery'),
         ('media', 'can_access_admin_gallery'),

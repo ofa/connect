@@ -41,7 +41,8 @@ class TestConnectProcessor(ConnectTestMixin, ConnectMessageTestCase):
         self.assertEqual(
             response['nav2_items'][1]['label'], 'Manage My Account')
         self.assertEqual(
-            response['nav2_items'][1]['link'], reverse('update_user'))
+            response['nav2_items'][1]['link'],
+            reverse('update_user', args=(user.uuid,)))
 
         self.assertEqual(
             response['nav2_items'][2]['label'], 'Logout')
@@ -95,10 +96,11 @@ class TestConnectProcessor(ConnectTestMixin, ConnectMessageTestCase):
             reverse('moderate_requests')
         )
 
+    @override_settings(BRAND_TITLE='The Test Brand')
     def test_brand_title(self):
         """Test brand title."""
         response = connect_processor(self.request)
-        self.assertEqual(response['brand_title'], 'Connect')
+        self.assertEqual(response['brand_title'], 'The Test Brand')
 
     def test_user_has_access_to_admin_gallery(self):
         """Test processor with access to the admin gallery."""

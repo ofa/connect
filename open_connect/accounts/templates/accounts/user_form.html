@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block bodyclass %}profile-update{% endblock %}
-{% block title %}Update your profile{% endblock %}
+{% block title %}Update {{ user_editing }}{% endblock %}
+{% block page_title %}Update {{ user_editing }}{% endblock page_title %}
 
 {% block page_content %}
         <form method="POST" enctype="multipart/form-data" class="form-horizontal">

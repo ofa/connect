@@ -24,7 +24,7 @@ def connect_processor(request):
             {'label': 'My Profile',
              'link': reverse('user_profile')},
             {'label': 'Manage My Account',
-             'link': reverse('update_user')},
+             'link': reverse('update_user', args=(user.uuid,))},
             {'label': 'Logout', 'link': reverse('logout')},
         ]
 
@@ -55,11 +55,6 @@ def connect_processor(request):
         if user.has_perm('accounts.add_invite'):
             admin_items.append(
                 {'label': 'Invites', 'link': reverse('invites')}
-            )
-        if user.has_perm('accounts.change_user'):
-            admin_items.append(
-                {'label': 'User Admin',
-                 'link': reverse('admin:accounts_user_changelist')}
             )
         if user.has_perm('groups.change_category') and user.is_staff:
             admin_items.append(

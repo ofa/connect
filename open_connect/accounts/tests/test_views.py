@@ -245,16 +245,39 @@ class UserUpdateViewTest(ConnectTestMixin, TestCase):
         self.user = self.create_user(password='test')
         self.client.login(username=self.user.username, password='test')
 
-    def test_authenticated_user(self):
-        """Test that an authenticated user can access the update view."""
-        response = self.client.get(reverse('update_user'))
-        self.assertEqual(response.context_data['user'], self.user)
+    def test_authenticated_user_own_profile(self):
+        """Test that an authenticated user can access their own update view."""
+        response = self.client.get(
+            reverse('update_user', args=(self.user.uuid,)))
+        self.assertEqual(response.context_data['object'], self.user)
+
+    def test_admin_access_view(self):
+        """
+        Test that admins with the `accounts.change_user` permission can view
+        """
+        admin_user = self.create_user(password='admintest')
+        admin_client = Client()
+        admin_client.login(username=admin_user.username, password='admintest')
+
+        unprivlidged_result = admin_client.get(
+            reverse('update_user', args=(self.user.uuid,)))
+        self.assertEqual(unprivlidged_result.status_code, 404)
+
+        change_user_permission = Permission.objects.get(
+            content_type__app_label='accounts', codename='change_user')
+
+        admin_user.user_permissions.add(change_user_permission)
+
+        privlidged_result = admin_client.get(
+            reverse('update_user', args=(self.user.uuid,)))
+        self.assertEqual(privlidged_result.status_code, 200)
+        self.assertContains(privlidged_result, self.user)
 
     @override_settings(LOGIN_URL=reverse('login'))
     def test_update_anonymous_user(self):
         """Unauthenticated users should be redirected to the login page."""
         client = Client()
-        update_url = reverse('update_user')
+        update_url = reverse('update_user', args=(self.user.uuid,))
         response = client.get(update_url)
         self.assertRedirects(
             response,
@@ -269,7 +292,8 @@ class UserUpdateViewTest(ConnectTestMixin, TestCase):
             'group_notification_period': 'none',
             'email': self.user.email
         }
-        response = self.client.post(reverse('update_user'), data)
+        response = self.client.post(
+            reverse('update_user', args=(self.user.uuid,)), data)
         self.assertRedirects(
             response,
             reverse('user_profile'),
@@ -290,7 +314,8 @@ class UserUpdateViewTest(ConnectTestMixin, TestCase):
             'group_notification_period': 'none',
             'email': self.user.email
         }
-        response = self.client.post(reverse('update_user'), data)
+        response = self.client.post(
+            reverse('update_user', args=(self.user.uuid,)), data)
         self.assertRedirects(
             response,
             reverse('user_profile'),
@@ -301,7 +326,8 @@ class UserUpdateViewTest(ConnectTestMixin, TestCase):
 
     def test_group_owner_has_receive_group_join_notifications_field(self):
         """A user who owns any groups should see the field."""
-        response = self.client.get(reverse('update_user'))
+        response = self.client.get(
+            reverse('update_user', args=(self.user.uuid,)))
         self.assertNotIn(
             'receive_group_join_notifications',
             response.context['user_form'].fields.keys()
@@ -314,7 +340,8 @@ class UserUpdateViewTest(ConnectTestMixin, TestCase):
         group.owners.add(user)
         client = Client()
         client.login(username=user.email, password='moo')
-        response = client.get(reverse('update_user'))
+        response = client.get(
+            reverse('update_user', args=(user.uuid,)))
         self.assertIn(
             'receive_group_join_notifications',
             response.context['user_form'].fields.keys()

@@ -10,7 +10,7 @@ from open_connect.connectmessages.views import DirectMessageCreateView
 
 urlpatterns = patterns(
     'accounts.views',
-    url(r'^update/$',
+    url(r'^(?P<user_uuid>[\d\w-]+)/update/$',
         views.UserUpdateView.as_view(),
         name='update_user'),
     url(r'^(?P<user_uuid>[\d\w-]+)/permissions/$',
