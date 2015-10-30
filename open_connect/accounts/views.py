@@ -14,6 +14,7 @@ from django.http import (
     Http404,
     HttpResponse
 )
+from django.shortcuts import get_object_or_404
 from django.views.generic import (
     RedirectView, DetailView, ListView, FormView, UpdateView
 )
@@ -48,7 +49,15 @@ from open_connect.connect_core.utils.third_party.cached_property import (
 )
 
 
-class UserDetailView(DetailView):
+class SuppressSystemUserMixin(object):
+    """The system user should never be listed in a view"""
+    def get_queryset(self):
+        """Get a User queryset that excludes the 'System User'"""
+        return super(SuppressSystemUserMixin, self).get_queryset().exclude(
+            email=settings.SYSTEM_USER_EMAIL)
+
+
+class UserDetailView(SuppressSystemUserMixin, DetailView):
     """View for displaying a single user."""
     model = User
     context_object_name = 'account'
@@ -58,8 +67,9 @@ class UserDetailView(DetailView):
         """Cache and return the user."""
         if not hasattr(self, '_user'):
             # pylint: disable=attribute-defined-outside-init
-            self._user = self.model.objects.select_related(
-                'image').get(uuid=self.kwargs['user_uuid'])
+            self._user = get_object_or_404(
+                self.get_queryset().select_related('image'),
+                uuid=self.kwargs['user_uuid'])
         return self._user
 
     def show_banned_warning(self):
@@ -88,6 +98,7 @@ class UserDetailView(DetailView):
         return context
 
     def get_object(self, queryset=None):
+        """Get the object for the user"""
         if not self.request.user.can_view_profile(self.user):
             raise Http404
         if self.show_banned_warning():
@@ -95,7 +106,8 @@ class UserDetailView(DetailView):
         return self.user
 
 
-class UserUpdateView(SingleObjectMixin, MultipleFormsView):
+class UserUpdateView(
+        SuppressSystemUserMixin, SingleObjectMixin, MultipleFormsView):
     """View for updating a user."""
     form_classes = OrderedDict({
         'user_form': UserForm,
@@ -152,7 +164,8 @@ class UserUpdateView(SingleObjectMixin, MultipleFormsView):
         return HttpResponseRedirect(reverse('user_profile'))
 
 
-class UpdateUserPermissionView(CommonViewMixin, UpdateView):
+class UpdateUserPermissionView(
+        SuppressSystemUserMixin, CommonViewMixin, UpdateView):
     """View for updating a user's application permissions."""
     model = User
     form_class = UserPermissionForm

@@ -43,6 +43,14 @@ class UserDetailViewTest(ConnectTestMixin, TestCase):
         view.kwargs = {'user_uuid': user.uuid}
         self.assertEqual(view.user, user)
 
+    def test_non_existant_404(self):
+        """Test that a UUID that does not exist causes a 404"""
+        view = views.UserDetailView()
+        view.kwargs = {'user_uuid': 'does-not-exist'}
+        with self.assertRaises(Http404):
+            # pylint: disable=W0104
+            view.user
+
     def test_direct_message_regular_user(self):
         """
         Test that a regular user cannot send a direct message to regular users

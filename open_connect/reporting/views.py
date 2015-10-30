@@ -6,6 +6,7 @@ from django.views.generic import ListView
 from pure_pagination import PaginationMixin
 from tablib import Dataset
 
+from open_connect.accounts.views import SuppressSystemUserMixin
 from open_connect.groups.models import Group
 from open_connect.groups.utils import (
     groups_string, groups_tags_string, groups_categories_string
@@ -22,8 +23,8 @@ User = get_user_model()
 
 
 class UserReportListView(
-        PaginationMixin, PaginateByMixin, DateTimeRangeListMixin,
-        SortableListMixin, CommonViewMixin, ListView):
+        SuppressSystemUserMixin, PaginationMixin, PaginateByMixin,
+        DateTimeRangeListMixin, SortableListMixin, CommonViewMixin, ListView):
     """View for reporting on users."""
     model = User
     template_name = 'userreport_list.html'
