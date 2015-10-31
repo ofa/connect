@@ -55,7 +55,7 @@ class UserReportListViewTest(ConnectMessageTestCase):
         # Make sure everything looks right
         user = queryset.get(pk=user.pk)
         self.assertEqual(user.flags_received, 1)
-        self.assertEqual(user.message_count, 2)
+        self.assertEqual(user.messages_sent, 2)
         self.assertEqual(user.visit_count, 1)
 
     def test_export(self):
@@ -72,7 +72,7 @@ class UserReportListViewTest(ConnectMessageTestCase):
         data = import_set(response.content)
         # There should be at least the header row and one user row
         self.assertGreater(data.height, 2)
-        self.assertEqual(data.width, 16)
+        self.assertEqual(data.width, 14)
 
     def test_non_export(self):
         """If export is not in query string, response should be normal."""

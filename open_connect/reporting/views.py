@@ -1,4 +1,5 @@
 """Views for generating reports."""
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Sum, Q
 from django.http import HttpResponse
@@ -30,9 +31,9 @@ class UserReportListView(
     template_name = 'userreport_list.html'
     valid_order_by = [
         'last_name', 'email', 'phone', 'zip', 'state', 'date_joined',
-        'flags_received', 'new_thread_count', 'message_count', 'reply_count',
+        'last_login', 'flags_received', 'total_groups_joined', 'messages_sent',
         'is_staff', 'is_superuser', 'is_banned', 'phone', 'zip_code', 'state',
-        'visit_count', 'last_login'
+        'visit_count', 'unsubscribed'
     ]
     default_order_by = 'date_joined'
     date_range_field = 'date_joined'
@@ -43,11 +44,32 @@ class UserReportListView(
 
     def get_queryset(self):
         """Update the queryset with some annotations."""
-        queryset = super(UserReportListView, self).get_queryset().annotate(
-            flags_received=Count('message__flags', distinct=True),
-            message_count=Count('message', distinct=True),
-            visit_count=Count('visit', distinct=True)
-        )
+        # Using annotate() on this query will result in a GROUP_BY of all
+        # the columns returned. This causes a huge hit on performance, so we
+        # need to fall back to the Django ORM's `extra()` functionality.
+        queryset = super(UserReportListView, self).get_queryset().extra(
+            select={
+                'visit_count': "SELECT COUNT(*) FROM accounts_visit visit "
+                               "WHERE visit.user_id = accounts_user.id",
+
+                'messages_sent': "SELECT COUNT(*) FROM "
+                                 "connectmessages_message messages WHERE "
+                                 "messages.sender_id = accounts_user.id",
+
+                'total_groups_joined': "SELECT COUNT(*) FROM "
+                                       "notifications_subscription "
+                                       "subscriptions WHERE "
+                                       "subscriptions.user_id = "
+                                       "accounts_user.id",
+
+                'flags_received': "SELECT COUNT(message_flags.id) FROM "
+                                  "connectmessages_message messages LEFT JOIN "
+                                  "connectmessages_message_flags "
+                                  "message_flags ON message_flags.message_id "
+                                  "= messages.id WHERE messages.sender_id = "
+                                  "accounts_user.id"
+            }
+        ).defer('biography').defer('image')
 
         search_name = self.request.GET.get('search_name', False)
         if search_name:
@@ -68,20 +90,18 @@ class UserReportListView(
         if 'export' in self.request.GET:
             data = Dataset()
             data.headers = (
-                'Name', 'Email', 'Phone', 'Zip', 'State', 'Joined',
-                'Last login', 'Groups', 'Group tags', 'Group issues',
-                'Flags received', 'Messages sent', 'Staff?', 'Superuser?',
-                'Banned?', 'Visits'
+                u'Name', u'Email', u'Phone', u'Zip', u'State', u'Joined',
+                u'Last login', u'Total Groups Joined',
+                u'Flags received', u'Messages sent', u'Staff?', u'Superuser?',
+                u'Banned?', u'Visits'
             )
 
             for user in self.get_queryset():
                 data.append((
                     user, user.email, user.phone, user.zip_code, user.state,
                     user.date_joined, user.last_login,
-                    groups_string(user.groups_joined),
-                    groups_tags_string(user.groups_joined),
-                    groups_categories_string(user.groups_joined),
-                    user.flags_received, user.message_count,
+                    user.total_groups_joined,
+                    user.flags_received, user.messages_sent,
                     user.is_staff, user.is_superuser, user.is_banned,
                     user.visit_count
                 ))

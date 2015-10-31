@@ -43,15 +43,14 @@
                 <th><a href="{{ sort_strings.state }}">State</a></th>
                 <th><a href="{{ sort_strings.date_joined }}">Joined</a></th>
                 <th><a href="{{ sort_strings.last_login }}">Last Login</a></th>
-                <th>Groups</th>
-                <th>Group tags</th>
-                <th>Group categories</th>
+                <th><a href="{{ sort_strings.total_groups_joined }}">Groups Joined</a></th>
                 <th><a href="{{ sort_strings.flags_received }}">Flags received</a></th>
-                <th><a href="{{ sort_strings.message_count }}">Messages sent</a></th>
-                <th><a href="{{ sort_strings.is_staff }}">Staff?</a></th>
-                <th><a href="{{ sort_strings.is_superuser }}">Superuser?</a></th>
-                <th><a href="{{ sort_strings.is_banned }}">Banned?</a></th>
+                <th><a href="{{ sort_strings.messages_sent }}">Messages sent</a></th>
                 <th><a href="{{ sort_strings.visit_count }}">Visits</a></th>
+                <th><a href="{{ sort_strings.is_banned }}">Banned</a></th>
+                <th><a href="{{ sort_strings.unsubscribed }}">Unsubscribed</a></th>
+                <th><a href="{{ sort_strings.is_staff }}">Staff</a></th>
+                <th><a href="{{ sort_strings.is_superuser }}">Superuser</a></th>
             </tr>
             </thead>
             <tbody>
@@ -65,33 +64,25 @@
                     <td>{{ user.state }}</td>
                     <td>{{ user.date_joined }}</td>
                     <td>{{ user.last_login }}</td>
-                    <td>
-                        {% for group in groups_joined %}
-                            <a href="{% url "group_details" group.pk %}">{{ group }}</a>
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {% for group in groups_joined %}
-                            {% for tag in group.tagged_items.all %}
-                                {{ tag.tag }}{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        {% endfor %}
-                    </td>
-                    <td>
-                        {{ user.group_categories|join:", " }}
-                    </td>
+                    <td>{{ user.total_groups_joined }}</td>
                     <td>{{ user.flags_received }}</td>
-                    <td>{{ user.message_count }}</td>
+                    <td>{{ user.messages_sent }}</td>
+                    <td>{{ user.visit_count }}</td>
+
+                    <td>
+                        {% if user.is_banned %}<i class="{{icon_prefix}}ok-sign"></i>{% else %}&nbsp;{% endif %}
+                    </td>
+                    <td>
+                        {% if user.unsubscribed %}<i class="{{icon_prefix}}ok-sign"></i>{% else %}&nbsp;{% endif %}
+                    </td>
                     <td>
                         {% if user.is_staff %}<i class="{{icon_prefix}}ok-sign"></i>{% else %}&nbsp;{% endif %}
                     </td>
                     <td>
                         {% if user.is_superuser %}<i class="{{icon_prefix}}ok-sign"></i>{% else %}&nbsp;{% endif %}
                     </td>
-                    <td>
-                        {% if user.is_banned %}<i class="{{icon_prefix}}ok-sign"></i>{% else %}&nbsp;{% endif %}
-                    </td>
-                    <td>{{ user.visit_count }}</td>
+
+
                 </tr>
                 {% endwith %}
             {% endfor %}
