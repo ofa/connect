@@ -292,7 +292,9 @@ class Group(TimestampModel):
 
     def links(self):
         """Returns popular links related to this group."""
-        return ShortenedURL.popular.filter(message__thread__group=self)
+        return ShortenedURL.popular.filter(
+            message__thread__group=self,
+            message__status='approved')
 
 
 def group_owners_changed(**kwargs):
