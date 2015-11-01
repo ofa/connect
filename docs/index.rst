@@ -1,4 +1,5 @@
-Connect Documentation
+=====================
+Connect documentation
 =====================
 
 `Connect`_ is a Python/Django-based communication platform built in-house by `Organizing for Action`_
@@ -12,17 +13,15 @@ code can be found at the official `Github repository`_ for third parties to
 use and contribute to. For more information about contributing view the
 :doc:`/contribution/index`
 
-*****************
-Table of contents
-*****************
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     /user/index
     /dev/index
     /contribution/index
-
+    /contribution/email
+    /license
 
 .. _Connect: https://connect.barackobama.com/
 .. _Organizing for Action: https://www.barackobama.com/
