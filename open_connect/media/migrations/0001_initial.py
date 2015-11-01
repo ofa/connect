@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
-                ('image', models.ImageField(storage=open_connect.connect_core.utils.storages.AttachmentStorage(), width_field=b'image_width', height_field=b'image_height', upload_to=b'attachments/images/', max_length=250, blank=True)),
+                ('image', models.ImageField(width_field=b'image_width', height_field=b'image_height', upload_to=b'attachments/images/', max_length=250, blank=True)),
                 ('display_image', models.ImageField(storage=open_connect.connect_core.utils.storages.HighValueStorage(), max_length=250, upload_to=b'attachments/images/', blank=True)),
                 ('thumbnail', models.ImageField(storage=open_connect.connect_core.utils.storages.HighValueStorage(), max_length=250, upload_to=b'attachments/thumbnails/images/', blank=True)),
                 ('exif', jsonfield.fields.JSONField(null=True, blank=True)),

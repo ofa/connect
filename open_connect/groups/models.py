@@ -152,7 +152,7 @@ class Group(TimestampModel):
         default=False,
         verbose_name=u'This is an official group',
         help_text='Official groups are managed by staff and '
-                  ' appear first in search results.',
+                  'appear first in search results.',
         db_index=True
     )
     member_list_published = models.BooleanField(
