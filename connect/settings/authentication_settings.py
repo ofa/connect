@@ -1,5 +1,5 @@
 """Settings related to authentication"""
-# pylint: disable=invalid-name
+# pylint: disable=invalid-name,line-too-long
 
 from django.utils.module_loading import import_by_path
 import environ
@@ -33,9 +33,26 @@ LOGIN_EXEMPT_URLS = [
     r'^favicon\.ico$'
 ]
 
+
+if env('DEFAULT_AUTH_BACKEND') == 'connect_extras.auth_backends.bsdtools.BSDToolsOAuth2':
+    # If using the BSDTools backend, you need to enter your 'instance', aka the
+    # secure (https) raw domain that BSD has assigned you. It's usually
+    # `donate.yourdomain.com` or `my.yourdomain.com`
+    SOCIAL_AUTH_BSDTOOLS_INSTANCE = env('BSDTOOLS_INSTANCE')
+
+    # In order to use the BSDTools backend you need an OAuth2 'APP ID' and
+    # 'SHARED SECRET'. This is assigned after you create a new Oauth2
+    # application.
+    SOCIAL_AUTH_BSDTOOLS_KEY = env('BSDTOOLS_KEY')
+    SOCIAL_AUTH_BSDTOOLS_SECRET = env('BSDTOOLS_SECRET')
+
+
 # If using the default NGPVAN ActionID backend and no POST_LOGOUT_PAGE is set
 if env('POST_LOGOUT_PAGE') == '/' and env('DEFAULT_AUTH_BACKEND') == 'social.backends.ngpvan.ActionIDOpenID':
     POST_LOGOUT_PAGE = 'https://accounts.ngpvan.com/Account/LogOut'
+elif env('POST_LOGOUT_PAGE') == '/' and env('DEFAULT_AUTH_BACKEND') == 'connect_extras.auth_backends.bsdtools.BSDToolsOAuth2':
+    POST_LOGOUT_PAGE = 'https://{instance}/page/user/logout'.format(
+        instance=env('BSDTOOLS_INSTANCE'))
 else:
     POST_LOGOUT_PAGE = env('POST_LOGOUT_PAGE')
 

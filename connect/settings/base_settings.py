@@ -274,10 +274,10 @@ USE_TZ = True
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 NOSE_ARGS = [
-    #'--with-xcoverage',
+    '--with-xcoverage',
     '--with-xunit',
     # pylint: disable=line-too-long
-    #'--cover-package=open_connect.accounts,open_connect.context_processors,open_connect.groups,open_connect.images,open_connect.middleware,open_connect.notifications,open_connect.connectmessages,open_connect.connect_core,open_connect.media,open_connect.moderation,open_connect.mailer',
+    '--cover-package=open_connect.accounts,open_connect.context_processors,open_connect.groups,open_connect.middleware,open_connect.notifications,open_connect.connectmessages,open_connect.connect_core,open_connect.media,open_connect.moderation,open_connect.mailer,connect_extras',
     '--nologcapture'
 ]
 
