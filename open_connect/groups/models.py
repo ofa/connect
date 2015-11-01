@@ -1,7 +1,7 @@
 """Group models."""
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group as AuthGroup
+from django.contrib.auth.models import Group as AuthGroup, Permission
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
@@ -312,12 +312,13 @@ def group_owners_changed(**kwargs):
         for user in users:
             cache.delete(user.cache_key + 'owned_groups')
 
-    # Make sure group owners have appropriate permissions
+    # Make sure group owners can direct message all other users
     if kwargs['action'] == 'post_add':
-        group, _ = AuthGroup.objects.get_or_create(
-            name='Volunteer / fellows permissions')
+        direct_message_permission = Permission.objects.get(
+            codename='can_initiate_direct_messages',
+            content_type__app_label='accounts')
         for user in users:
-            user.groups.add(group)
+            user.user_permissions.add(direct_message_permission)
 
 
 m2m_changed.connect(group_owners_changed, Group.owners.through)

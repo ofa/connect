@@ -338,18 +338,12 @@ class GroupTest(ConnectTestMixin, TestCase):
 
 class GroupOwnersChangedReceiverTest(ConnectTestMixin, TestCase):
     """Tests for group_owners_changed reciever."""
-    def setUp(self):
-        """Common things."""
-        AuthGroup.objects.create(name='Volunteer / fellows permissions')
-
     def test_user_added_gets_permissions(self):
         """When a user is added as owner, they should get new permissions."""
         group = mommy.make('groups.Group')
         user = self.create_user()
         group.owners.add(user)
-        self.assertTrue(
-            user.groups.filter(name='Volunteer / fellows permissions').exists()
-        )
+        self.assertTrue(user.has_perm('accounts.can_initiate_direct_messages'))
 
     def test_user_added_already_in_group(self):
         """If a user already has owner permissions, shouldn't have any error."""
@@ -357,10 +351,7 @@ class GroupOwnersChangedReceiverTest(ConnectTestMixin, TestCase):
         user = self.create_user()
         group.owners.add(user)
         group.owners.add(user)
-        self.assertEqual(
-            user.groups.filter(name='Volunteer / fellows permissions').count(),
-            1
-        )
+        self.assertTrue(user.has_perm('accounts.can_initiate_direct_messages'))
 
     @patch('open_connect.groups.models.cache')
     def test_adding_clears_cache(self, mock):
