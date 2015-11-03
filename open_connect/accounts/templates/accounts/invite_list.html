@@ -24,7 +24,6 @@
         <thead>
         <tr>
             <th><a href="{{ sort_strings.email }}">Email</a></th>
-            <th><a href="{{ sort_strings.code }}">Code</a></th>
             <th><a href="{{ sort_strings.is_staff }}">Staff?</a></th>
             <th><a href="{{ sort_strings.is_superuser }}">Superuser?</a></th>
             <th>Groups</th>
@@ -38,7 +37,6 @@
         {% for invite in invites %}
             <tr>
                 <td>{{ invite.email|urlize }}</td>
-                <td>{{ invite.code }}</td>
                 <td><i class="{{icon_prefix}}{% if invite.is_staff %}ok-sign{% else %}minus-sign{% endif %}"></i></td>
                 <td><i class="{{icon_prefix}}{% if invite.is_superuser %}ok-sign{% else %}minus-sign{% endif %}"></i></td>
                 <td>{% for group in invite.groups.all %}<a href="{% url "group_details" group.pk %}">{{ group }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>

@@ -314,7 +314,7 @@ class InviteListView(PaginationMixin, PaginateByMixin, SortableListMixin,
     nav_active_item = 'Admin'
     dd_active_item = 'Invites'
     valid_order_by = [
-        'email', 'code', 'is_staff', 'is_superuser', 'created_at', 'created_by',
+        'email', 'is_staff', 'is_superuser', 'created_at', 'created_by',
         'notified', 'consumed_at'
     ]
     default_order_by = 'created_at'
