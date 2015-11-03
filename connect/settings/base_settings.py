@@ -38,6 +38,11 @@ env = environ.Env(
     EMAIL_SSL_KEYFILE=(str, None),
     EMAIL_TIMEOUT=(int, None),
 
+    CUCUMBER_RATE_LIMIT=(int, 1),
+
+    BOUNCY_AUTO_SUBSCRIBE=(bool, False),
+    BOUNCY_TOPIC_ARN=(list, None),
+
     AWS_ACCESS_KEY_ID=(str, ''),
     AWS_SECRET_ACCESS_KEY=(str, ''),
 )
@@ -116,8 +121,6 @@ INSTALLED_APPS = (
     'django_nose',
     'clear_cache',
 
-    'django_bouncy',
-
     'open_connect.connect_core',
 
     'open_connect.accounts',
@@ -137,8 +140,15 @@ INSTALLED_APPS = (
     'kombu.transport.django',
     'pure_pagination',
     'seacucumber',
+    'django_bouncy',
+
     'social.apps.django_app.default',
     'taggit',
+
+    'debug_toolbar',
+
+    # Add
+    #'connect_extras',
 
     # It should be possible to comment this out and have tests pass
     # and correctly display a non-branded connect.
@@ -203,7 +213,7 @@ EMAIL_BACKEND = 'open_connect.mailer.backend.ConnectMailerBackend'
 # prevent accidents.
 # Some useful backends would be 'django.core.mail.backends.smtp.EmailBackend'
 # for SMTP and 'seacucumber.backend.SESBackend' for Amazon's Simple Email
-# Service
+# Service. `seacucumber` is installed by default.
 if env('EMAIL_BACKEND') == 'django.core.mail.backends.smtp.EmailBackend':
     # For SMTP we'll look for the relevant host information in the environment
     EMAIL_HOST = env('EMAIL_HOST')
@@ -217,6 +227,33 @@ if env('EMAIL_BACKEND') == 'django.core.mail.backends.smtp.EmailBackend':
     EMAIL_TIMEOUT = env('EMAIL_TIMEOUT')
 else:
     ORIGINAL_EMAIL_BACKEND = env('EMAIL_BACKEND')
+
+
+# If you are using seacucumber you'll want to have the ability to set the rate
+# limit that your SES account is capped at. We can do that with the
+# `CUCUMBER_RATE_LIMIT` environment var. By default it's 1 email per second.
+# You can get your rate limit by running `python manage.py ses_usage`
+
+CUCUMBER_RATE_LIMIT = env('CUCUMBER_RATE_LIMIT')
+
+
+###
+# Django-bouncy settings
+# We've provided the library `django_bouncy` for you to handle incoming bounces
+# and complaints from Amazon Simple Email Service. You can find out more info
+# about the `Django Bouncy` library at https://github.com/ofa/django-bouncy
+
+
+# It's wise to specify the specific `Amazon Simple Notification Service` ARN
+# for your bounce and complaint notifications
+BOUNCY_TOPIC_ARN = env('BOUNCY_TOPIC_ARN')
+
+# When you setup bouncy for the first time, you need to set your configuration
+# variable `BOUNCY_AUTO_SUBSCRIBE` to `True`.
+# AFTER YOU HAVE SUCCESSFULLY SUBSCRIBED YOUR SNS ENDPOINT YOU MUST EITHER
+# DISABLE AUTO-SUBSCRIPTION BY REMOVING THIS CONFIGURATION VARIABLE OR AT THE
+# VERY LEAST HARD-CODE YOUR SNS TOPIC ARN.
+BOUNCY_AUTO_SUBSCRIBE = env('BOUNCY_AUTO_SUBSCRIBE')
 
 
 ####
