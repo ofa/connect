@@ -9,6 +9,7 @@ addons:
   apt:
     packages:
     - nodejs
+    - gifsicle
 env:
   DATABASE_URL=pgsql://postgres:@localhost:5432/connect
   CACHE_URL=dummycache://
