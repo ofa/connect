@@ -1,0 +1,33 @@
+language: python
+# Test against 2.7
+python:
+  - "2.7"
+cache: pip
+services:
+  - postgresql
+addons:
+  apt:
+    packages:
+    - nodejs
+env:
+  DATABASE_URL=pgsql://postgres:@localhost:5432/connect
+  CACHE_URL=dummycache://
+  SECRET_KEY=demo_secret_key
+  EMAIL_SECRET_KEY=demo_email_secret_key
+  CELERY_ALWAYS_EAGER=True
+  TZ=US/Central
+before_install:
+# Install command-line node packages before installing package apps
+   - npm install -g grunt-cli
+   - npm install -g bower
+install:
+  - npm install
+  - bower install
+  - pip install -r common-requirements.txt
+# command to run tests
+script:
+  - python manage.py test
+  - grunt jasmine
+# turn off email notifications
+notifications:
+  email: false
