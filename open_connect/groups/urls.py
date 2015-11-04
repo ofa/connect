@@ -2,7 +2,6 @@
 # pylint: disable=invalid-name,no-value-for-parameter
 from django.contrib.auth.decorators import permission_required
 from django.conf.urls import patterns, url
-from django.views.generic import TemplateView
 
 from open_connect.groups import views
 

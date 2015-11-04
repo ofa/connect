@@ -4,7 +4,6 @@
 from autocomplete_light import MultipleChoiceWidget, ModelForm
 from autocomplete_light.contrib.taggit_field import TaggitField, TaggitWidget
 from django import forms
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group as AuthGroup
 from django.core.exceptions import ValidationError

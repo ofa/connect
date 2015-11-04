@@ -292,10 +292,10 @@ class SendSystemMessageTest(TestCase):
         # user here if it doesn't exist
         User.objects.get_or_create(
             email='systemuser-email@connect.local', defaults={
-            'username': 'systemuser-email@connect.local',
-            'is_active': True,
-            'is_superuser': True
-        })
+                'username': 'systemuser-email@connect.local',
+                'is_active': True,
+                'is_superuser': True
+            })
 
         self.subject = 'This is a subject'
         self.message = 'This is a message'

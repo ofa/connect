@@ -2,7 +2,7 @@
 # pylint: disable=no-self-use
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
-from django.test import TestCase, modify_settings
+from django.test import TestCase
 from django.utils.timezone import now
 from model_mommy import mommy
 

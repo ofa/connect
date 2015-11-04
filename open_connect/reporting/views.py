@@ -1,5 +1,4 @@
 """Views for generating reports."""
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Sum, Q
 from django.http import HttpResponse
@@ -9,9 +8,7 @@ from tablib import Dataset
 
 from open_connect.accounts.views import SuppressSystemUserMixin
 from open_connect.groups.models import Group
-from open_connect.groups.utils import (
-    groups_string, groups_tags_string, groups_categories_string
-)
+from open_connect.groups.utils import groups_tags_string
 from open_connect.connect_core.utils.mixins import (
     SortableListMixin,
     DateTimeRangeListMixin,
@@ -20,14 +17,11 @@ from open_connect.connect_core.utils.mixins import (
 from open_connect.connect_core.utils.views import CommonViewMixin
 
 
-User = get_user_model()
-
-
 class UserReportListView(
         SuppressSystemUserMixin, PaginationMixin, PaginateByMixin,
         DateTimeRangeListMixin, SortableListMixin, CommonViewMixin, ListView):
     """View for reporting on users."""
-    model = User
+    model = get_user_model()
     template_name = 'userreport_list.html'
     valid_order_by = [
         'last_name', 'email', 'phone', 'zip', 'state', 'date_joined',
