@@ -1,0 +1,17 @@
+{
+  "name": "PRIVATE-CONNECT",
+  "version": "0.3.3",
+  "homepage": "https://github.com/ofa/reagan",
+
+  "description": "Your Org's branded Connect instance.",
+
+  "dependencies": {
+    "intro.js": ""
+  },
+
+  "private": true,
+  "resolutions": {
+    "bootstrap": "3.3.5",
+    "jasny-bootstrap": "3.1.3"
+  }
+}

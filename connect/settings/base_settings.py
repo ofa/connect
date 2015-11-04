@@ -152,7 +152,7 @@ INSTALLED_APPS = (
 
     # It should be possible to comment this out and have tests pass
     # and correctly display a non-branded connect.
-    #'org_specific_connect',
+    'private_connect',
 
 )
 
