@@ -2,7 +2,9 @@ language: python
 # Test against 2.7
 python:
   - "2.7"
-cache: pip
+cache:
+  directories:
+    - $HOME/.cache/pip
 services:
   - postgresql
 addons:
@@ -11,6 +13,7 @@ addons:
     - nodejs
     - gifsicle
 env:
+  PIP_DOWNLOAD_CACHE=$HOME/.cache/pip
   DATABASE_URL=pgsql://postgres:@localhost:5432/connect
   CACHE_URL=dummycache://
   SECRET_KEY=demo_secret_key
