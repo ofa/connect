@@ -94,9 +94,7 @@ except ImportError:
 
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-    }
+    'default': default_cache,
 }
 
 CACHE_MIDDLEWARE_ALIAS = env('CACHE_MIDDLEWARE_ALIAS')
