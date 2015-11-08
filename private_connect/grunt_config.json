@@ -3,7 +3,7 @@
     "_private": "./private_connect/",
     "_dist": "<%= _ofa %>static/connect/",
     "_bower": "./bower_components/",
-    "_ofahogan": "<%= _private %>assets/hogan/",
+    "_privatehogan": "<%= _private %>assets/hogan/",
     "_hogan": "<%= _assets %>hogan",
     "_less": "<%= _assets %>less/",
     "_privateless": "<%= _private %>assets/less/",
