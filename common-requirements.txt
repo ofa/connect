@@ -4,7 +4,7 @@
 # Due to issues with some packages compiling on dev machines we break out
 # requirements that are needed on Heroku (requirements.txt) and on dev machines
 # (dev-requirements.txt)
-Django==1.8.6
+Django==1.8.5
 psycopg2==2.6
 
 # Environment Manager
