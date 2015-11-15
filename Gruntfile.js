@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
+	require('dotenv').load();
     var path = require("path");
-    var target = grunt.option("target") || "open_connect/connect_core";
+    var target = grunt.option("target") || process.env.CONNECT_APP || "open_connect/connect_core";
     var dataFile = grunt.file.readJSON("./" + target + "/grunt_config.json");
 
     require("load-grunt-config")(grunt, {
