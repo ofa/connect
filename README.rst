@@ -10,18 +10,17 @@ Connect is available under a MIT license for third parties to use and contribute
 .. _Organizing for Action: https://www.barackobama.com/
 .. _Github repository: https://www.github.com/ofa/connect
 
-===
+=================
 Client-side
-===
+=================
 
 Contribute to Connect’s core client-side code
--------- 
+------------------------------------------------ 
 
 1) Install the needed dependencies by running, from the root directory:
-```
-npm i
-bower i
-```
+
+`npm i`
+`bower i`
 
 Dev dependencies for Connect are managed by NPM, and front-end dependencies are managed by bower. These dependencies are required before compilation.
 
@@ -39,15 +38,14 @@ A `watch` task is provided in case you would like files to compile while you wor
 
 
 Customize the client-side assets for your own version of Connect, i.e. "skinning" Connect
--------
+-----------------------------------------------------------------------------------------------------
 
 The easiest way to give Connect a look-and-feel that matches your organization's brand while maintaining the ability to receive updates is to skin it as follows:
 
 1) Install the needed dependencies by running, from the root directory:
-```
-npm i
-bower i
-```
+
+`npm i`
+`bower i`
 
 Dev dependencies for Connect are managed by NPM, and front-end dependencies are managed by bower. These dependencies are required before compilation.
 
@@ -72,17 +70,14 @@ Django also uses the `CONNECT_APP` assignment you set in the `.env` file to know
 When you run the server and look at Connect, you should see it using your custom LESS changes instead of the default styles.
 
 
-
 Advanced customization
--------
+----------------------------
 
 You can pass a `target` option to grunt at the command line so you can switch easily between tasks for different versions of Connect, with different settings, compiling in different places.
 
 Example:
 
-```
-grunt --target="private-connect"
-```
+`grunt --target="private-connect"`
 
 You can also write your own grunt configurations for any of the other tasks, i.e. uglification, template precompilation with hogan, etc, or add new custom tasks. Anything you can do with a normal grunt file, you can do here. See `this article 
 <http://www.thomasboyt.com/2013/09/01/maintainable-grunt.html>`_ for more about Grunt configurations that are loaded from separate files.
