@@ -1,7 +1,7 @@
 {
     "_assets": "./assets/",
     "_private": "./private_connect/",
-    "_dist": "<%= _ofa %>static/connect/",
+    "_dist": "<%= _private %>static/connect/",
     "_bower": "./bower_components/",
     "_privatehogan": "<%= _private %>assets/hogan/",
     "_hogan": "<%= _assets %>hogan",

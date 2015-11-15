@@ -1,0 +1,4 @@
+{
+  "dist": ["uglify"],
+  "default": ["hogan", "less", "dist", "autoprefixer", "copy"]
+}
