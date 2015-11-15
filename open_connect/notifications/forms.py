@@ -26,7 +26,7 @@ def get_subscription_formset(user):
         Subscription, form=SubscriptionForm, extra=0, can_delete=False)
     subscription_formset = SubscriptionModelFormSet(
         queryset=Subscription.objects.filter(
-            user=user).select_related('group__group'))
+            user=user).select_related('group__group', 'group__category'))
     for form in subscription_formset:
         if hasattr(form, 'instance'):
             form.group_name = form.instance.group.group.name

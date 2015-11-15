@@ -5,9 +5,12 @@ import os
 from boto.s3.connection import OrdinaryCallingFormat
 import environ
 
+from importlib import import_module
+
 
 env = environ.Env(
     DEBUG=(bool, False),
+    CONNECT_APP=(str, False),
     USE_S3=(bool, False),
     DEFAULT_S3_PATH=(str, 'connect/uploads'),
     STATIC_S3_PATH=(str, 'connect/static')
@@ -17,10 +20,31 @@ env = environ.Env(
 BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 
 
+# Django's "AppDirectoriesFinder" staticfiles finder goes through applications
+# in the order they are listed in INSTALLED_APPS, and then prioritizes the
+# FIRST static file it finds which matches a static file lookup.
+# Django's ``django.template.loaders.app_directories.Loader`` template loader
+# will go through all the template folders in INSTALLED_APPS and prioritize
+# the FINAL template it finds which matches a lookup.
+# Thus we need to hard code in the actual static files we want to override
+# the open source version with.
+if env('CONNECT_APP'):
+    CONNECT_APP_PATH = import_module(env('CONNECT_APP')).__path__[0]
+    CONNECT_STATIC_PATH = os.path.join(CONNECT_APP_PATH, 'static/connect/')
+else:
+    # If there is no custom Connect application, use the open source files
+    # held in the 'open_connect/connect_core/static/' directory
+    CONNECT_STATIC_PATH = os.path.join(
+        BASE_PATH, 'open_connect/connect_core/static/connect/')
+
+
+# Locations of static assets
 STATICFILES_DIRS = (
     os.path.join(BASE_PATH, 'assets'),
     os.path.join(BASE_PATH, 'bower_components'),
-    os.path.join(BASE_PATH, 'open_connect/connect_core/static/connect/'),
+
+    # The location of the compiled static files for Connect
+    CONNECT_STATIC_PATH
 )
 
 # Preload metadata for S3 (used for django-s3-collectstatic)

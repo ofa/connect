@@ -12,6 +12,8 @@ env = environ.Env(
     LANGUAGE_CODE=(str, 'en-us'),
     CSRF_COOKIE_NAME=(str, 'mesages_csrftoken'),
 
+    CONNECT_APP=(str, False),
+
     SESSION_COOKIE_NAME=(str, 'messages_sessionid'),
     SESSION_ENGINE=(str, 'django.contrib.sessions.backends.cached_db'),
     SESSION_SERIALIZER=(
@@ -144,16 +146,11 @@ INSTALLED_APPS = (
     'taggit',
 
     'debug_toolbar',
-
-    # Add
-    #'connect_extras',
-
-    # It should be possible to comment this out and have tests pass
-    # and correctly display a non-branded connect.
-    'private_connect',
-
 )
 
+# If the user is using a custom Connect app add it to INSTALLED_APPS
+if env('CONNECT_APP'):
+    INSTALLED_APPS = INSTALLED_APPS + (env('CONNECT_APP'),)
 
 ####
 # Custom authentication model setting
