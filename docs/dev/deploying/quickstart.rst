@@ -19,7 +19,7 @@ If you don't have accounts on those two services, you'll need to set those accou
 
 While you'll be required to enter your credit card when setting these services up, by default Connect will not require enough resources to use more than the "Free Tier" for either Amazon S3 nor Simple Email Service, and a base demo version of Connect can run 24/7 on Heroku for as low as $14.
 
-.. note:: While Connect can be run on Heroku's "Free" plan, Connect has a "scheduler" that the "worker" process keeps running 24/7. For $7 per process (or "Dyno" in Heroku speak) per month you can have your "web" process and "scheduler" process run 24/7. This is usage-used, so if you only run Connect for a few days you'll only be charged for a portion of the overall cost.
+.. note:: While Connect can be run on Heroku's "Free" plan, Connect has a "scheduler" that the "worker" process keeps running 24/7. For $7 per process (or "Dyno" in Heroku speak) per month you can have your "web" process and "scheduler" process run 24/7. This is usage-based, so if you only run Connect for a few days you'll only be charged for a portion of the overall cost.
 
 .. warning:: While Connect can be run for $14/month, a production installation of Connect on Heroku with all the necessary extra services starts at $350/month (as of Oct 27, 2015) and can go higher depending on load. A Heroku support package which includes 24/7 response time is available for $1000/month on top of your base cost. For a very high volume Connect installation this package is recommended, although it can be split among multiple applications on Heroku (and even multiple installations of Connect.)
 
@@ -52,7 +52,7 @@ Once your version of Connect is ready, you'll be able to create an account and l
 
 The "Admin Key" is a secret key that is used exclusively to elevate accounts to elevate accounts to staff-level permissions if no other admin account exists. **After you've esclated one account, it's recommended you remove the "Admin Key" from your configuration.**
 
-.. warning:: You only have one bite at the apple when creating your first staff account via the /new-admin/ endpoint. If you lose access to your first staff account you'll need to esclate a new account via the Heroku command line. See :doc:`/dev/management/promote_admin` for more info about the ``promote_admin`` management command.
+.. warning:: You only have one bite at the apple when creating your first staff account via the /new-admin/ endpoint. If you lose access to your first staff account you'll need to esclate a new account via the Heroku command line. See :doc:`/dev/management/promote_superuser` for more info about the ``promote_superuser`` management command.
 
 Step 4: Setup Outgoing Email
 ----------------------------

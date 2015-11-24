@@ -4,7 +4,9 @@ Connect documentation
 
 `Connect`_ is a Python/Django-based communication platform built in-house by `Organizing for Action`_
 
-**Administrators** looking for documentation on how to use Connect, you should refer to our :doc:`/user/index` section.
+**Regular Users** looking for documentation on how to use Connect should refer to our :doc:`/user/basic/index` section.
+
+**Administrators** looking for documentation on how to use Connect should refer to our :doc:`/user/admin/index` section.
 
 **Developers** looking for more information about installation and contributing to Connect can refer to the :doc:`/dev/index` section.
 
@@ -17,10 +19,10 @@ use and contribute to. For more information about contributing view the
 .. toctree::
     :maxdepth: 1
 
-    /user/index
+    /user/admin/index
+    /user/basic/index
     /dev/index
     /contribution/index
-    /contribution/email
     /license
 
 .. _Connect: https://connect.barackobama.com/
