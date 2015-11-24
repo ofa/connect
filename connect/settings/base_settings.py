@@ -21,13 +21,10 @@ env = environ.Env(
     SESSION_EXPIRE_AT_BROWSER_CLOSE=(bool, False),
     SESSION_COOKIE_SECURE=(bool, False),
     SECURE_PROXY_SSL_HEADER=(tuple, ('HTTP_X_FORWARDED_PROTO', 'https')),
-    CACHE_MIDDLEWARE_ALIAS=(str, 'default'),
-    CACHE_MIDDLEWARE_SECONDS=(int, 0),
-    CACHE_MIDDLEWARE_KEY_PREFIX=(str, 'connect__'),
+    KEY_PREFIX=(str, ''),
     USE_SES=(bool, False),
 
     EMAIL_BACKEND=(str, 'django.core.mail.backends.dummy.EmailBackend'),
-    EMAIL_SUBJECT_PREFIX=(str, '[Connect] '),
 
     # SMTP related configuration vars
     EMAIL_HOST=(str, 'localhost'),
@@ -99,10 +96,7 @@ CACHES = {
     'default': default_cache,
 }
 
-CACHE_MIDDLEWARE_ALIAS = env('CACHE_MIDDLEWARE_ALIAS')
-CACHE_MIDDLEWARE_SECONDS = env('CACHE_MIDDLEWARE_SECONDS')
-CACHE_MIDDLEWARE_KEY_PREFIX = env('CACHE_MIDDLEWARE_KEY_PREFIX')
-
+KEY_PREFIX = env('KEY_PREFIX')
 
 ####
 # Installed Apps Settings
