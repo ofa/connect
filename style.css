@@ -1,0 +1,138 @@
+body{
+	font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	font-weight: 100;
+	font-size: 20px;
+	color: #333;
+	line-height: 1.7;
+}
+h2{
+	font-size: 40px;
+	font-weight: 100;
+	line-height: 1.5;
+	text-align: center;
+	margin-top: 0;
+}
+h3{
+	text-transform: uppercase;
+	font-size: 24px;
+	font-weight: 600;
+	text-align: center;
+}
+header{
+	background-image: linear-gradient(#333333 66%, #fff .01%, #fff 33.99%);
+}
+.logo{
+	margin-top: 40px;
+	margin-bottom: 40px;
+}
+.navigation{
+	text-align: center;
+}
+.navbar{
+	display: inline-block;
+	background: transparent;
+	border: none;
+	color: #fff;
+}
+.navbar-default .navbar-nav>li>a{
+	color: #fff;
+}
+.navbar-default .navbar-nav>li>a:hover{
+	background: #444;
+	color: #fff;
+}
+
+.overview {
+	text-align: center;
+}
+
+img{
+	max-width: 100%;
+	height: auto;
+}
+
+.features{
+	background: #333;
+	color: #fff;
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+.get-started,
+.overview{
+	padding-top: 50px;
+	padding-bottom: 50px;
+}
+
+footer{
+	background: #333;
+	color: #fff;
+	text-align: center;
+	padding: 20px;
+	font-size: 14px;
+}
+.btn-glass{
+	border: 2px solid #333;
+	background: transparent;
+	font-size: 20px;
+	text-transform: uppercase;
+	color: #333;
+	border-radius: 0;
+}
+a{
+	text-decoration: none !important;
+}
+.btn-glass:hover,
+.btn-glass:hover,
+.btn-glass:active,
+.btn-glass:focus{
+	background: #333 !important;
+	border: 2px solid #333;
+	color: #fff;
+}
+.navbar-default .navbar-toggle .icon-bar{
+	background-color: #fff;
+}
+.navbar-default .navbar-toggle{
+	border: none;
+	float: none;
+	margin-right: 0;
+}
+.navbar-default .navbar-toggle:active,
+.navbar-default .navbar-toggle:focus{
+	background: #444;
+}
+@media (max-width: 1199px) {
+	.logo{
+		margin-top: 30px;
+		margin-bottom: 30px;
+	}
+	.navbar{
+		margin-bottom: 10px;
+	}
+}
+@media (max-width: 768px) {
+	h2{
+		font-size: 30px;
+		font-weight: 300;
+	}
+	.get-started .btn{
+		margin-bottom: 15px;
+	}
+	.feature-section{
+		margin-bottom: 15px;
+	}
+	.navbar{
+		width: 100%;
+	}
+	.navbar-nav{
+		background: #444;
+	}
+	#primary-nav{
+		border:0;
+	}
+}
+@media (max-width: 480px) {
+	.get-started .btn{
+		margin-bottom: 15px;
+	}
+}
