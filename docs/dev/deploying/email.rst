@@ -37,9 +37,7 @@ The path Django Bouncy is installed at on Connect is ``https://connect.yourdomai
     It's important that the Django Bouncy path is included in the ``LOGIN_EXEMPT_URLS`` list in the ``connect.settings.authentication_settings`` settings file. Otherwise Connect will attempt to forward Amazon SNS to your login provider. By default ``mail/*`` is in that list.
 
 
-
-
 .. _Simple Email Service: https://aws.amazon.com/ses/
 .. _Sea Cucumber: https://github.com/duointeractive/sea-cucumber/
 .. _Django Bouncy: https://github.com/ofa/django-bouncy
-.. _Simple Notification Service: https://aws.amazon.com/sns/eeee
+.. _Simple Notification Service: https://aws.amazon.com/sns/
