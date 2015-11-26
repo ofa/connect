@@ -17,6 +17,7 @@ Guides
 
     /dev/deploying/quickstart
 
+
 Individual Topics
 -----------------
 
@@ -29,6 +30,7 @@ Individual Topics
     /management/promote_superuser
 
 
+
 Developing Connect
 ==================
 
@@ -39,6 +41,15 @@ Local Development
     :maxdepth: 1
 
     /dev/developing/environment_setup
+
+
+Customization
+-------------
+
+.. toctree::
+    :maxdepth: 1
+
+    /dev/customizing/basic_theming
 
 
 Project Layout
