@@ -1,6 +1,6 @@
-========
-Settings
-========
+================
+Connect Settings
+================
 
 .. contents::
     :local:
