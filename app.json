@@ -9,17 +9,79 @@
   "logo": "",
   "success_url": "",
   "scripts": {
-    "postdeploy": "heroku/postdeploy.sh"
+    "postdeploy": "scripts/heroku/postdeploybutton.sh"
   },
   "env": {
-    "SECRET_TOKEN": {
-      "description": "",
+    "SECRET_KEY": {
+      "description": "A secret key for a particular Django installation. Connect will refuse to start if ``SECRET_KEY`` is not set.",
       "generator": "secret"
+    },
+    "EMAIL_SECRET_KEY": {
+      "description": "Similar to ``SECRET_KEY`` the Email Secret Key is a secret key that is used in cryptographic functions that involve outgoing emails.",
+      "generator": "secret"
+    },
+    "BRAND_TITLE": {
+      "description": "The title you're using for your version of Connect. This is used throughout the Connect codebase.",
+      "value": "My Connect"
+    },
+    "ORGANIZATION": {
+      "description": "The name of the organization or person running this copy of Connect. This will be attached to all outgoing emails as well as included in a few copyright sections.",
+      "value": "My Organization"
     },
     "WEB_CONCURRENCY": {
       "description": "The number of processes to run.",
       "value": "4"
-    }
+    },
+    "ALLOWED_HOSTS": {
+      "description": "A list of strings representing the host/domain names that this Django site can serve.",
+      "value": "mydomain.herokuapp.com,my.domain.com"
+    },
+    "HOSTNAME": {
+      "description": "The hostname that this version of Connect is running on, without the protocol. If connect is running at ``https://public.ofaconnect.com/`` then the hostname would be ``public.ofaconnect.com``",
+      "value": "mydomain.herokuapp.com"
+    },
+    "ORIGIN": {
+      "description": "The full URL that this version of Connect is running at, with the protocol. This is used when absolute URLs are needed (such as in notification emails.) If Connect is running at ``https://public.ofaconnect.com/`` this would be ``https://public.ofaconnect.com``",
+      "value": "4"
+    },
+    "DEFAULT_FROM_ADDRESS": {
+      "description": "The 'From' address will be used when outgoing emails are compiled by Connect. You must have this address whitelisted to be sent from with your Email Service Provider",
+      "value": "no-reply@connect.local"
+    },
+    "DEFAULT_FROM_EMAIL": {
+      "description": "The friendly 'From' address that will be used on outgoing emails sent from Connect. This is what will appear in your end user's email client as the sender of notifications. You must have this address whitelisted to be sent from with your Email Service Provider",
+      "value": "4"
+    },
+    "GOOGLE_ANALYTICS_PROPERTY_ID": {
+      "description": "The Google Analytics property ID.",
+      "value": "UA-0-0"
+    },
+    "EMAIL_BACKEND": {
+      "description": "If you're using SES you'll likely want to use Sea Cucumber and thus set this to ``seacucumber.backend.SESBackend``. If using the SMTP backend, this will need to be set to ``django.core.mail.backends.smtp.EmailBackend``",
+      "value": "django.core.mail.backends.dummy.EmailBackend"
+    },
+    "AWS_ACCESS_KEY_ID": {
+      "description": "An Amazon Web Services access key id. This is used for both S3 (where static files and uploads are stored) and (should you decide to use it) Simple Email Service"
+    },
+    "AWS_SECRET_ACCESS_KEY": {
+      "description": "The associated secret key associated with the ``AWS_ACCESS_KEY_ID``"
+    },
+    "GOOGLE_ANALYTICS_PROPERTY_ID": {
+      "description": "The Google Analytics property ID.",
+      "value": "UA-0-0"
+    },
+    "USE_S3": {
+      "description": "A boolean set to ``True`` if Connect is to store content on Amazon S3.",
+      "value": "True"
+    },
+    "DEFAULT_S3_PATH": {
+      "description": "The default path in the S3 bucket for uploads to be uploaded to. If you want to use the same S3 bucket for multiple Connect installations, such as a staging and production installation, you should make ``DEFAULT_S3_PATH`` and ``STATIC_S3_PATH`` unique.",
+      "value": "connect/uploads"
+    },
+    "STATIC_S3_PATH": {
+      "description": "The default path in the S3 bucket for static files to be uploaded to.",
+      "value": "connect/static"
+    },
   },
   //"image": "heroku/pyhon",
   "addons": [
