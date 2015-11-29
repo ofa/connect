@@ -6,16 +6,17 @@ Connect is an application with extensive compiled less/hogan/javascript front-en
 
 Some parts of this documentation are based off the `DjangoCMS Documentation <http://docs.django-cms.org/en/develop/how_to/install.html>`_
 
+.. note:: You will need ``sudo`` access to install some of these packages.
+
 .. note:: These instructions apply for development using OS X, although there shouldn't be much change needed to develop on Linux.
 
 
 System Package Requirements
 ===========================
 
-As a `12 Factor App`_ developers of Connect should strive for `Dev/prod parity`_, where the environment run locally is as close as possible to production.
+As a `12 Factor App`_, developers of Connect should strive for `Dev/prod parity`_, where the environment run locally is as close as possible to production.
 
-
-Before starting, make sure you have `Homebrew`_ installed, so you can install the required libraries. The following instructions imply that you have ``brew`` installed
+Before starting, make sure you have `Homebrew`_ installed so you can install the required libraries. The following instructions imply that you have ``brew`` installed.
 
 * `Node`_ - Command-line javascript system. ``brew install node``
 * `PostgreSQL`_ - Database. ``brew install postgresql`` or via `Postgres.app`_ with the `command line tools <http://postgresapp.com/documentation/cli-tools.html>`_ configured. Postgres.app is more user-friendly, but both work.
@@ -24,7 +25,7 @@ Before starting, make sure you have `Homebrew`_ installed, so you can install th
 * `libjpeg`_ - JPEG image support. ``brew install libjpeg``
 * `pip`_ - Python dependency management. ``sudo easy_install pip``
 * `virtualenv`_ or `virtualenvwrapper`_ - Python package isolation. It's recommended you install the more user-friendly virtualenvwrapper, which also installs virtualenv, but these instructions imply you're using the vanilla virtualenv. ``sudo pip install virtualenv``
-* `GIT`_ - Code management. This may be installed already on your system, but to use the latest version of Git use ``brew install git``
+* `Git`_ - Code management. This may be installed already on your system, but for the latest version of Git: ``brew install git``
 
 
 Optional (but recommended) packages
@@ -64,7 +65,7 @@ Connect requires users to fork their own version of the `Connect Github project`
 
 How to fork Connect and move the upstream changes into that fork is outside the scope of this documentation, but for simplicity's sake we can clone Connect from the official repository locally.
 
-To clone the Connect project locally, set the official project as a remote called "open", and enter that folder run the following:
+To clone the Connect project locally, set the official project as a remote called "open" and enter that folder, run the following:
 
 .. code-block:: bash
 
@@ -94,7 +95,7 @@ To create a new virtualenv
 
 .. code-block:: bash
 
-    virtualenv env
+    virtualenv connectenv
 
 .. note:: If you are *not* using a system-wide install of Python (such as with Homebrew),
           omit the usage of ``sudo`` when installing via ``pip``.
@@ -103,7 +104,11 @@ Switch to the virtualenv at the command line by typing:
 
 .. code-block:: bash
 
-  source env/bin/activate
+  source connectenv/bin/activate
+
+
+.. note::
+    Any time you want to load Connect you'll need to enter ``source connectenv/bin/activate`` to enter the virtual environment containing your Connect dependencies.
 
 
 Connect relies on ``pip`` for python dependency management.
@@ -116,7 +121,7 @@ The python dependencies necessary for development of Connect are located in the 
 
 
 .. warning::
-    There are a few packages that are compiled during this step that require system packages above, specifically ``libjpeg`` for JPEG image handling and ``PostgreSQL`` for database handling. Make sure you've installed both before attempting to install postgres.
+    There are a few packages that are compiled during this step that require packages defined in `System Package Requirements <#system-package-requirements>`_, specifically ``libjpeg`` for JPEG image handling and ``PostgreSQL`` (with the PostgreSQL command line tools) for database handling. Make sure you have installed both before attempting to install Connect.
 
 
 .. [1] There are multiple ``requirements.txt`` files in Connect, including an actual ``requirements.txt``, which has packages aimed specifically at Heroku and may not compile on OS X. Each of these files include ``common-requirements.txt``, which contains the core cross-platform packages necessary to run Connect on any platform. For development, use ``dev-requirements.txt``
@@ -143,7 +148,7 @@ You can then edit the ``.env`` file to reflect the settings you need locally. Av
 Setting up a database
 ---------------------
 
-This assumes that you have `Postgres.app`_ installed and have correctly installed the `command line tools <http://postgresapp.com/documentation/cli-tools.html>`_.
+This assumes that you have `Postgres.app`_ installed and running and have correctly installed the `command line tools <http://postgresapp.com/documentation/cli-tools.html>`_.
 
 The ``.env`` file that ships with Connect assumes that you have a database called ``connect`` in your localhost database. To both create this database and have Connect insert all the preliminary code, run:
 
@@ -197,7 +202,7 @@ Running Connect locally
 
 Once you have your static files built, you'll be able to launch your version of Connect using Django's built-in development server.
 
-While inside your local virtualenv, run
+While inside your local virtualenv (i.e. after running ``source connectenv/bin/activate``) run
 
 
 .. code-block:: bash
