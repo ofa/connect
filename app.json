@@ -3,11 +3,12 @@
   "description": "A Python/Django-based community platform by Organizing for Action",
   "keywords": [
     "community",
+    "django",
+    "messaging",
+    "organizing"
   ],
   "website": "https://ofa.github.io/connect/",
   "repository": "https://github.com/ofa/connect",
-  "logo": "",
-  "success_url": "",
   "scripts": {
     "postdeploy": "scripts/heroku/postdeploybutton.sh"
   },
@@ -66,10 +67,6 @@
     "AWS_SECRET_ACCESS_KEY": {
       "description": "The associated secret key associated with the ``AWS_ACCESS_KEY_ID``"
     },
-    "GOOGLE_ANALYTICS_PROPERTY_ID": {
-      "description": "The Google Analytics property ID.",
-      "value": "UA-0-0"
-    },
     "USE_S3": {
       "description": "A boolean set to ``True`` if Connect is to store content on Amazon S3.",
       "value": "True"
@@ -81,9 +78,8 @@
     "STATIC_S3_PATH": {
       "description": "The default path in the S3 bucket for static files to be uploaded to.",
       "value": "connect/static"
-    },
+    }
   },
-  //"image": "heroku/pyhon",
   "addons": [
     "heroku-postgresql",
     "cloudamqp",
@@ -92,8 +88,6 @@
   ],
   "buildpacks": [
     {
-      // We want to be able to control buildpacks in a `.buildpack` file so
-      // it's easier to just use the multi buildpack tool
       "url": "https://github.com/heroku/heroku-buildpack-multi"
     }
   ]
