@@ -216,7 +216,7 @@ You should now be able to visit ``http://127.0.0.1:8000/`` and see a fully funct
 Promote a user to be a superuser
 --------------------------------
 
-Connect uses NGPVAN_'s `ActionID`_ single-sign-on system for authentication via `Python Social Auth`_.
+Connect uses NGP VAN_'s `ActionID`_ single-sign-on system for authentication via `Python Social Auth`_.
 
 When you first go to your development server you'll be given 2 buttons, one to Login and one to Create a New Account. Click on either and follow the login or registration flow presented by ActionID. **Remember the email address you use.** After you're done with that you'll be redirected back to Connect with a new account.
 
@@ -230,6 +230,6 @@ In order to upgrade your account to be a super-user, you'll need to use the :doc
 Your account should now be properly promoted to a superuser. From here on out you can manage your local version of Connect by following the :doc:`/user/admin/index`.
 
 
-.. _NGPVAN: https://www.ngpvan.com
+.. _NGP VAN: https://www.ngpvan.com
 .. _ActionID: http://developers.ngpvan.com/action-id
 .. _Python Social Auth: http://psa.matiasaguirre.net/
