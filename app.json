@@ -34,15 +34,13 @@
       "value": "4"
     },
     "ALLOWED_HOSTS": {
-      "description": "A list of strings representing the host/domain names that this Django site can serve.",
-      "value": "mydomain.herokuapp.com,my.domain.com"
+      "description": "A list of strings representing the host/domain names that this Django site can serve. This will likely need to be ``appname.herokuapp.com,myconnectdomain.mydomain.com``"
     },
     "HOSTNAME": {
-      "description": "The hostname that this version of Connect is running on, without the protocol. If connect is running at ``https://public.ofaconnect.com/`` then the hostname would be ``public.ofaconnect.com``",
-      "value": "mydomain.herokuapp.com"
+      "description": "The hostname that this version of Connect is running on, without the protocol. If connect is running at ``https://appname.herokuapp.com/`` then the hostname would be ``appname.herokuapp.com``"
     },
     "ORIGIN": {
-      "description": "The full URL that this version of Connect is running at, with the protocol. This is used when absolute URLs are needed (such as in notification emails.) If Connect is running at ``https://public.ofaconnect.com/`` this would be ``https://public.ofaconnect.com``",
+      "description": "The full URL that this version of Connect is running at, with the protocol. This is used when absolute URLs are needed (such as in notification emails.) If Connect is running at ``https://appname.herokuapp.com/`` this would be ``https://appname.herokuapp.com``",
       "value": "4"
     },
     "DEFAULT_FROM_ADDRESS": {

@@ -22,7 +22,6 @@ env = environ.Env(
     SESSION_COOKIE_SECURE=(bool, False),
     SECURE_PROXY_SSL_HEADER=(tuple, ('HTTP_X_FORWARDED_PROTO', 'https')),
     KEY_PREFIX=(str, ''),
-    USE_SES=(bool, False),
 
     EMAIL_BACKEND=(str, 'django.core.mail.backends.dummy.EmailBackend'),
 

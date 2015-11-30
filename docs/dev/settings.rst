@@ -524,18 +524,6 @@ Email Settings
 The ability for Connect to send outgoing email is vital. It's highly recommended you read :doc:`/dev/deploying/email` before attempting to configure outgoing email in production.
 
 
-
-USE_SES
--------
-
-Default: ``False`` (Boolean)
-
-A boolean specifying if Connect should use Amazon's `Simple Email Service`_.
-
-.. _Simple Email Service: https://aws.amazon.com/ses/
-
-
-
 EMAIL_BACKEND
 -------------
 
