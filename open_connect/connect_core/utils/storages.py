@@ -51,7 +51,7 @@ class HighValueStorage(AttachmentStorageEngine):
 
     # All URLs should expire after 1 hour. This will let us cache the URL and
     # reduce CPU associated in generating signed URLs
-    querystring_expire = 600
+    querystring_expire = 3600
     querystring_auth = True
 
 
