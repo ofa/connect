@@ -6,17 +6,17 @@ Connect does not have a built-in authentication system and instead relies on the
 
 .. _Python Social Auth: http://psa.matiasaguirre.net/
 
-NGPVAN ActionID
+NGP VAN ActionID
 ===============
 
-By default Connect uses the NGPVAN_ ActionID_ OAuth1 authentication backend. ActionID is the same backend that is used as part of NGPVAN's VAN product, allowing users to use the same username and password to login to both VAN and Connect.
+By default Connect uses the NGP VAN_ ActionID_ OAuth1 authentication backend. ActionID is the same backend that is used as part of NGP VAN's VAN product, allowing users to use the same username and password to login to both VAN and Connect.
 
 Using ActionID requires no work on your end, however there will be an opt-in step after users first attempt to login to your version of Connect using ActionID.
 
-NGPVAN is able to "white list" certain installations of Connect based on hostname. This is already done for ``http://localhost``, but by contacting `NGPVAN Developer Support <http://developers.everyaction.com/support/contact>`_ you may be eligible to have that authorization step removed.
+NGP VAN is able to "white list" certain installations of Connect based on hostname. This is already done for ``http://localhost``, but by contacting `NGP VAN Developer Support <http://developers.ngpvan.com/support/contact>`_ you may be eligible to have that authorization step removed.
 
-.. _NGPVAN: https://www.ngpvan.com/
-.. _ActionID: http://developers.everyaction.com/action-id
+.. _NGP VAN: https://www.ngpvan.com/
+.. _ActionID: http://developers.ngpvan.com/action-id
 
 
 Blue State Digital Tools
