@@ -7,9 +7,9 @@ Connect does not have a built-in authentication system and instead relies on the
 .. _Python Social Auth: http://psa.matiasaguirre.net/
 
 NGP VAN ActionID
-===============
+================
 
-By default Connect uses the NGP VAN_ ActionID_ OAuth1 authentication backend. ActionID is the same backend that is used as part of NGP VAN's VAN product, allowing users to use the same username and password to login to both VAN and Connect.
+By default Connect uses the `NGP VAN`_ ActionID_ OAuth1 authentication backend. ActionID is the same backend that is used as part of NGP VAN's VAN product, allowing users to use the same username and password to login to both VAN and Connect.
 
 Using ActionID requires no work on your end, however there will be an opt-in step after users first attempt to login to your version of Connect using ActionID.
 
