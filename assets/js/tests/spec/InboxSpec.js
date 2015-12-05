@@ -652,7 +652,7 @@ describe("Inbox", function() {
             });
         });
 
-        describe("Messages & Controller >", function(argument) {
+        describe("Messages & Controller >", function() {
 
             /*
 
