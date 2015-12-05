@@ -26,6 +26,7 @@
     "grunt-contrib-watch": "0.6.1",
     "grunt-hogan": "0.3.0",
     "load-grunt-config": "0.17.2",
-    "load-grunt-tasks": "3.2.0"
+    "load-grunt-tasks": "3.2.0",
+    "es5-shim": "^4.0.6"
   }
 }

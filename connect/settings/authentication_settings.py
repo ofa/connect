@@ -7,7 +7,8 @@ import environ
 env = environ.Env(
     DEFAULT_AUTH_BACKEND=(str, 'social.backends.ngpvan.ActionIDOpenID'),
     POST_LOGOUT_PAGE=(str, '/'),
-    SOCIAL_AUTH_NEW_USER_REDIRECT_URL=(str, '/explore/'),
+    SOCIAL_AUTH_NEW_USER_REDIRECT_URL=(
+        str, '/accounts/accept-terms/?next=/explore/'),
     LOGIN_REDIRECT_URL=(str, '/messages/'),
     LOGIN_ERROR_URL=(str, '/'),
     SOCIAL_AUTH_PROTECTED_FIELDS=(list, 'username'),

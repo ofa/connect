@@ -18,7 +18,7 @@ class AcceptTermsAndConductMiddleware(object):
         """Process request and ask for an invite code if needed."""
         # Find users that are logged in but haven't been verified
         user = request.user
-        if user.is_authenticated():
+        if user.is_authenticated() and not request.is_ajax():
             if user.tos_accepted_at and user.ucoc_accepted_at:
                 return
             path = request.path_info.lstrip('/')
