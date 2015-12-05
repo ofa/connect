@@ -59,3 +59,21 @@ class TestAcceptTermsAndConductMiddleware(TestCase):
             self.mw.process_request(request)['Location'],
             '{url}?next=/inbox/'.format(url=reverse('accept_terms_and_conduct'))
         )
+
+    def test_ajax_request_does_not_check_tos(self):
+        """If the request is an AJAX one, don't redirect to the TOS page."""
+        user = mommy.make(
+            'accounts.User', tos_accepted_at=now(), ucoc_accepted_at=None)
+        request = self.factory.get('/inbox/')
+        request.user = user
+        self.assertFalse(request.is_ajax())
+        self.assertEqual(
+            self.mw.process_request(request)['Location'],
+            '{url}?next=/inbox/'.format(url=reverse('accept_terms_and_conduct'))
+        )
+
+        ajax_request = self.factory.get(
+            '/inbox/', HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        ajax_request.user = user
+        self.assertTrue(ajax_request.is_ajax())
+        self.assertIsNone(self.mw.process_request(ajax_request))
