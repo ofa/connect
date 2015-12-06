@@ -21,9 +21,11 @@ env:
   CELERY_ALWAYS_EAGER=True
   TZ=US/Central
 before_install:
-# Install command-line node packages before installing package apps
+   # Install command-line node packages before installing package apps & use
+   # latest pip
    - npm install -g grunt-cli
    - npm install -g bower
+   - pip install --upgrade pip
 install:
   - npm install
   - bower install
@@ -35,7 +37,7 @@ script:
 # install and run pylint if everything passed
 after_success:
   - pip install pylint==1.4.4
-  - pylint --rcfile=.pylintrc connect_extras open_connect connect
+  - pylint --rcfile=$HOME/.pylintrc connect_extras open_connect connect
 # turn off email notifications
 notifications:
   email: false
