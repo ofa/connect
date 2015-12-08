@@ -377,11 +377,12 @@ class User(
 
     def can_direct_message_user(self, user):
         """Return true if user is allowed to direct message to a user"""
+        if user == self:
+            # Users should never be able to message themselves
+            return False
+
         if self.system_user:
             # The system user must always be able to create direct messages
-            return True
-        elif self.is_superuser:
-            # Superusers can initiate direct messages with users
             return True
         elif self.is_staff:
             # Staff can initiate direct messages with users
@@ -392,12 +393,13 @@ class User(
             return True
         elif self.has_perm('accounts.can_initiate_direct_messages'):
             # If this user has the specific permission of being able to direct
-            # message users, allow this user to go through
+            # message users, allow this user to go through. Superuers will
+            # always have this permission.
             return True
-        else:
-            # If the user is not allowed to direct message the requested user
-            # return false
-            return False
+
+        # If the user is not allowed to direct message the requested user
+        # return false
+        return False
 
     @property
     def system_user(self):

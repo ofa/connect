@@ -344,6 +344,11 @@ class UserDirectMessagePermissionTest(ConnectTestMixin, TestCase):
         user = self.create_superuser()
         self.assertTrue(user.can_direct_message_user(self.recipient))
 
+    def test_direct_message_self(self):
+        """Test that users cannot direct message themselves"""
+        user = self.create_superuser()
+        self.assertFalse(user.can_direct_message_user(user))
+
     def test_staff_initiate_direct_message(self):
         """Test that staff can initiate direct messages"""
         user = self.create_user(is_staff=True)

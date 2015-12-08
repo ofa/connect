@@ -346,8 +346,10 @@ class DirectMessageCreateViewTest(ConnectTestMixin, DjangoTestCase):
 
     def test_recipient_returned_in_context(self):
         """Test that the recipient is returned in the context"""
-        response = self.view(self.request, user_uuid=self.user1.uuid)
-        self.assertEqual(response.context_data['recipient'], self.user1)
+        recipient = self.create_user()
+
+        response = self.view(self.request, user_uuid=recipient.uuid)
+        self.assertEqual(response.context_data['recipient'], recipient)
 
     def test_non_existent_recipient_throws_404(self):
         """
@@ -413,6 +415,29 @@ class DirectMessageCreateViewTest(ConnectTestMixin, DjangoTestCase):
         self.assertIn(
             'You don\'t have permission to direct message {user}'.format(
                 user=recipient),
+            str(response.cookies)
+        )
+
+    def test_user_cannot_message_self(self):
+        """
+        Test that users cannot message themselves.
+        """
+        sender = self.create_superuser()
+        self.login(sender)
+
+        # Attempt to get the sender's create_direct_message form as sender
+        response = self.client.get(
+            reverse('create_direct_message',
+                    kwargs={'user_uuid': sender.uuid})
+            )
+
+        # Confirm that the user was immediately redirected
+        self.assertEqual(response.status_code, 302)
+
+        # Confirm that a permission exception was thrown
+        self.assertIn(
+            'You don\'t have permission to direct message {user}'.format(
+                user=sender),
             str(response.cookies)
         )
 
