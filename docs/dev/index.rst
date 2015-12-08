@@ -9,14 +9,6 @@ Running Connect
 
 Out-of-the-box Connect is built to run as a Heroku_ app, with static files and uploaded content stored on `Amazon S3`_. As such, out of the box you'll need accounts on both services.
 
-Guides
-------
-
-.. toctree::
-    :maxdepth: 1
-
-    /dev/deploying/quickstart
-
 
 Individual Topics
 -----------------
@@ -27,7 +19,7 @@ Individual Topics
     /dev/settings
     /dev/deploying/email
     /dev/deploying/authentication_backends
-    /management/promote_superuser
+    /dev/management/promote_superuser
 
 
 
