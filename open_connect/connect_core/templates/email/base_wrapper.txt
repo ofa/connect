@@ -6,3 +6,5 @@ All messages must comply with the Connect Terms of Service. {% origin %}{% url "
 
 This email was sent to: {{ email }}
 {% if recipient %}To update your subscription preferences or unsubscribe go to: {% unsubscribe_link email %}{% else %}To unsubscribe from future notifications go to: {% unsubscribe_link email %}{% endif %}
+
+This email was sent from a notification-only address that cannot accept incoming email. Please do not reply to this message.
