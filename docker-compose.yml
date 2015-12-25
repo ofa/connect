@@ -1,0 +1,61 @@
+web:
+  build: .
+  command: proclaunch web
+  working_dir: /app
+  environment:
+    PORT: 8000
+    DATABASE_URL: 'postgres://connect:connectdb@connectPostgreSQL:5432/connect'
+    CACHE_URL: 'pymemcache://connectmemcache:11211'
+    BROKER_URL: 'amqp://guest:guest@connectqueue:5672//'
+    SECRET_KEY: abcd123
+    EMAIL_SECRET_KEY: 123abcd
+    DEBUG: 'True'
+  ports:
+    - '8080:8000'
+  links:
+    - connectPostgreSQL
+    - connectmemcache
+    - connectqueue
+scheduler:
+  build: .
+  command: proclaunch scheduler
+  working_dir: /app
+  environment:
+    DATABASE_URL: 'postgres://connect:connectdb@connectPostgreSQL:5432/connect'
+    CACHE_URL: 'pymemcache://connectmemcache:11211'
+    BROKER_URL: 'amqp://guest:guest@connectqueue:5672//'
+    SECRET_KEY: abcd123
+    EMAIL_SECRET_KEY: 123abcd
+    DEBUG: 'True'
+  links:
+    - connectPostgreSQL
+    - connectmemcache
+    - connectqueue
+shell:
+  build: .
+  command: bash
+  working_dir: /app
+  environment:
+    PORT: 8090
+    DATABASE_URL: 'postgres://connect:connectdb@connectPostgreSQL:5432/connect'
+    CACHE_URL: 'pymemcache://connectmemcache:11211'
+    BROKER_URL: 'amqp://guest:guest@connectqueue:5672//'
+    SECRET_KEY: abcd123
+    EMAIL_SECRET_KEY: 123abcd
+    DEBUG: 'True'
+  ports:
+    - '8090:8090'
+  links:
+    - connectPostgreSQL
+    - connectmemcache
+    - connectqueue
+connectPostgreSQL:
+  image: sameersbn/postgresql:9.4-11
+  environment:
+    DB_USER: connect
+    DB_PASS: connectdb
+    DB_NAME: connect
+connectmemcache:
+  image: memcached
+connectqueue:
+  image: rabbitmq

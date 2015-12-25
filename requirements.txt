@@ -21,7 +21,7 @@ django-heroku-memcacheify==0.8
 
 # We include the gunicorn-related packages in this file as they don't compile
 # well outside of heroku
-gevent==1.0
+gevent==1.0.2
 greenlet==0.4.1
 gunicorn==18.0
 
