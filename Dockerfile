@@ -31,6 +31,14 @@ RUN mkdir /app
 WORKDIR /app
 
 
+# We'll run our app entirely as the user 'appuser'
+# As we build the app, we'll keep changing the owner of whatever we do to
+# 'appuser'. By doing this as part of each RUN, instead of in one large
+# RUN, we reduce the total size of the image.
+RUN adduser --disabled-password --gecos '' appuser && \
+    chown -R --from=root:root appuser:appuser /app
+
+
 # Install 2 buildpacks
 
 # nginx-buildpack: This will proxy gunicorn (the python http server) behind
@@ -39,7 +47,8 @@ RUN git clone https://github.com/ryandotsmith/nginx-buildpack.git nginx-buildpac
     cd nginx-buildpack && \
     git checkout 005ca0374e3cf61a29fb0f9041a7315677af1972 && \
     STACK=cedar-14 bash bin/compile '/app' && \
-    cd .. && rm -r nginx-buildpack
+    cd .. && rm -r nginx-buildpack && \
+    chown -R --from=root:root appuser:appuser /app
 
 
 # pgbouncer buildpack: By default each request to connect will open a new
@@ -51,12 +60,15 @@ RUN git clone https://github.com/ofa/heroku-buildpack-pgbouncer.git pgbouncer-bu
     cd pgbouncer-buildpack && \
     git checkout cb5656d70991e98a1bf3f55a66b843939e3384e1 && \
     STACK=cedar-14 bash bin/compile '/app' && \
-    cd .. && rm -r pgbouncer-buildpack
+    cd .. && rm -r pgbouncer-buildpack && chown -R --from=root:root appuser:appuser /app
 
 
 # Install node packages. This can be slow, so caching it is useful.
+# We'll uninstall phantomjs, since it's large and unnecessary for the build
+# process.
 ADD package.json /app/package.json
-RUN npm install
+RUN npm install && rm -r ~/.npm && npm uninstall phantomjs && \
+    chown -R --from=root:root appuser:appuser /app
 
 
 # We run pip as root so that python packages are available for all (and thus
@@ -64,12 +76,13 @@ RUN npm install
 # Because we're adding requirements.txt separately Docker is smart and will
 # cache this entire step until you change requirements.txt (or clear the cache)
 ADD *requirements.txt /app/
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt && rm -r ~/.cache
 
 
 # Install bower packages. Change this file to break the built-in cache.
 ADD bower.json /app/bower.json
-RUN bower install --allow-root
+RUN bower install --allow-root && rm -r ~/.cache && \
+    chown -R --from=root:root appuser:appuser /app
 
 
 # Add the Connect app to the `/app/` folder. This step will likely prevent the
@@ -77,10 +90,11 @@ RUN bower install --allow-root
 # rarely changes should be above this line.
 ADD . /app/
 
+RUN chown -R --from=root:root appuser:appuser /app
+
 
 # Drop down into a local user. From here on out we'll only run things in /app/
 # as the user 'appuser'
-RUN adduser --disabled-password --gecos '' appuser && chown -R appuser:appuser /app
 USER appuser
 
 
@@ -89,5 +103,5 @@ USER appuser
 # version of connect.
 RUN grunt
 
-# We tell nginix to serve on port 8000, so we'll need this port exposed
+# We tell nginx to serve on port 8000, so we'll need this port exposed
 EXPOSE 8000
