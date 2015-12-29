@@ -199,6 +199,14 @@ Scale up Connect
     # You'll soon need to make the scheduler a 2x dyno, but this demo is free
     heroku ps:scale web=1 scheduler=1
 
+.. note::
+    There are 3 apps defined in the heroku ``Procfile``: ``web``, ``scheduler`` and ``worker``.
+
+    You need at least 1 ``web`` dyno, which accepts incoming HTTP requests, and at least 1 worker. Your first worker must be a ``scheduler`` dyno (which is a `Celery <http://www.celeryproject.org/>`_ worker which starts `periodic tasks <http://docs.celeryproject.org/en/latest/userguide/periodic-tasks.html>`_.) If your task queue is too large, you'll want to create additional ``worker`` dynos, which are the same as ``scheduler`` except they will not create new scheduled tasks.
+
+.. warning::
+    Never create more than 1 ``scheduler`` dyno. If you need extra task-processing capacity, create new workers. In order to properly launch the Connect python process all worker/scheduler dynos must have at least 1GB of RAM (known as 2X dynos)
+
 
 Working with a Deployed Connect
 ===============================

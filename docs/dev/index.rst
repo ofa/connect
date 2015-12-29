@@ -7,7 +7,7 @@ Connect is written in Python using the `Django`_ library.
 Running Connect
 ===============
 
-Out-of-the-box Connect is built to run as a Heroku_ app, with static files and uploaded content stored on `Amazon S3`_. As such, out of the box you'll need accounts on both services.
+The easiest way to run Connect is by deploying it as a Heroku_ app with static files and uploaded content stored on `Amazon S3`_. However, support for Docker_ is also available, which is useful for doing custom deployments into existing environments as well as for local development.
 
 Guides
 ------
@@ -17,6 +17,7 @@ Guides
 
     /dev/deploying/heroku_setup
     /dev/deploying/fonts_on_s3
+    /dev/docker/index
 
 
 Individual Topics
@@ -35,6 +36,7 @@ Individual Topics
 Developing Connect
 ==================
 
+
 Local Development
 -----------------
 
@@ -42,6 +44,7 @@ Local Development
     :maxdepth: 1
 
     /dev/developing/environment_setup
+    /dev/docker/compose
 
 
 Customization
@@ -67,3 +70,4 @@ Configuration of the runtime version of Connect is done primarially via environm
 .. _Django: https://www.djangoproject.com/
 .. _Heroku: http://heroku.com/
 .. _Amazon S3: https://aws.amazon.com/s3/
+.. _Docker: https://www.docker.com/

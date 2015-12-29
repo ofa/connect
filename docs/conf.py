@@ -29,7 +29,7 @@ html_show_copyright = False
 exclude_patterns = ['_build']
 pygments_style = 'sphinx'
 html_theme = 'sphinx_rtd_theme'
-html_static_path = ['_static']
+html_static_path = []
 htmlhelp_basename = 'Connectdoc'
 latex_documents = [
     ('index', 'Connect.tex', u'Connect Documentation',
