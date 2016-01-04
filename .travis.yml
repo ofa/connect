@@ -36,8 +36,8 @@ script:
   - grunt jasmine
 # install and run pylint if everything passed
 after_success:
-  - pip install pylint==1.4.4
-  - pylint --rcfile=$HOME/.pylintrc connect_extras open_connect connect
+  - pip install pylint==1.5.2
+  - pylint --rcfile=.pylintrc connect_extras open_connect connect
 # turn off email notifications
 notifications:
   email: false
