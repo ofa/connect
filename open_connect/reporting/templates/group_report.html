@@ -15,7 +15,9 @@
 {% block main_area %}
         <h1>Group Report</h1>
         <form class="form form-inline" role="form">
-            
+                <div class="form-group">
+                    <label>Name: <input id="id_search_name" name="search_name" class="search-query" type="text" value="{{ request.GET.search_name|default:"" }}"></label>
+                </div>
                 <div class="form-group">
                     <label>From: <input id="id_{{ date_range_form.start_datetime.name }}" name="{{ date_range_form.start_datetime.name }}" class="search-query dtpicker" type="text" value="{{ date_range_form.start_datetime.value|default:"" }}"></label>
                 </div>
@@ -40,7 +42,6 @@
                 <th><a href="{{ sort_strings.thread_count }}">Threads</a></th>
                 <th><a href="{{ sort_strings.reply_count }}">Replies</a></th>
                 <th><a href="{{ sort_strings.posters }}">Posters</a></th>
-                <th><a href="{{ sort_strings.flagged }}">Flagged messages</a></th>
                 <th><a href="{{ sort_strings.category }}">Category</a></th>
                 <th>Tags</th>
                 <th><a href="{{ sort_strings.state }}">State</a></th>
@@ -53,10 +54,6 @@
                 <th><a href="{{ sort_strings.member_list_published }}">Member List Published</a></th>
                 <th><a href="{{ sort_strings.created_at }}">Created</a></th>
                 <th><a href="{{ sort_strings.created_by }}">Created by</a></th>
-                <th><a href="{{ sort_strings.image_count }}">Photos</a></th>
-                <th><a href="{{ sort_strings.image_clicks }}">Photo clicks</a></th>
-                <th><a href="{{ sort_strings.link_count }}">Links</a></th>
-                <th><a href="{{ sort_strings.link_clicks }}">Link clicks</a></th>
             </tr>
             </thead>
             <tbody>
@@ -67,7 +64,6 @@
                     <td>{{ group.thread_count }}</td>
                     <td>{{ group.reply_count }}</td>
                     <td>{{ group.posters }}</td>
-                    <td>{{ group.flagged }}</td>
                     <td>{{ group.category.name|default:"-" }}</td>
                     <td>
                         {% for tag in group.tagged_items.all %}
@@ -84,10 +80,6 @@
                     <td>{% if group.member_list_published %}Yes{% else %}&nbsp;{% endif %}</td>
                     <td>{{ group.created_at }}</td>
                     <td>{% if group.created_by %}<a href="{{ group.created_by.get_absolute_url }}">{{ group.created_by }}</a>{% endif %}</td>
-                    <td>{{ group.image_count }}</td>
-                    <td>{{ group.image_clicks|default:"0" }}</td>
-                    <td>{{ group.link_count }}</td>
-                    <td>{{ group.link_clicks|default:"0" }}</td>
                 </tr>
             {% endfor %}
             </tbody>

@@ -1,14 +1,18 @@
 """Tests for reporting.views."""
 # pylint: disable=invalid-name
+import csv
+import io
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.urlresolvers import reverse
-from django.test import Client
+from django.test import Client, TestCase
 from django.test.utils import override_settings
 from model_mommy import mommy
 from tablib import import_set
 
 from open_connect.connectmessages.tests import ConnectMessageTestCase
+from open_connect.connect_core.utils.basetests import ConnectTestMixin
 from open_connect.reporting.views import UserReportListView, GroupReportListView
 
 
@@ -111,34 +115,35 @@ class UserReportListViewTest(ConnectMessageTestCase):
         self.assertEqual(response.context['search_name'], 'Robyn')
 
 
-class GroupReportListViewTest(ConnectMessageTestCase):
+class GroupReportListViewTest(ConnectTestMixin, TestCase):
     """Tests for GroupReportListView."""
-    def test_get_queryset(self):
-        """get_queryset should add the correct extra attributes."""
-        # Create a fresh group
-        group = mommy.make('groups.Group', make_m2m=True)
-
-        # Create a fresh message and flag it
-        thread = mommy.make('connectmessages.Thread', group=group)
-        mommy.make(
-            'connectmessages.Message', sender=self.superuser, thread=thread)
-        mommy.make(
-            'connectmessages.Message', sender=self.superuser, thread=thread)
-        mommy.make(
-            'connectmessages.Message', sender=self.superuser, thread=thread)
-
-        # Get the queryset
-        view = GroupReportListView()
-        view.request = self.request_factory.get('/')
-        queryset = view.get_queryset()
-
-        # Make sure everything looks right
-        group = queryset.get(pk=group.pk)
-        self.assertEqual(group.reply_count, 2)
+    def setUp(self):
+        """Login the testcase as a superuser"""
+        self.login(self.create_superuser())
 
     def test_export(self):
-        """If export is in query string, response should be a csv."""
-        response = self.client.get('%s?export' % reverse('groups_report'))
+        """
+        If export is in query string, response should be a csv.
+
+        We can also take advantage of the easily-parsable result here to test
+        the overall report.
+        """
+        member_one = self.create_user()
+        member_two = self.create_user()
+        owner = self.create_superuser(
+            first_name='Group', last_name='Reporter Exporter')
+
+        group = self.create_group(created_by=owner, featured=True)
+        group.owners.add(owner)
+
+        member_one.add_to_group(group.pk)
+        member_two.add_to_group(group.pk)
+
+        self.create_thread(sender=member_one, group=group)
+
+        response = self.client.get(
+            '{path}?export&search_name={group_name}'.format(
+                path=reverse('groups_report'), group_name=group.group.name))
         self.assertEqual(
             response['Content-Disposition'],
             'attachment; filename=groups.csv'
@@ -147,10 +152,26 @@ class GroupReportListViewTest(ConnectMessageTestCase):
             response['Content-Type'],
             'text/csv'
         )
-        data = import_set(response.content)
-        # There should be at least the header row and one group row
-        self.assertGreaterEqual(data.height, 2)
-        self.assertEqual(data.width, 22)
+
+        # We can use python's CSV parsing functionality by creating a CSV file
+        # object and passing it to DictReader.
+        reader = csv.DictReader(io.StringIO(unicode(response.content)))
+
+        # We can get the first row in the CSV (which should just be our group)
+        # by using python's next() functionality.
+        report = next(reader)
+
+        self.assertEqual(report['Admins'], '1')
+        self.assertEqual(report['Category'], 'Default')
+        self.assertEqual(report['Created By'], 'Group R.')
+        self.assertEqual(report['Featured'], 'True')
+        self.assertEqual(report['Member list published'], 'True')
+        self.assertEqual(report['Members'], '2')
+        self.assertEqual(report['Messages'], '1')
+        self.assertEqual(report['Name'], group.group.name)
+        self.assertEqual(report['Posters'], '1')
+        self.assertEqual(report['Private'], 'False')
+        self.assertEqual(report['Threads'], '1')
 
     def test_non_export(self):
         """If export is not in query string, response should be normal."""
@@ -163,3 +184,20 @@ class GroupReportListViewTest(ConnectMessageTestCase):
             response.templates[0].name,
             'group_report.html'
         )
+
+    def test_search_name_filter(self):
+        """Test the 'Search By Name' Filter"""
+        self.create_group(group__name='FilterTest1')
+        self.create_group(group__name='FilterTest2')
+
+        response = self.client.get(
+            reverse('groups_report'), {'search_name': 'FilterTest1'})
+
+        self.assertIn('FilterTest1', response.content)
+        self.assertNotIn('FilterTest2', response.content)
+
+    def test_search_name_in_context(self):
+        """Search name should populate in context."""
+        response = self.client.get(
+            reverse('groups_report'), {'search_name': 'Puppies'})
+        self.assertEqual(response.context['search_name'], 'Puppies')
