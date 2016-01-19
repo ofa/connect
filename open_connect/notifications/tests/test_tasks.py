@@ -5,6 +5,7 @@ from django.contrib.auth.models import Permission
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.utils.dateparse import parse_datetime
+from django.utils.timezone import now
 from mock import patch, call
 from model_mommy import mommy
 
@@ -362,45 +363,63 @@ class TestSendDigestNotification(ConnectTestMixin, ConnectMessageTestCase):
 
 
 @patch.object(tasks, 'send_digest_notification')
-class SendDailyEmailNotifications(ConnectMessageTestCase):
+class SendDailyEmailNotifications(ConnectTestMixin, TestCase):
     """Tests for send_daily_email_notifications"""
     def test_called(self, mock):
         """Test that the daily notifications list was properly called"""
-        # Clear out all notifications that may be leftover in the database
-        Notification.objects.all().delete()
-        group = mommy.make('groups.Group')
-        user1 = mommy.make('accounts.User')
-        user2 = mommy.make('accounts.User')
+        # Mark all existing notifications as sent
+        Notification.objects.update(queued_at=now(), consumed_at=now())
+
+        group = self.create_group()
+
+        sender = self.create_superuser()
+        user1 = self.create_user()
+        user2 = self.create_user()
+        user3 = self.create_user()
+
+        sender.add_to_group(group.pk)
         user1.add_to_group(group.pk, period='daily')
-        u1sub = Subscription.objects.get(user=user1, group=group)
         user2.add_to_group(group.pk, period='daily')
-        u2sub = Subscription.objects.get(user=user2, group=group)
+        user3.add_to_group(group.pk, period='immediate')
 
-        notification1 = mommy.make(
-            Notification, recipient=user1, subscription=u1sub,
-            message=self.message1)
-        notification2 = mommy.make(
-            Notification, recipient=user2, subscription=u2sub,
-            message=self.message1)
+        self.create_thread(sender=sender, group=group)
 
-        self.assertTrue(Notification.objects.filter(
-            pk=notification1.pk, queued_at__isnull=True).exists())
-        self.assertTrue(Notification.objects.filter(
-            pk=notification2.pk, queued_at__isnull=True).exists())
+        self.assertEqual(mock.delay.call_count, 0)
 
         tasks.send_daily_email_notifications()
 
         self.assertEqual(mock.delay.call_count, 2)
 
-        self.assertEqual(
-            [call(user1.pk), call(user2.pk)],
-            mock.delay.call_args_list
-        )
+        expected = [call(user1.pk), call(user2.pk)]
+        self.assertEqual(mock.delay.call_args_list, expected)
 
-        self.assertFalse(Notification.objects.filter(
-            pk=notification1.pk, queued_at__isnull=True).exists())
-        self.assertFalse(Notification.objects.filter(
-            pk=notification2.pk, queued_at__isnull=True).exists())
+    def test_unapproved_not_sent(self, mock):
+        """Make sure unapproved messages are not sent"""
+        # Mark all existing notifications as sent
+        Notification.objects.update(queued_at=now(), consumed_at=now())
+
+        group = self.create_group()
+        user1 = self.create_user()
+        user1.add_to_group(group.pk, period='daily')
+
+        thread = self.create_thread(group=group)
+        message = thread.first_message
+
+        message.status = 'unapproved'
+        message.save()
+
+        tasks.send_daily_email_notifications()
+
+        self.assertEqual(mock.delay.call_count, 0)
+
+        message.status = 'approved'
+        message.save()
+
+        tasks.send_daily_email_notifications()
+
+        self.assertEqual(mock.delay.call_count, 1)
+        mock.delay.assert_called_once_with(user1.pk)
+
 
 
 class ModerationNotificationsTest(ConnectTestMixin, TestCase):

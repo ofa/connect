@@ -189,14 +189,29 @@ def send_digest_notification(user_id):
 @shared_task()
 def send_daily_email_notifications():
     """Sends emails for subscriptions that are daily digests."""
-    users_with_notifications = Notification.objects.filter(
+    daily_notifications = Notification.objects.filter(
         subscription__period='daily',
-        queued_at__isnull=True
-    ).values_list('recipient_id', flat=True)
+        queued_at__isnull=True,
+        # Only send notifications for approved messages, otherwise leave the
+        # messages pending
+        message__status='approved'
+    )
+
+    # Grab the unique user id of each user with a daily notification.
+    users_with_notifications_lazy = daily_notifications.distinct(
+        "recipient").values_list("recipient_id", flat=True)
+
+    # We have to actually execute the above "find users with notifications"
+    # lookup before we do any update operatons. Thus we need to load the list
+    # of users with notifications into memory. Thanfully it's just a list of
+    # integers
+    users_with_notifications = list(users_with_notifications_lazy)
+
+    # Queue all the daily notifications in one big update
+    daily_notifications.update(queued_at=now())
+
     for user_id in users_with_notifications:
         send_digest_notification.delay(user_id)
-        Notification.objects.filter(
-            recipient_id=user_id).update(queued_at=now())
 
 
 @shared_task()
