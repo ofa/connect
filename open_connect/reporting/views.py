@@ -120,8 +120,7 @@ class GroupReportListView(
     valid_order_by = [
         'group__name', 'message_count', 'thread_count', 'reply_count',
         'posters', 'flagged', 'category', 'state', 'member_count',
-        'owner_count', 'created_at', 'created_by', 'image_count',
-        'image_clicks', 'link_count', 'link_clicks', 'private', 'published',
+        'owner_count', 'created_at', 'created_by', 'private', 'published',
         'moderated', 'featured', 'member_list_published'
     ]
     paginate_by = 25
@@ -129,28 +128,64 @@ class GroupReportListView(
 
     def get_queryset(self):
         """Update the queryset with some annotations."""
-        return super(GroupReportListView, self).get_queryset().annotate(
-            message_count=Count('thread__message', distinct=True),
-            thread_count=Count('thread', distinct=True),
-            posters=Count('thread__message__sender', distinct=True),
-            flagged=Count('thread__message__flags', distinct=True),
-            member_count=Count('group__user', distinct=True),
-            owner_count=Count('owners', distinct=True),
-            image_count=Count('thread__message__images', distinct=True),
-            image_clicks=Sum('thread__message__images__view_count'),
-            link_count=Count('thread__message__links', distinct=True),
-            link_clicks=Sum('thread__message__links__click_count')
-        ).extra(
+        # Using annotate() on this query will result in a GROUP_BY of all
+        # the columns returned. This causes a huge hit on performance, so we
+        # need to fall back to the Django ORM's `extra()` functionality.
+        queryset = super(GroupReportListView, self).get_queryset().extra(
             select={
-                'reply_count': """
-                    SELECT COUNT(*) from connectmessages_message AS m
-                    JOIN connectmessages_thread t
-                    ON m.thread_id = t.id
-                    WHERE t.group_id = groups_group.id AND
-                    m.id != t.first_message_id
-                """
+                'reply_count': "SELECT COUNT(*) from connectmessages_message "
+                               "m JOIN connectmessages_thread t ON "
+                               "m.thread_id = t.id  JOIN accounts_user u ON "
+                               "m.sender_id = u.id WHERE t.group_id = "
+                               "groups_group.id AND m.id != t.first_message_id "
+                               "AND u.is_banned <> TRUE AND m.status = "
+                               "'approved'",
+                'thread_count': "SELECT COUNT(*) from connectmessages_thread t "
+                                "JOIN connectmessages_message fm ON "
+                                "t.first_message_id = fm.id JOIN "
+                                "accounts_user firstsender ON fm.sender_id = "
+                                "firstsender.id WHERE fm.status = 'approved' "
+                                "AND firstsender.is_banned <> TRUE AND "
+                                "t.group_id = groups_group.id",
+                'message_count': "SELECT COUNT(*) from connectmessages_message "
+                                 "m JOIN connectmessages_thread t ON "
+                                 "m.thread_id = t.id JOIN accounts_user u ON "
+                                 "m.sender_id = u.id WHERE t.group_id = "
+                                 "groups_group.id AND u.is_banned <> TRUE AND "
+                                 "m.status = 'approved'",
+                'posters': "SELECT COUNT(DISTINCT au.id) from "
+                           "connectmessages_message m JOIN "
+                           "connectmessages_thread t ON m.thread_id = t.id "
+                           "JOIN accounts_user au ON m.sender_id = au.id "
+                           "WHERE t.group_id = groups_group.id AND "
+                           "au.is_banned <> TRUE AND m.status = 'approved'",
+                'member_count': "SELECT COUNT(*) from accounts_user_groups aug "
+                                "JOIN accounts_user au ON aug.user_id = au.id "
+                                "WHERE aug.group_id = groups_group.group_id "
+                                "AND au.is_banned <> TRUE",
+                'owner_count': "SELECT COUNT(*) from groups_group_owners go "
+                               "WHERE go.group_id = groups_group.id"
             }
-        ).prefetch_related('tagged_items__tag')
+        ).only(
+            "group__name", "category__name", "state", "private", "published",
+            "moderated", "featured", "member_list_published", "created_at",
+            "created_by", "created_by__first_name", "created_by__last_name",
+            "created_by__email", "created_by__uuid"
+        ).select_related('created_by').prefetch_related('tagged_items__tag')
+
+        search_name = self.request.GET.get('search_name', False)
+        if search_name:
+            queryset = queryset.filter(
+                Q(group__name__icontains=search_name)
+            )
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        """Pass in extra context to the view"""
+        context = super(GroupReportListView, self).get_context_data(**kwargs)
+        context['search_name'] = self.request.GET.get('search_name', False)
+        return context
 
     def render_to_response(self, context, **response_kwargs):
         """If exporting, generate a csv."""
@@ -158,23 +193,20 @@ class GroupReportListView(
             data = Dataset()
             data.headers = (
                 'Name', 'Messages', 'Threads', 'Replies', 'Posters',
-                'Flagged messages', 'Category', 'Tags', 'State', 'Members',
-                'Admins', 'Private', 'Published', 'Moderated', 'Featured',
-                'Member list published', 'Created', 'Created By', 'Photos',
-                'Photo clicks', 'Links', 'Link clicks'
+                'Category', 'Tags', 'State', 'Members', 'Admins', 'Private',
+                'Published', 'Moderated', 'Featured', 'Member list published',
+                'Created', 'Created By'
             )
 
             for group in self.get_queryset():
                 data.append((
                     group.group.name, group.message_count, group.thread_count,
-                    group.reply_count, group.posters, group.flagged,
+                    group.reply_count, group.posters,
                     group.category.name, groups_tags_string([group]),
                     group.state, group.member_count, group.owner_count,
                     group.private, group.published, group.moderated,
                     group.featured, group.member_list_published,
-                    group.created_at, group.created_by, group.image_count,
-                    group.image_clicks or 0, group.link_count,
-                    group.link_clicks or 0
+                    group.created_at, group.created_by
                 ))
 
             response = HttpResponse(
