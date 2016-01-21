@@ -144,8 +144,7 @@ def send_system_message(recipient, subject, message_content):
     # plaintext email version of the message
     notification, created = Notification.objects.get_or_create(
         recipient_id=recipient.pk,
-        message=message,
-        triggered_at=message.created_at
+        message=message
     )
 
     if created and recipient.group_notification_period == 'immediate':
