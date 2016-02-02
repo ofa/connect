@@ -12,6 +12,9 @@ class FakeModel(models.Model):
     """Fake model for testing."""
     somefield = models.TextField()
 
+    class Meta(object):
+        managed = False
+
 
 @patch.object(utils.models, 'get_models')
 class GetNotificationModelsTest(TestCase):

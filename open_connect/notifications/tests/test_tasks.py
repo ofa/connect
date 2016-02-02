@@ -5,14 +5,13 @@ from django.contrib.auth.models import Permission
 from django.core.urlresolvers import reverse
 from django.test import TestCase, override_settings
 from django.utils.dateparse import parse_datetime
-from django.utils.timezone import now
 from mock import patch, call
 from model_mommy import mommy
 
 from open_connect.connectmessages.models import Message
 from open_connect.connectmessages.tests import ConnectMessageTestCase
 from open_connect.notifications import tasks
-from open_connect.notifications.models import Notification, Subscription
+from open_connect.notifications.models import Notification
 from open_connect.connect_core.utils.basetests import ConnectTestMixin
 
 
@@ -106,7 +105,7 @@ class TestCreateRecipientNotifications(TestCase):
             Notification.objects.filter(
                 recipient=user,
                 message_id=self.message.pk,
-                triggered_at=self.message.created_at,
+                consumed=True,
                 message=self.message
             ).exists()
         )
@@ -151,11 +150,11 @@ class TestSendImmediateNotification(ConnectMessageTestCase):
             Notification,
             recipient=user, message=self.message1)
 
-        self.assertIsNone(notification.consumed_at)
+        self.assertFalse(notification.consumed)
 
         tasks.send_immediate_notification(notification.pk)
-        self.assertIsNotNone(
-            Notification.objects.get(pk=notification.pk).consumed_at)
+        self.assertTrue(
+            Notification.objects.get(pk=notification.pk).consumed)
         mock.assert_called_once()
 
         args = mock.call_args[1]
@@ -191,11 +190,11 @@ class TestSendImmediateNotification(ConnectMessageTestCase):
             Notification,
             recipient=user, message=self.directmessage1)
 
-        self.assertIsNone(notification.consumed_at)
+        self.assertFalse(notification.consumed)
 
         tasks.send_immediate_notification(notification.pk)
         self.assertIsNotNone(
-            Notification.objects.get(pk=notification.pk).consumed_at)
+            Notification.objects.get(pk=notification.pk).consumed)
         mock.assert_called_once()
 
         args = mock.call_args[1]
@@ -242,31 +241,49 @@ class TestSendImmediateNotification(ConnectMessageTestCase):
 
 
 @patch.object(tasks, 'send_email')
-class TestSendDigestNotification(ConnectTestMixin, ConnectMessageTestCase):
-    """Tests for send_digest_notification"""
-    def test_called(self, mock):
-        """Test to make sure that the emailer was properly called"""
-        user = mommy.make('accounts.User')
-        sub = mommy.make(Subscription, period='daily')
-        notification1 = mommy.make(
-            Notification,
-            recipient=user, subscription=sub, message=self.message1)
-        notification2 = mommy.make(
-            Notification,
-            recipient=user, subscription=sub, message=self.message2)
+class TestSendDailyDigestNotification(ConnectTestMixin, TestCase):
+    """Tests for send_daily_digest_notification"""
+    def test_marked_consumed(self, mock):
+        """Test to make sure that the notification was marked consumed"""
+        user = self.create_user()
 
-        self.assertIsNone(
-            Notification.objects.get(pk=notification1.pk).consumed_at)
-        self.assertIsNone(
-            Notification.objects.get(pk=notification2.pk).consumed_at)
+        # Create the group and add the user to that group
+        group = self.create_group()
+        user.add_to_group(group.pk, period='daily')
 
-        tasks.send_digest_notification(user.pk)
+        thread1 = self.create_thread(group=group)
+        message1 = thread1.first_message
+        notification1 = user.notification_set.get(message=message1)
+
+        thread2 = self.create_thread(group=group)
+        message2 = thread2.first_message
+        notification2 = user.notification_set.get(message=message2)
+
+        self.assertFalse(
+            Notification.objects.get(pk=notification1.pk).consumed)
+        self.assertFalse(
+            Notification.objects.get(pk=notification2.pk).consumed)
+
+        tasks.send_daily_digest_notification(user.pk)
         mock.assert_called_once()
 
-        self.assertIsNotNone(
-            Notification.objects.get(pk=notification1.pk).consumed_at)
-        self.assertIsNotNone(
-            Notification.objects.get(pk=notification2.pk).consumed_at)
+        self.assertTrue(
+            Notification.objects.get(pk=notification1.pk).consumed)
+        self.assertTrue(
+            Notification.objects.get(pk=notification2.pk).consumed)
+
+    def test_outgoing_email(self, mock):
+        """Test that the digest is properly sent"""
+        user = self.create_user()
+
+        group = self.create_group()
+        user.add_to_group(group.pk, period='daily')
+
+        thread1 = self.create_thread(group=group)
+        thread2 = self.create_thread(group=group)
+
+        tasks.send_daily_digest_notification(user.pk)
+        mock.assert_called_once()
 
         args = mock.call_args[1]
 
@@ -292,58 +309,69 @@ class TestSendDigestNotification(ConnectTestMixin, ConnectMessageTestCase):
         # Body (HTML and Plaintext)
         html = args['html']
         plaintext = args['text']
-        self.assertIn(self.message1.text, html)
-        self.assertIn(self.message2.text, html)
+        self.assertIn(thread1.first_message.text, html)
+        self.assertIn(thread2.first_message.text, html)
         self.assertIn('Reply', html)
-        self.assertIn(self.message1.clean_text, plaintext)
-        self.assertIn(self.message2.clean_text, plaintext)
+        self.assertIn(thread1.first_message.clean_text, plaintext)
+        self.assertIn(thread2.first_message.clean_text, plaintext)
 
     def test_no_pending_messages(self, mock):
         """Test that pending messages are never part of a digest"""
         user = self.create_user()
-        valid_thread = self.create_thread()
-        pending_thread = self.create_thread()
+
+        group = self.create_group()
+        user.add_to_group(group.pk, period='daily')
+
+        valid_thread = self.create_thread(group=group)
+        pending_thread = self.create_thread(group=group)
 
         valid_message = valid_thread.first_message
+
         pending_message = pending_thread.first_message
         pending_message.status = 'pending'
         pending_message.save()
 
-        sub = mommy.make(Subscription, period='daily')
-        valid_notification = mommy.make(
-            Notification,
-            recipient=user, subscription=sub, message=valid_message)
-        pending_notification = mommy.make(
-            Notification,
-            recipient=user, subscription=sub, message=pending_message)
+        valid_notification = user.notification_set.get(
+            message=valid_message)
+        pending_notification = user.notification_set.get(
+            message=pending_message)
 
-        self.assertIsNone(
-            Notification.objects.get(pk=valid_notification.pk).consumed_at)
-        self.assertIsNone(
-            Notification.objects.get(pk=pending_notification.pk).consumed_at)
-
-        tasks.send_digest_notification(user.pk)
+        tasks.send_daily_digest_notification(user.pk)
         mock.assert_called_once()
 
-        self.assertIsNotNone(
-            Notification.objects.get(pk=valid_notification.pk).consumed_at)
-        self.assertIsNone(
-            Notification.objects.get(pk=pending_notification.pk).consumed_at)
+        self.assertTrue(
+            Notification.objects.get(pk=valid_notification.pk).consumed)
+        self.assertFalse(
+            Notification.objects.get(pk=pending_notification.pk).consumed)
 
         args = mock.call_args[1]
         html = args['html']
         self.assertIn(valid_message.text, html)
         self.assertNotIn(pending_message.text, html)
 
+        # Try making the pending notification valid, and test again
+        pending_message.status = 'approved'
+        pending_message.save()
+
+        tasks.send_daily_digest_notification(user.pk)
+
+        self.assertTrue(
+            Notification.objects.get(pk=pending_notification.pk).consumed)
+
     def test_includes_unsubscribe_link(self, mock):
         """Ensure that the digest includes an unsubscribe link"""
-        user = mommy.make('accounts.User')
+        user = self.create_user()
+
+        thread = self.create_thread()
+
         mommy.make(
             Notification,
             recipient=user,
-            message=self.message1
+            message=thread.first_message,
+            subscription__period='daily'
         )
-        tasks.send_digest_notification(user.pk)
+
+        tasks.send_daily_digest_notification(user.pk)
         mock.assert_called_once()
 
         args = mock.call_args[1]
@@ -355,20 +383,20 @@ class TestSendDigestNotification(ConnectTestMixin, ConnectMessageTestCase):
 
     def test_no_notifications(self, mock):
         """If there are no notifications, should return None."""
-        user = mommy.make('accounts.User')
+        user = self.create_user()
         # pylint: disable=assignment-from-none
-        response = tasks.send_digest_notification(user.pk)
+        response = tasks.send_daily_digest_notification(user.pk)
         self.assertIsNone(response)
         self.assertEqual(mock.call_count, 0)
 
 
-@patch.object(tasks, 'send_digest_notification')
+@patch.object(tasks, 'send_daily_digest_notification')
 class SendDailyEmailNotifications(ConnectTestMixin, TestCase):
     """Tests for send_daily_email_notifications"""
     def test_called(self, mock):
         """Test that the daily notifications list was properly called"""
         # Mark all existing notifications as sent
-        Notification.objects.update(queued_at=now(), consumed_at=now())
+        Notification.objects.update(consumed=True)
 
         group = self.create_group()
 
@@ -390,13 +418,13 @@ class SendDailyEmailNotifications(ConnectTestMixin, TestCase):
 
         self.assertEqual(mock.delay.call_count, 2)
 
-        expected = [call(user1.pk), call(user2.pk)]
-        self.assertEqual(mock.delay.call_args_list, expected)
+        self.assertIn(call(user1.pk), mock.delay.call_args_list)
+        self.assertIn(call(user2.pk), mock.delay.call_args_list)
 
     def test_unapproved_not_sent(self, mock):
         """Make sure unapproved messages are not sent"""
         # Mark all existing notifications as sent
-        Notification.objects.update(queued_at=now(), consumed_at=now())
+        Notification.objects.update(consumed=True)
 
         group = self.create_group()
         user1 = self.create_user()
@@ -419,7 +447,6 @@ class SendDailyEmailNotifications(ConnectTestMixin, TestCase):
 
         self.assertEqual(mock.delay.call_count, 1)
         mock.delay.assert_called_once_with(user1.pk)
-
 
 
 class ModerationNotificationsTest(ConnectTestMixin, TestCase):

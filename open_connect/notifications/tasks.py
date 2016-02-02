@@ -62,8 +62,7 @@ def create_group_notification(message_id, userthread_id):
         notification = Notification.objects.create(
             recipient_id=userthread.user.pk,
             subscription_id=userthread.subscription_id,
-            message=message,
-            triggered_at=message.created_at
+            message=message
         )
 
         if userthread.subscription_period == 'immediate':
@@ -84,8 +83,7 @@ def create_recipient_notifications(message_id):
         try:
             notification = Notification.objects.create(
                 recipient_id=recipient.pk,
-                message=message,
-                triggered_at=message.created_at
+                message=message
             )
             if recipient.direct_notification_period == 'immediate':
                 send_immediate_notification.delay(notification.pk)
@@ -141,22 +139,33 @@ def send_immediate_notification(notification_id):
         html=html
     )
 
-    notification.consumed_at = now()
+    notification.consumed = True
     notification.save()
 
 
 @shared_task()
-def send_digest_notification(user_id):
-    """Send a digest notification for an individual user"""
-    notifications = Notification.objects.select_related('recipient').filter(
+def send_daily_digest_notification(user_id):
+    """Send a daily digest notification for an individual user"""
+    notifications = Notification.objects.filter(
         recipient_id=user_id,
-        consumed_at__isnull=True,
+        consumed=False,
         # Only send notifications for approved messages, otherwise leave the
         # messages pending
-        message__status='approved'
-    ).exclude(subscription__period__in=['immediate', 'none']).order_by(
-        '-message__thread', '-message__pk')
-    if not notifications:
+        message__status='approved',
+        subscription__period='daily'
+    ).select_related(
+        'recipient',
+        'message',
+        'message__thread',
+        'message__thread__group',
+        'message__thread__group__group'
+    ).order_by('-message__thread', '-message__pk')
+
+    # To reduce the number of `count` and `exists` queries, do the count once
+    # and base as much logic around that count as possible.
+    total_notifications = notifications.count()
+
+    if not total_notifications:
         return
     recipient = notifications[0].recipient
 
@@ -171,8 +180,8 @@ def send_digest_notification(user_id):
     subject = u'Your {brand} {day} Digest - {num} New {word}'.format(
         brand=settings.BRAND_TITLE,
         day=now().strftime('%A'),
-        num=notifications.count(),
-        word=ngettext('Message', 'Messages', notifications.count())
+        num=total_notifications,
+        word=ngettext('Message', 'Messages', total_notifications)
     )
 
     send_email(
@@ -183,35 +192,21 @@ def send_digest_notification(user_id):
         html=html
     )
 
-    notifications.update(consumed_at=now())
+    notifications.update(consumed=True)
 
 
 @shared_task()
 def send_daily_email_notifications():
     """Sends emails for subscriptions that are daily digests."""
-    daily_notifications = Notification.objects.filter(
-        subscription__period='daily',
-        queued_at__isnull=True,
-        # Only send notifications for approved messages, otherwise leave the
-        # messages pending
-        message__status='approved'
-    )
+    from open_connect.accounts.models import User
+    users_with_notifications = User.objects.filter(
+        notification__subscription__period='daily',
+        notification__consumed=False,
+        notification__message__status='approved'
+        ).distinct().only("id")
 
-    # Grab the unique user id of each user with a daily notification.
-    users_with_notifications_lazy = daily_notifications.distinct(
-        "recipient").values_list("recipient_id", flat=True)
-
-    # We have to actually execute the above "find users with notifications"
-    # lookup before we do any update operatons. Thus we need to load the list
-    # of users with notifications into memory. Thanfully it's just a list of
-    # integers
-    users_with_notifications = list(users_with_notifications_lazy)
-
-    # Queue all the daily notifications in one big update
-    daily_notifications.update(queued_at=now())
-
-    for user_id in users_with_notifications:
-        send_digest_notification.delay(user_id)
+    for user in users_with_notifications:
+        send_daily_digest_notification.delay(user.pk)
 
 
 @shared_task()

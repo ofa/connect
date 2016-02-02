@@ -18,7 +18,8 @@ class Subscription(TimestampModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='subscriptions')
     period = models.CharField(
-        max_length=30, choices=NOTIFICATION_PERIODS, default='immediate')
+        max_length=30, choices=NOTIFICATION_PERIODS, default='immediate',
+        db_index=True)
     group = models.ForeignKey('groups.Group')
 
     class Meta(object):
@@ -60,9 +61,7 @@ class Subscription(TimestampModel):
 class Notification(TimestampModel):
     """Information about an individual notification."""
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL)
-    triggered_at = models.DateTimeField(blank=True, null=True)
-    queued_at = models.DateTimeField(blank=True, null=True)
-    consumed_at = models.DateTimeField(blank=True, null=True)
+    consumed = models.BooleanField(default=False, db_index=True)
     subscription = models.ForeignKey(Subscription, blank=True, null=True)
     message = models.ForeignKey('connectmessages.Message')
 
