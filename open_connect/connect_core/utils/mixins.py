@@ -19,6 +19,7 @@ from open_connect.connect_core.utils.forms import (
 # pylint: disable=invalid-name
 special_chars_regex = re.compile(r'\s+')
 spaces_near_breaks_regex = re.compile(r'( *<br/> *)')
+single_break = re.compile(r'(<br/>)')
 three_or_more_breaks_regex = re.compile(r'(<br/>){3,}')
 opening_closing_break = re.compile(r'(^(<br/>)+)|((<br/>)+$)')
 # pylint: disable=line-too-long
@@ -204,24 +205,29 @@ class PaginateByMixin(MultipleObjectMixin):
         return super(PaginateByMixin, self).get_paginate_by(queryset)
 
 
-def handle_breaks(message):
+def handle_breaks(html):
     """Cleanup code and handle <br/> tags"""
     # Clean up the code a bit by turning newlines, tabs,
     # and multiple spaces into single spaces.
-    single_spaced = special_chars_regex.sub(' ', message)
+    html = special_chars_regex.sub(u' ', html)
 
     # Remove spaces before and after HTML breaks
-    space_free_br = spaces_near_breaks_regex.sub('<br/>', single_spaced)
+    html = spaces_near_breaks_regex.sub(u'<br/>', html)
 
     # Turn 3 or more <br/> tags into 2 tags
-    shortened = three_or_more_breaks_regex.sub('<br/><br/>', space_free_br)
+    html = three_or_more_breaks_regex.sub(u'<br/><br/>', html)
 
     # Remove the leading and trailing whitespace caused by
     # the previous regex
-    stripped = shortened.strip()
+    html = html.strip()
 
     # Remove any leading and closing <br/> tags
-    return opening_closing_break.sub('', stripped)
+    html = opening_closing_break.sub(u'', html)
+
+    # Add a newline after every linebreak, to prevent a wall of HTML
+    html = single_break.sub(u'<br/>\n', html)
+
+    return html
 
 
 class SanitizeHTMLMixin(object):
@@ -258,7 +264,7 @@ class SanitizeHTMLMixin(object):
             # they always fit inside any template or email client they're
             # inserted into.
             if self.ADD_MAX_WIDTH and tag.name == 'img':
-                tag.attrs['style'] = 'max-width: 100%;'
+                tag.attrs['style'] = u'max-width: 100%;'
 
         # Grab the HTML from BeautifulSoup, return it in UTF8
         return unicode(soup).encode("utf-8", errors="ignore")
@@ -272,7 +278,7 @@ class SanitizeHTMLMixin(object):
         # Detect if redactor is enabled
         if 'vars:redactor=true' not in message:
             # If redactor is not enabled, replace \n with <br/>
-            message = string.replace(message, '\n', '<br/>')
+            message = string.replace(message, u'\n', u'<br/>')
 
         clean_code = self._cleanse_tags(message)
 

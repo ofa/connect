@@ -76,7 +76,8 @@ Compose.prototype.populateWindow = function(data) {
                 "csrfmiddlewaretoken": tokenvalue
             },
             convertImageLinks: true,
-            convertVideoLinks: true
+            convertVideoLinks: true,
+            pastePlainText: true
         });
     }
 
