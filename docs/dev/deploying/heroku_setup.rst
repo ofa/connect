@@ -158,6 +158,17 @@ Configure S3 Static & Upload Storage
     heroku config:set USE_S3=True
 
 
+Disable collectstatic during Heroku compilation
+-----------------------------------------------
+
+Connect relies on bower for static file dependencies. To keep things speedy and builds small, we need to disable the bower and collectstatic step when compiling Connect on Heroku.
+
+.. code-block:: bash
+
+    # Disable staticfile collection during heroku build
+    heroku config:set DISABLE_COLLECTSTATIC=1
+
+
 Deploy Connect to Heroku
 ------------------------
 
