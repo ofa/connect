@@ -8,11 +8,13 @@
 
 # cffi or cryptography have to be explictly set in requirements for heroku
 # python buildpack to install the relevant libraries
-cffi==1.1.1
+cffi==1.5.2
+
 
 # pylibmc has to be explictly added to requirements for heroku's python
 # buildpack
 pylibmc==1.4.3
+
 
 # Since we don't want to require libmemcached on dev machines, only require
 # packages that need memcached on heroku
