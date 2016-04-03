@@ -8,7 +8,7 @@
 
 # cffi or cryptography have to be explictly set in requirements for heroku
 # python buildpack to install the relevant libraries
-cffi==1.1.1
+cffi==1.5.2
 
 
 # pylibmc has to be explictly added to requirements for heroku's python
