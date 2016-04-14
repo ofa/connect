@@ -202,6 +202,9 @@ class Group(TimestampModel):
         ordering = ['-featured', '-is_national', 'group__name']
         permissions = (
             ('can_edit_any_group', 'Can edit any group.'),
+            ('can_edit_group_category', 'Can change a group\'s category.'),
+            ('can_edit_group_featured',
+             'Can change a group\'s featured status.'),
         )
 
     def __unicode__(self):

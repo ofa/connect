@@ -20,10 +20,8 @@
 
         <div class="member-status admin">
             <div class="member-status-block">ADMIN</div>
-            {% if perms.groups.change_group %}
-                <a href="{% url "update_group" group.pk %}" class="btn-primary btn btn-block hidden-xs">Edit Group</a>
-                <a href="{% url "update_group" group.pk %}" class="visible-xs-block">Edit Group</a>
-            {% endif %}
+            <a href="{% url "update_group" group.pk %}" class="btn-primary btn btn-block hidden-xs">Edit Group</a>
+            <a href="{% url "update_group" group.pk %}" class="visible-xs-block">Edit Group</a>
         </div>
         {% else %} {% if group not in user.groups_joined %}
         <!-- {% if group.id in requested_ids %}
