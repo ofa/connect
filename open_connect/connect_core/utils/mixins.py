@@ -209,23 +209,23 @@ def handle_breaks(html):
     """Cleanup code and handle <br/> tags"""
     # Clean up the code a bit by turning newlines, tabs,
     # and multiple spaces into single spaces.
-    html = special_chars_regex.sub(u' ', html)
+    html = special_chars_regex.sub(' ', html)
 
     # Remove spaces before and after HTML breaks
-    html = spaces_near_breaks_regex.sub(u'<br/>', html)
+    html = spaces_near_breaks_regex.sub('<br/>', html)
 
     # Turn 3 or more <br/> tags into 2 tags
-    html = three_or_more_breaks_regex.sub(u'<br/><br/>', html)
+    html = three_or_more_breaks_regex.sub('<br/><br/>', html)
 
     # Remove the leading and trailing whitespace caused by
     # the previous regex
     html = html.strip()
 
     # Remove any leading and closing <br/> tags
-    html = opening_closing_break.sub(u'', html)
+    html = opening_closing_break.sub('', html)
 
     # Add a newline after every linebreak, to prevent a wall of HTML
-    html = single_break.sub(u'<br/>\n', html)
+    html = single_break.sub('<br/>\n', html)
 
     return html
 
@@ -264,7 +264,7 @@ class SanitizeHTMLMixin(object):
             # they always fit inside any template or email client they're
             # inserted into.
             if self.ADD_MAX_WIDTH and tag.name == 'img':
-                tag.attrs['style'] = u'max-width: 100%;'
+                tag.attrs['style'] = 'max-width: 100%;'
 
         # Grab the HTML from BeautifulSoup, return it in UTF8
         return unicode(soup).encode("utf-8", errors="ignore")
@@ -278,7 +278,7 @@ class SanitizeHTMLMixin(object):
         # Detect if redactor is enabled
         if 'vars:redactor=true' not in message:
             # If redactor is not enabled, replace \n with <br/>
-            message = string.replace(message, u'\n', u'<br/>')
+            message = string.replace(message, '\n', '<br/>')
 
         clean_code = self._cleanse_tags(message)
 
