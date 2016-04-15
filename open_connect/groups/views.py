@@ -115,12 +115,10 @@ class GroupUpdateView(GroupCreateView, CommonViewMixin):
 
     def disallow_non_owners(self):
         """Only allow group owners and superusers to edit a group."""
-        user = self.request.user
-        if user.is_superuser or user.has_perm('groups.can_edit_any_group'):
+        if (self.request.user.has_perm('groups.can_edit_any_group') or
+                self.group in self.request.user.groups_moderating):
             return
-        if not user.has_perm('groups.change_group'):
-            raise PermissionDenied
-        if not self.group.owners.filter(pk=user.pk).exists():
+        else:
             raise Http404
 
     def get(self, request, *args, **kwargs):
@@ -141,6 +139,17 @@ class GroupUpdateView(GroupCreateView, CommonViewMixin):
         if not self._group:
             self._group = Group.objects.get(pk=self.kwargs['pk'])
         return self._group
+
+    def get_forms(self, form_classes):
+        """Changing category or feature status should be a permission"""
+        forms = super(GroupUpdateView, self).get_forms(form_classes)
+        if not self.request.user.has_perm('groups.can_edit_group_featured'):
+            del forms['group_form'].fields['featured']
+
+        if not self.request.user.has_perm('groups.can_edit_group_category'):
+            del forms['group_form'].fields['category']
+
+        return forms
 
     def get_form_kwargs(self, form_class_name):
         """Bind the forms to the correct instances."""

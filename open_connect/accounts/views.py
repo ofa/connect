@@ -193,6 +193,8 @@ class UpdateUserPermissionView(
         ('groups', 'add_group'),
         ('groups', 'change_group'),
         ('groups', 'can_edit_any_group'),
+        ('groups', 'can_edit_group_category'),
+        ('groups', 'can_edit_group_featured'),
         ('resources', 'add_resource'),
         ('resources', 'can_add_resource_anywhere')
     )

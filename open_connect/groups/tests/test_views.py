@@ -36,6 +36,12 @@ USER_MODEL = get_user_model()
 IS_SQLITE = settings.DATABASES['default']['ENGINE'].endswith('sqlite3')
 
 
+def get_group_permission(codename):
+    """Helper to get a specific group permission"""
+    return Permission.objects.get(
+        content_type__app_label='groups', codename=codename)
+
+
 class GroupCreateViewTest(ConnectTestMixin, DjangoTestCase):
     """Tests for GroupCreateView"""
     def setUp(self):
@@ -145,56 +151,190 @@ class GroupUpdateViewTest(ConnectTestMixin, DjangoTestCase):
     """Tests for GroupUpdateView."""
     def setUp(self):
         """Setup the GroupUpdateViewTest TestCase"""
-        self.group = mommy.make(Group)
+        self.group = self.create_group()
 
-    def test_change_group_permission_required(self):
-        """User without change_group permission should get a 403."""
-        user = self.create_user(is_staff=True)
-        c = Client()
-        c.login(username=user.email, password='moo')
-        response = c.get(reverse('update_group', args=[self.group.pk]))
-        self.assertEqual(response.status_code, 403)
+    def test_regular_users_get_404(self):
+        """Test that regular users cannot view nor edit"""
+        group = self.create_group(
+            group__name='Original Name', description='First Description')
 
-    def test_non_group_owner_cannot_update_group(self):
-        """A non-owner of a group shouldn't be able to update."""
-        user = self.create_user(is_staff=True)
-        permission = Permission.objects.get(
-            content_type__app_label='groups', codename='change_group')
-        user.user_permissions.add(permission)
+        user = self.create_user()
+        self.login(user)
 
-        c = Client()
-        c.login(username=user.email, password='moo')
-        response = c.post(
-            reverse('update_group', args=[self.group.pk]),
+        get_response = self.client.get(reverse('update_group', args=[group.pk]))
+        self.assertEqual(get_response.status_code, 404)
+
+        post_response = self.client.post(
+            reverse('update_group', args=[group.pk]),
             {
-                'authgroup_form-name': 'TGIF',
-                'group_form-category': '1'}
-        )
-        self.assertEqual(response.status_code, 404)
+                'authgroup_form-name': 'New Name',
+                'group_form-description': 'Second Description'
+            })
+        self.assertEqual(post_response.status_code, 404)
 
-    def test_group_owner_can_update_group(self):
-        """A group owner should be able to update their own group."""
-        staff_user = self.create_user(is_staff=True)
-        self.group.owners.add(staff_user)
-        change_group_permission = Permission.objects.get(
-            content_type__app_label='groups', codename='change_group')
-        staff_user.user_permissions.add(change_group_permission)
-        c = Client()
-        c.login(username=staff_user.email, password='moo')
+        updated_group = Group.objects.get(pk=group.pk)
+        self.assertEqual(updated_group.group.name, 'Original Name')
+        self.assertEqual(updated_group.description, 'First Description')
 
-        # Verify the group name isn't already what we're changing it to
-        self.assertNotEqual(self.group.group.name, 'TGIF')
+    def test_edit_any_group_can_edit(self):
+        """A users with the can_edit_any_group permission can update group"""
+        group = self.create_group(
+            group__name='Original Name', description='First Description')
 
-        response = c.post(
-            reverse('update_group', args=[self.group.pk]),
+        user = self.create_user()
+        edit_any_group_permission = get_group_permission('can_edit_any_group')
+        user.user_permissions.add(edit_any_group_permission)
+        self.login(user)
+
+        post_response = self.client.post(
+            reverse('update_group', args=[group.pk]),
             {
-                'authgroup_form-name': 'TGIF',
-                'group_form-category': '1'}
-        )
-        self.assertRedirects(
-            response, reverse('group_details', args=[self.group.pk]))
-        group = Group.objects.get(pk=self.group.pk)
-        self.assertEqual(group.group.name, 'TGIF')
+                'authgroup_form-name': 'New Name',
+                'group_form-description': 'Second Description'
+            })
+        self.assertEqual(post_response.status_code, 302)
+
+        updated_group = Group.objects.get(pk=group.pk)
+        self.assertEqual(updated_group.group.name, 'New Name')
+        self.assertEqual(updated_group.description, 'Second Description')
+
+    def test_group_owners_can_edit(self):
+        """Group owners can edit their own group"""
+        group = self.create_group(
+            group__name='Original Name', description='First Description')
+
+        user = self.create_user()
+        group.owners.add(user)
+        self.login(user)
+
+        post_response = self.client.post(
+            reverse('update_group', args=[group.pk]),
+            {
+                'authgroup_form-name': 'New Name',
+                'group_form-description': 'Second Description'
+            })
+        self.assertEqual(post_response.status_code, 302)
+
+        updated_group = Group.objects.get(pk=group.pk)
+        self.assertEqual(updated_group.group.name, 'New Name')
+        self.assertEqual(updated_group.description, 'Second Description')
+
+    def test_edit_featured_restriction(self):
+        """Group owners should not be able to update featured status"""
+        group = self.create_group(featured=False)
+
+        user = self.create_user()
+        group.owners.add(user)
+        self.login(user)
+
+        post_response = self.client.post(
+            reverse('update_group', args=[group.pk]),
+            {
+                'authgroup_form-name': 'New Name',
+                'group_form-featured': '1'
+            })
+        self.assertEqual(post_response.status_code, 302)
+
+        updated_group = Group.objects.get(pk=group.pk)
+        self.assertEqual(updated_group.group.name, 'New Name')
+        self.assertEqual(updated_group.featured, False)
+
+    def test_caregory_change_restriction(self):
+        """Group owners shouldn't change category without permission"""
+        # Create 2 categories and a group
+        old_category = mommy.make('groups.Category')
+        new_category = mommy.make('groups.Category')
+        group = self.create_group(
+            category=old_category, group__name='Old Name')
+
+        # Create a user for this test. Make that user an owner of the group
+        # then log that user into the test client
+        user = self.create_user()
+        group.owners.add(user)
+        self.login(user)
+
+        # Send a POST request with enough information to change the category
+        post_response = self.client.post(
+            reverse('update_group', args=[group.pk]),
+            {
+                'authgroup_form-name': 'New Name',
+                'group_form-category': new_category.pk
+            })
+        # Confirm the POST was successful, as successful POSTs redirect
+        self.assertEqual(post_response.status_code, 302)
+
+        # Refresh the group from the database and make sure the name is
+        # correct but the old category persisted
+        updated_group = Group.objects.get(pk=group.pk)
+        self.assertEqual(updated_group.group.name, 'New Name')
+        self.assertEqual(updated_group.category, old_category)
+
+        # Add the permission
+        change_category_permission = get_group_permission(
+            'can_edit_group_category')
+        user.user_permissions.add(change_category_permission)
+
+        # We need to re-add the user to the group owners, since the previous
+        # POST request cleared out our owners
+        group.owners.add(user)
+
+        second_post_response = self.client.post(
+            reverse('update_group', args=[group.pk]),
+            {
+                'authgroup_form-name': 'New Name',
+                'group_form-category': new_category.pk
+            })
+        self.assertEqual(second_post_response.status_code, 302)
+
+        updated_group = Group.objects.get(pk=group.pk)
+        self.assertEqual(updated_group.category, new_category)
+
+    def test_featured_change_restrictions(self):
+        """Group owners shouldn't change featured status without permission"""
+        group = self.create_group(featured=False, group__name='Old Name')
+        user = self.create_user()
+        group.owners.add(user)
+
+        self.login(user)
+
+        # Send a POST request with enough information to change the featured
+        # status
+        post_response = self.client.post(
+            reverse('update_group', args=[group.pk]),
+            {
+                'authgroup_form-name': 'New Name',
+                'group_form-featured': '1'
+            })
+        # Confirm the POST was successful, as successful POSTs redirect
+        self.assertEqual(post_response.status_code, 302)
+
+        updated_group = Group.objects.get(pk=group.pk)
+        self.assertEqual(updated_group.group.name, 'New Name')
+        self.assertFalse(updated_group.featured)
+
+        # Add the permission
+        change_category_permission = get_group_permission(
+            'can_edit_group_featured')
+        user.user_permissions.add(change_category_permission)
+
+        # We need to re-add the user to the group owners, as the previous
+        # POST cleared out our owners
+        group.owners.add(user)
+
+        # Send a POST request with enough information to change the featured
+        # status
+        post_response = self.client.post(
+            reverse('update_group', args=[group.pk]),
+            {
+                'authgroup_form-name': 'Second Name',
+                'group_form-featured': '1'
+            })
+        # Confirm the POST was successful, as successful POSTs redirect
+        self.assertEqual(post_response.status_code, 302)
+
+        updated_group = Group.objects.get(pk=group.pk)
+        self.assertEqual(updated_group.group.name, 'Second Name')
+        self.assertTrue(updated_group.featured)
 
     def test_superuser_can_update_group(self):
         """Superusers should be able to update any group."""
@@ -214,7 +354,7 @@ class GroupUpdateViewTest(ConnectTestMixin, DjangoTestCase):
 
     def test_user_with_edit_all_perm_can_update_group(self):
         """Users with can_edit_any_group perm should be able to update."""
-        group = mommy.make('groups.Group')
+        group = self.create_group()
         user = self.create_user()
         permission = Permission.objects.get(codename='can_edit_any_group')
         user.user_permissions.add(permission)

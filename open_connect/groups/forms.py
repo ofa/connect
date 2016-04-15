@@ -39,8 +39,6 @@ class GroupImageForm(forms.ModelForm):
 
 class GroupForm(SanitizeHTMLMixin, ModelForm):
     """Form for groups.models.Group."""
-    category = forms.ModelChoiceField(
-        label='Category', queryset=Category.objects.all())
     tags = TaggitField(
         widget=TaggitWidget(
             'TagAutocomplete', attrs={'placeholder': "type tags here"}),
