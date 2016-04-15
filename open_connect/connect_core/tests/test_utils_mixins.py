@@ -67,7 +67,11 @@ DIRTY_SAFE_HTML = u'''
     Multiple <br/> breaks
     <br/><br/><br/>
 
-    Hey<br/> Yeah
+	Hey<br/> Yeah
+
+
+	
+
 
 Breaks at end<br/><br/>
 <!-- vars:redactor=true -->
@@ -445,21 +449,32 @@ class SanitizeHTMLMixinTest(TestCase):
         # newlines
         result = handle_breaks(DIRTY_SAFE_HTML)
 
-        # Test whitespace, tab and newline removal
+        # Test whitespace, newline and tab removal
+        self.assertTrue('  ' in DIRTY_SAFE_HTML)
         self.assertFalse('  ' in result)
-        self.assertFalse('\n' in result)
+
+        self.assertTrue('\n\n' in DIRTY_SAFE_HTML)
+        self.assertFalse('\n\n' in result)
+
+        self.assertTrue('\t' in DIRTY_SAFE_HTML)
         self.assertFalse('\t' in result)
 
         # Test Unicode
         self.assertTrue(u'Ⴚ' in result)
 
-        # Tech space around break removal
-        self.assertFalse('Hey<br/> Yeah' in result)
-        self.assertTrue('Hey<br/>Yeah' in result)
+        # Test newlines added after html linebreaks
+        self.assertFalse('<br/>\n<br/>\n' in DIRTY_SAFE_HTML)
+        self.assertTrue('<br/>\n<br/>\n' in result)
 
-        # Test multiple linebreak removal
+        # Test space around html break removal
+        self.assertFalse('Hey<br/> Yeah' in result)
+        self.assertFalse('Hey<br/>\n Yeah' in result)
+        self.assertTrue('Hey<br/>\nYeah' in result)
+
+        # Test multiple html linebreak removal
         self.assertFalse('<br/><br/><br/>' in result)
-        self.assertTrue('Testing<br/><br/>Multiple Lines' in result)
+        self.assertFalse('<br/>\n<br/>\n<br/>' in result)
+        self.assertTrue('Testing<br/>\n<br/>\nMultiple Lines' in result)
 
     @override_settings(ALLOWED_HOSTS=['localhost'])
     def test_cleanse_tags(self):
@@ -546,7 +561,8 @@ class SanitizeHTMLMixinTest(TestCase):
         """Test a plain text submission"""
         result = self.mixin.sanitize_html(PLAIN_TEXT_MESSAGE)
 
-        self.assertEqual(result, 'Line 1<br/><br/>Line 3<br/><br/>Line 7')
+        self.assertEqual(
+            result, 'Line 1<br/>\n<br/>\nLine 3<br/>\n<br/>\nLine 7')
 
         message = PLAIN_TEXT_MESSAGE + '<!-- vars:redactor=true -->'
 

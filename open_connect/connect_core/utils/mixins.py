@@ -19,6 +19,7 @@ from open_connect.connect_core.utils.forms import (
 # pylint: disable=invalid-name
 special_chars_regex = re.compile(r'\s+')
 spaces_near_breaks_regex = re.compile(r'( *<br/> *)')
+single_break = re.compile(r'(<br/>)')
 three_or_more_breaks_regex = re.compile(r'(<br/>){3,}')
 opening_closing_break = re.compile(r'(^(<br/>)+)|((<br/>)+$)')
 # pylint: disable=line-too-long
@@ -204,24 +205,29 @@ class PaginateByMixin(MultipleObjectMixin):
         return super(PaginateByMixin, self).get_paginate_by(queryset)
 
 
-def handle_breaks(message):
+def handle_breaks(html):
     """Cleanup code and handle <br/> tags"""
     # Clean up the code a bit by turning newlines, tabs,
     # and multiple spaces into single spaces.
-    single_spaced = special_chars_regex.sub(' ', message)
+    html = special_chars_regex.sub(' ', html)
 
     # Remove spaces before and after HTML breaks
-    space_free_br = spaces_near_breaks_regex.sub('<br/>', single_spaced)
+    html = spaces_near_breaks_regex.sub('<br/>', html)
 
     # Turn 3 or more <br/> tags into 2 tags
-    shortened = three_or_more_breaks_regex.sub('<br/><br/>', space_free_br)
+    html = three_or_more_breaks_regex.sub('<br/><br/>', html)
 
     # Remove the leading and trailing whitespace caused by
     # the previous regex
-    stripped = shortened.strip()
+    html = html.strip()
 
     # Remove any leading and closing <br/> tags
-    return opening_closing_break.sub('', stripped)
+    html = opening_closing_break.sub('', html)
+
+    # Add a newline after every linebreak, to prevent a wall of HTML
+    html = single_break.sub('<br/>\n', html)
+
+    return html
 
 
 class SanitizeHTMLMixin(object):
