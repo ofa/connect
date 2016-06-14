@@ -268,6 +268,39 @@ class GroupTest(ConnectTestMixin, TestCase):
         user.remove_from_group(group)
         self.assertNotIn(user, group.get_members())
 
+    def test_unmoderated_messages(self):
+        """Test the Group.unmiderated_messages property"""
+        group = self.create_group(moderated=False)
+        thread = self.create_thread(group=group)
+
+        banned_sender = self.create_user(is_banned=True)
+        banned_sender.add_to_group(group.pk)
+
+        regular_sender = self.create_user()
+        regular_sender.add_to_group(group.pk)
+
+        banned_pending_message = mommy.make(
+            'connectmessages.Message', thread=thread, status='pending',
+            sender=banned_sender)
+
+        flagged_message = mommy.make(
+            'connectmessages.Message', thread=thread, sender=regular_sender)
+        flagged_message.status = 'flagged'
+        flagged_message.save()
+
+        pending_message = mommy.make(
+            'connectmessages.Message', thread=thread, sender=regular_sender)
+        pending_message.status = 'pending'
+        pending_message.save()
+
+        normal_message = mommy.make(
+            'connectmessages.Message', thread=thread, sender=regular_sender)
+
+        self.assertIn(pending_message, group.unmoderated_messages)
+        self.assertIn(flagged_message, group.unmoderated_messages)
+        self.assertNotIn(banned_pending_message, group.unmoderated_messages)
+        self.assertNotIn(normal_message, group.unmoderated_messages)
+
     def test_get_members_avatar_prioritized(self):
         """
         Group.get_members_avatar_prioritized() returns users that are in a

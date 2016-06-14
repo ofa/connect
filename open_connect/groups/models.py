@@ -274,7 +274,9 @@ class Group(TimestampModel):
         Return all unmoderated messages
         """
         return Message.objects.filter(
-            thread__group=self, status='pending')
+            thread__group=self,
+            status__in=['pending', 'flagged'],
+            sender__is_banned=False)
 
     @property
     def total_unmoderated_messages(self):
