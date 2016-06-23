@@ -568,4 +568,4 @@ class SanitizeHTMLMixinTest(TestCase):
 
         result = self.mixin.sanitize_html(message)
         self.assertEqual(
-            result, 'Line 1 Line 3 Line 7 <!-- vars:redactor=true -->')
+            result, 'Line 1 Line 3 Line 7')

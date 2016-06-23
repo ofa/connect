@@ -7,6 +7,7 @@ import re
 import string
 
 from bs4 import BeautifulSoup
+import bleach
 from django.conf import settings
 from django.utils.timezone import make_aware, get_current_timezone
 from django.views.generic.list import MultipleObjectMixin
@@ -238,26 +239,30 @@ class SanitizeHTMLMixin(object):
     ADD_MAX_WIDTH = True
 
     def _cleanse_tags(self, message):
-        """Using BeautifulSoup, remove or modify improper tags & attributes"""
-        soup = BeautifulSoup(message, "lxml")
+        """Using BeautifulSoup and bleach, remove or modify bad tags & attrs"""
+        bleached_message = bleach.clean(
+            message,
+            tags=self.VALID_TAGS,
+            attributes=self.VALID_ATTRS,
+            protocols=self.VALID_SCHEMES,
+            strip=True)
+
+        soup = BeautifulSoup(bleached_message, "lxml")
 
         # Find all the tags in the HTML code
         for tag in soup.findAll():
+            # We have to remove any invalid tags created by `lxml`, like <html>
+            # and <body>
             if tag.name not in self.VALID_TAGS:
                 tag.hidden = True
+
             for attr, value in dict(tag.attrs).iteritems():
-                if attr not in self.VALID_ATTRS:
-                    del tag.attrs[attr]
                 # Make sure any src attributes are on an allowed domain
                 if attr == 'src':
                     parsed_src = urlparse(value)
                     valid_netlocs = settings.ALLOWED_HOSTS
                     valid_netlocs.append('')
                     if parsed_src.netloc not in valid_netlocs:
-                        tag.hidden = True
-                if attr == 'href':
-                    parsed_src = urlparse(value)
-                    if parsed_src.scheme not in self.VALID_SCHEMES:
                         tag.hidden = True
 
             # All image tags should have a max-width style attribute to ensure
@@ -272,7 +277,7 @@ class SanitizeHTMLMixin(object):
     def sanitize_html(self, message):
         """Sanitize user-submitted HTML"""
         # Use django's built-in HTML cleaner to improve HTML. This will also
-        # run the HTML through djanog's normalize_newlines utility
+        # run the HTML through django's normalize_newlines utility
         message = clean_html(message)
 
         # Detect if redactor is enabled

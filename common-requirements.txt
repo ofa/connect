@@ -36,6 +36,7 @@ simplejson==3.7.1
 tablib==0.10.0
 ua-parser==0.3.6
 unidecode==0.04.17
+-e git+https://github.com/mozilla/bleach.git@b18f4273bad796734ce37b1048b266730bae2dd3#egg=bleach
 
 
 # AWS Specific Packages
