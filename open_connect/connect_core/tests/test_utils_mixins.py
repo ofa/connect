@@ -52,6 +52,28 @@ TEST_HTML = u'''
     Multiple Lines
     <img src="http://localhost/fantastic.jpg" data-embed="cool_embed">
     <img src="http://localhost/big.jpg" style="display: none;">
+
+    <!-- Emoji -->
+    😍<br>
+    👩🏽<br>
+    👾 🙇 💁 🙅 🙆 🙋 🙎 🙍 <br>
+    🐵 🙈 🙉 🙊<br>
+    ❤️ 💔 💌 💕 💞 💓 💗 💖 💘 💝 💟 💜 💛 💚 💙<br>
+    ✋🏿 💪🏿 👐🏿 🙌🏿 👏🏿 🙏🏿<br>
+    🚾 🆒 🆓 🆕 🆖 🆗 🆙 🏧<br>
+    0️⃣ 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 6️⃣ 7️⃣ 8️⃣ 9️⃣ 🔟<br>
+    🇺🇸🇦<br>
+
+    <!-- Japanese Emoticons -->
+    (╯°□°）╯︵ ┻━┻)<br>
+    ヽ༼ຈل͜ຈ༽ﾉ ヽ༼ຈل͜ຈ༽ﾉ<br>
+
+    <!-- Two-Byte Characters -->
+    田中さんにあげて下さい<br>
+    パーティーへ行かないか<br>
+    和製漢語<br>
+    部落格<br>
+
     <!-- vars:redactor=true -->
 '''
 
@@ -516,6 +538,9 @@ class SanitizeHTMLMixinTest(TestCase):
 
         # Test Unicode
         self.assertTrue(u'Ⴚ'.encode("utf-8") in safe_html)
+        self.assertTrue(u'🙉'.encode("utf-8") in safe_html)
+        self.assertTrue(u'語'.encode("utf-8") in safe_html)
+        self.assertTrue(u'╯°□°）╯︵ ┻━┻'.encode("utf-8") in safe_html)
 
         # Test src attribute with a valid domain
         self.assertTrue('localhost' in safe_html)
