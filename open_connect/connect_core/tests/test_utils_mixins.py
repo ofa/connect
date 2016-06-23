@@ -53,6 +53,15 @@ TEST_HTML = u'''
     <img src="http://localhost/fantastic.jpg" data-embed="cool_embed">
     <img src="http://localhost/big.jpg" style="display: none;">
 
+    <!-- Dangerous Strings -->
+    <a href="\x02javascript:javascript:alert(1)" id="fuzzelement1">test</a><br>
+    ABC<div style="x:\xE2\x80\x81expression(javascript:alert(1)">DEF<br>
+    &lt;script&gt;alert(&#39;123&#39;);&lt;/script&gt;<br>
+    <SCRIPT/XSS SRC="http://ha.ckers.org/xss.js"></SCRIPT><br>
+    <IMG onmouseover="alert('xxs')"><br>
+    <a oncopy=alert()>Copy me</a><br>
+    <IMG SRC="jav   ascript:alert('XSS');"><br>
+
     <!-- Emoji -->
     😍<br>
     👩🏽<br>
@@ -526,10 +535,14 @@ class SanitizeHTMLMixinTest(TestCase):
 
         # Test Unacceptable HTML
         self.assertFalse('iframe' in safe_html)
-        self.assertFalse('<script>' in safe_html)
+        self.assertFalse('<script' in safe_html)
         self.assertFalse('h1' in safe_html)
         self.assertFalse('div' in safe_html)
         self.assertFalse('alt=' in safe_html)
+        self.assertFalse('javascript' in safe_html)
+        self.assertFalse('onmouseover' in safe_html)
+        self.assertFalse('oncopy' in safe_html)
+        self.assertFalse('XSS' in safe_html)
 
         # Test Unacceptable Attributes
         self.assertFalse('display: none;' in safe_html)
