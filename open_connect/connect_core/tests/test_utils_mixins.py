@@ -52,6 +52,37 @@ TEST_HTML = u'''
     Multiple Lines
     <img src="http://localhost/fantastic.jpg" data-embed="cool_embed">
     <img src="http://localhost/big.jpg" style="display: none;">
+
+    <!-- Dangerous Strings -->
+    <a href="\x02javascript:javascript:alert(1)" id="fuzzelement1">test</a><br>
+    ABC<div style="x:\xE2\x80\x81expression(javascript:alert(1)">DEF<br>
+    &lt;script&gt;alert(&#39;123&#39;);&lt;/script&gt;<br>
+    <SCRIPT/XSS SRC="http://ha.ckers.org/xss.js"></SCRIPT><br>
+    <IMG onmouseover="alert('xxs')"><br>
+    <a oncopy=alert()>Copy me</a><br>
+    <IMG SRC="jav   ascript:alert('XSS');"><br>
+
+    <!-- Emoji -->
+    😍<br>
+    👩🏽<br>
+    👾 🙇 💁 🙅 🙆 🙋 🙎 🙍 <br>
+    🐵 🙈 🙉 🙊<br>
+    ❤️ 💔 💌 💕 💞 💓 💗 💖 💘 💝 💟 💜 💛 💚 💙<br>
+    ✋🏿 💪🏿 👐🏿 🙌🏿 👏🏿 🙏🏿<br>
+    🚾 🆒 🆓 🆕 🆖 🆗 🆙 🏧<br>
+    0️⃣ 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 6️⃣ 7️⃣ 8️⃣ 9️⃣ 🔟<br>
+    🇺🇸🇦<br>
+
+    <!-- Japanese Emoticons -->
+    (╯°□°）╯︵ ┻━┻)<br>
+    ヽ༼ຈل͜ຈ༽ﾉ ヽ༼ຈل͜ຈ༽ﾉ<br>
+
+    <!-- Two-Byte Characters -->
+    田中さんにあげて下さい<br>
+    パーティーへ行かないか<br>
+    和製漢語<br>
+    部落格<br>
+
     <!-- vars:redactor=true -->
 '''
 
@@ -504,10 +535,14 @@ class SanitizeHTMLMixinTest(TestCase):
 
         # Test Unacceptable HTML
         self.assertFalse('iframe' in safe_html)
-        self.assertFalse('<script>' in safe_html)
+        self.assertFalse('<script' in safe_html)
         self.assertFalse('h1' in safe_html)
         self.assertFalse('div' in safe_html)
         self.assertFalse('alt=' in safe_html)
+        self.assertFalse('javascript' in safe_html)
+        self.assertFalse('onmouseover' in safe_html)
+        self.assertFalse('oncopy' in safe_html)
+        self.assertFalse('XSS' in safe_html)
 
         # Test Unacceptable Attributes
         self.assertFalse('display: none;' in safe_html)
@@ -516,6 +551,9 @@ class SanitizeHTMLMixinTest(TestCase):
 
         # Test Unicode
         self.assertTrue(u'Ⴚ'.encode("utf-8") in safe_html)
+        self.assertTrue(u'🙉'.encode("utf-8") in safe_html)
+        self.assertTrue(u'語'.encode("utf-8") in safe_html)
+        self.assertTrue(u'╯°□°）╯︵ ┻━┻'.encode("utf-8") in safe_html)
 
         # Test src attribute with a valid domain
         self.assertTrue('localhost' in safe_html)
@@ -568,4 +606,4 @@ class SanitizeHTMLMixinTest(TestCase):
 
         result = self.mixin.sanitize_html(message)
         self.assertEqual(
-            result, 'Line 1 Line 3 Line 7 <!-- vars:redactor=true -->')
+            result, 'Line 1 Line 3 Line 7')
