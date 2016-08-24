@@ -2,6 +2,7 @@
 # App-specific files
 static/
 uploads/
+connectenv/
 
 ####
 # Generic Files

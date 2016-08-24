@@ -4,7 +4,7 @@
 # Due to issues with some packages compiling on dev machines we break out
 # requirements that are needed on Heroku (requirements.txt) and on dev machines
 # (dev-requirements.txt)
-Django==1.8.5
+Django==1.8.14
 psycopg2==2.6
 
 # Environment Manager
@@ -12,7 +12,7 @@ django-environ==0.3.0
 
 
 # Production Operations Packages
-newrelic==2.52.0.40
+newrelic==2.68.0.50
 
 
 # Core Requirements
@@ -65,10 +65,12 @@ dj-inmemorystorage==1.3.0
 coverage==3.7.1
 nosexcover==1.0.10
 
+
 # Useful packages for Debugging
 django-clear-cache==0.3
-django-debug-toolbar==1.3.0
+django-debug-toolbar==1.5
 ipython==3.1.0
 
+
 # Authentication Libraries
--e git+https://github.com/ofa/python-social-auth.git@ngp-actionid#egg=python-social-auth
+python-social-auth==0.2.21
