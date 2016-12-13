@@ -179,6 +179,7 @@ class UpdateUserPermissionView(
     # ('app_label', 'permission_codename')
     editable_permissions = (
         ('accounts', 'add_invite'),
+        ('accounts', 'email_invites'),
         ('accounts', 'can_unban'),
         ('accounts', 'can_ban'),
         ('accounts', 'can_view_banned'),
