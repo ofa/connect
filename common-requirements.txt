@@ -18,7 +18,9 @@ newrelic==2.68.0.50
 # Core Requirements
 beautifulsoup4==4.3.2
 django-autocomplete-light==2.1.1
-django-celery==3.1.16
+django-celery==3.1.17
+celery==3.1.23
+kombu==3.0.37
 django-extra-views==0.6.5
 django-ipware==1.0.0
 django-pure-pagination==0.2.1
