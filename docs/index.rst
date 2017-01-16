@@ -26,5 +26,5 @@ use and contribute to. For more information about contributing view the
     /license
 
 .. _Connect: https://ofa.github.io/connect/
-.. _Organizing for Action: https://www.barackobama.com/
+.. _Organizing for Action: https://www.ofa.us/
 .. _Github repository: https://www.github.com/ofa/connect
