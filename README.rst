@@ -9,6 +9,6 @@ Connect is available under a MIT license for third parties to use and contribute
 For more information about using and configuring Connect visit the `Documentation`_.
 
 .. _Connect: https://ofa.github.io/
-.. _Organizing for Action: https://www.barackobama.com/
+.. _Organizing for Action: https://www.ofa.us/
 .. _Github repository: https://www.github.com/ofa/connect
 .. _Documentation: https://opendocs.ofaconnect.com/
