@@ -95,7 +95,7 @@ class UserReportListViewTest(ConnectMessageTestCase):
         mommy.make(User, first_name='Jack')
         mommy.make(User, first_name='Jill')
         response = self.client.get(
-            reverse('users_report'), {'search_name': 'Jill'})
+            reverse('users_report'), {'search': 'Jill'})
         self.assertContains(response, 'Jill')
         self.assertNotContains(response, 'Jack')
 
@@ -104,15 +104,24 @@ class UserReportListViewTest(ConnectMessageTestCase):
         mommy.make(User, last_name='Gaga')
         mommy.make(User, last_name='Spears')
         response = self.client.get(
-            reverse('users_report'), {'search_name': 'Gaga'})
+            reverse('users_report'), {'search': 'Gaga'})
         self.assertContains(response, 'Gaga')
         self.assertNotContains(response, 'Spears')
+
+    def test_filter_by_email(self):
+        """Filter by email"""
+        mommy.make(User, first_name='Bob', email='bob@bobsemail.com')
+        mommy.make(User, first_name='Julie', email='julie@juliesemail.com')
+        response = self.client.get(
+            reverse('users_report'), {'search': 'bob@bobsemail.com'})
+        self.assertContains(response, 'Bob')
+        self.assertNotContains(response, 'Julie')
 
     def test_search_name_in_context(self):
         """Search name should populate in context."""
         response = self.client.get(
-            reverse('users_report'), {'search_name': 'Robyn'})
-        self.assertEqual(response.context['search_name'], 'Robyn')
+            reverse('users_report'), {'search': 'Robyn'})
+        self.assertEqual(response.context['search'], 'Robyn')
 
 
 class GroupReportListViewTest(ConnectTestMixin, TestCase):
