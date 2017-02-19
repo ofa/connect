@@ -108,30 +108,14 @@ class GroupCreateView(CommonViewMixin, MultipleFormsView):
 class GroupUpdateView(GroupCreateView, CommonViewMixin):
     """View for updating a Group."""
     nav_active_item = 'Group'
+    _group = None
 
-    def __init__(self):
-        super(GroupUpdateView, self).__init__()
-        self._group = None
-
-    def disallow_non_owners(self):
-        """Only allow group owners and superusers to edit a group."""
-        if (self.request.user.has_perm('groups.can_edit_any_group') or
+    def dispatch(self, request, *args, **kwargs):
+        """Disallow non-owners or permissioned admins from accessing"""
+        if not (self.request.user.has_perm('groups.can_edit_any_group') or
                 self.group in self.request.user.groups_moderating):
-            return
-        else:
             raise Http404
-
-    def get(self, request, *args, **kwargs):
-        """Call disallow_non_owners in get requests."""
-        self.disallow_non_owners()
-        response = super(GroupUpdateView, self).get(request, *args, **kwargs)
-        return response
-
-    def post(self, request, *args, **kwargs):
-        """Call disallow_non_owners in post requests."""
-        self.disallow_non_owners()
-        response = super(GroupUpdateView, self).post(request, *args, **kwargs)
-        return response
+        return super(GroupUpdateView, self).dispatch(request, *args, **kwargs)
 
     @property
     def group(self):
