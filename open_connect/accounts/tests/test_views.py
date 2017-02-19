@@ -355,6 +355,58 @@ class UserUpdateViewTest(ConnectTestMixin, TestCase):
             response.context['user_form'].fields.keys()
         )
 
+    def test_update_staff_no_permission(self):
+        """Only users with the permission should see the staff change toggle"""
+        regular_admin = self.create_user()
+        self.add_perm(
+            regular_admin, 'change_user', 'accounts', 'user')
+
+        regular_client = Client()
+        regular_client.login(username=regular_admin.email, password='moo')
+
+        user = self.create_user()
+
+        response = regular_client.get(
+            reverse('update_user', args=(user.uuid,)))
+        self.assertNotIn(
+            'is_staff',
+            response.context['user_form'].fields.keys()
+        )
+
+    def test_update_staff_privlidged(self):
+        """Those with the relevant permission can change staff status"""
+        privlidged_admin = self.create_user()
+        self.add_perm(
+            privlidged_admin, 'change_user', 'accounts', 'user')
+        self.add_perm(
+            privlidged_admin, 'can_modify_staff_status', 'accounts', 'user')
+
+        privlidged_client = Client()
+        privlidged_client.login(
+            username=privlidged_admin.email, password='moo')
+
+        user = self.create_user()
+
+        response = privlidged_client.get(
+            reverse('update_user', args=(user.uuid,)))
+        self.assertIn(
+            'is_staff',
+            response.context['user_form'].fields.keys()
+        )
+
+    def test_update_staff_regular_user(self):
+        """Test that regular users cannot update their own staff status"""
+        user = self.create_user()
+        client = Client()
+        client.login(username=user.email, password='moo')
+
+        response = client.get(
+            reverse('update_user', args=(user.uuid,)))
+        self.assertNotIn(
+            'is_staff',
+            response.context['user_form'].fields.keys()
+        )
+
 
 class UpdateUserPermissionViewTest(ConnectTestMixin, TestCase):
     """Tests for UpdateUserPermissionView"""

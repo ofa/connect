@@ -39,7 +39,7 @@ class UserForm(SanitizeHTMLMixin, forms.ModelForm):
             'first_name', 'last_name', 'biography', 'timezone',
             'facebook_url', 'twitter_handle', 'website_url',
             'group_notification_period', 'show_groups_on_profile',
-            'receive_group_join_notifications'
+            'receive_group_join_notifications', 'is_staff'
         ]
 
     def clean_biography(self):

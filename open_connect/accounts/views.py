@@ -144,6 +144,11 @@ class UserUpdateView(
         forms = super(UserUpdateView, self).get_forms(form_classes)
         if not self.object.groups_moderating.exists():
             del forms['user_form'].fields['receive_group_join_notifications']
+
+        # Only allow those with the permission to toggle staff status
+        if not self.request.user.has_perm('accounts.can_modify_staff_status'):
+            del forms['user_form'].fields['is_staff']
+
         return forms
 
     def form_valid(self, forms, all_cleaned_data):
@@ -188,6 +193,7 @@ class UpdateUserPermissionView(
         ('accounts', 'can_moderate_all_messages'),
         ('accounts', 'can_initiate_direct_messages'),
         ('accounts', 'change_user'),
+        ('accounts', 'can_modify_staff_status'),
         ('media', 'can_promote_image'),
         ('media', 'can_access_admin_gallery'),
         ('media', 'can_access_admin_gallery'),
