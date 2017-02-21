@@ -186,7 +186,8 @@ class User(
             ('can_impersonate', 'Can impersonate other users.'),
             ('can_moderate_all_messages', 'Can moderate all messages.'),
             ('can_initiate_direct_messages', 'Can initiate direct messages.'),
-            ('can_modify_permissions', 'Can modify user permissions.')
+            ('can_modify_permissions', 'Can modify user permissions.'),
+            ('can_modify_staff_status', "Can modify a user's staff status")
         )
 
     def get_absolute_url(self):
