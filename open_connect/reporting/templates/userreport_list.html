@@ -16,7 +16,7 @@
         <h1>User Report</h1>
         <form class="form form-inline pull-left" role="form">
                 <div class="form-group">
-                    <label>Name: <input id="id_search_name" name="search_name" class="search-query" type="text" value="{{ search_name|default:"" }}"></label>
+                    <label>Name or Email: <input id="id_search_name" name="search" class="search-query" type="text" value="{{ search|default:"" }}"></label>
                 </div>
                 <div class="form-group">
                     <label>From: <input id="id_{{ date_range_form.start_datetime.name }}" name="{{ date_range_form.start_datetime.name }}" class="search-query dtpicker" type="text" value="{{ date_range_form.start_datetime.value|default:"" }}"></label>
@@ -57,7 +57,7 @@
             {% for user in users %}
                 {% with user.cached_groups_joined as groups_joined %}
                 <tr>
-                    <td><a href="{% url "user_details" user.uuid %}">{{ user }}</a></td>
+                    <td><a href="{% url "user_details" user.uuid %}">{{ user.get_real_name }}</a></td>
                     <td>{{ user.email|urlize }}</td>
                     <td>{{ user.phone }}</td>
                     <td>{{ user.zip_code }}</td>

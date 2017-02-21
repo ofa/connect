@@ -65,18 +65,19 @@ class UserReportListView(
             }
         ).defer('biography').defer('image')
 
-        search_name = self.request.GET.get('search_name', False)
-        if search_name:
+        search = self.request.GET.get('search', False)
+        if search:
             queryset = queryset.filter(
-                Q(first_name__icontains=search_name)
-                | Q(last_name__icontains=search_name)
+                Q(first_name__icontains=search)
+                | Q(last_name__icontains=search)
+                | Q(email__icontains=search)
             )
 
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super(UserReportListView, self).get_context_data(**kwargs)
-        context['search_name'] = self.request.GET.get('search_name', False)
+        context['search'] = self.request.GET.get('search', False)
         return context
 
     def render_to_response(self, context, **response_kwargs):
@@ -92,12 +93,11 @@ class UserReportListView(
 
             for user in self.get_queryset():
                 data.append((
-                    user, user.email, user.phone, user.zip_code, user.state,
-                    user.date_joined, user.last_login,
-                    user.total_groups_joined,
-                    user.flags_received, user.messages_sent,
-                    user.is_staff, user.is_superuser, user.is_banned,
-                    user.visit_count
+                    user.get_real_name(), user.email, user.phone, user.zip_code,
+                    user.state, user.date_joined, user.last_login,
+                    user.total_groups_joined, user.flags_received,
+                    user.messages_sent, user.is_staff, user.is_superuser,
+                    user.is_banned, user.visit_count
                 ))
 
             response = HttpResponse(
