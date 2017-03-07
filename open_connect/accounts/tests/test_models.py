@@ -308,6 +308,46 @@ class UserTest(ConnectTestMixin, TestCase):
         self.assertEqual(self.user.get_full_name(), self.user.get_short_name())
 
 
+class UserViewListTest(ConnectTestMixin, TestCase):
+    """Tests for User.can_view_user_list"""
+    def test_staff_can_see_list(self):
+        """Test that staff members can see the user list"""
+        user = self.create_user(is_staff=True)
+        self.assertTrue(user.can_view_user_list())
+
+    def test_moderator_can_see_list(self):
+        """Test that group moderators can view the list"""
+        user = self.create_user()
+        group = self.create_group()
+        group.owners.add(user)
+
+        self.assertTrue(user.is_moderator())
+        self.assertTrue(user.can_view_user_list())
+
+    def test_invite_users_see_list(self):
+        """Test that users that can invite others to groups can see list"""
+        user = self.create_user()
+        self.add_perm(user, 'add_invite', 'accounts', 'invite')
+        self.assertTrue(user.can_view_user_list())
+
+    def test_edit_group_see_list(self):
+        """Test that users that can edit groups can see the user list"""
+        user = self.create_user()
+        self.add_perm(user, 'can_edit_any_group', 'groups', 'group')
+        self.assertTrue(user.can_view_user_list())
+
+    def test_add_group_see_list(self):
+        """Test that users that can add groups can see the user list"""
+        user = self.create_user()
+        self.add_perm(user, 'add_group', 'groups', 'group')
+        self.assertTrue(user.can_view_user_list())
+
+    def test_regular_user(self):
+        """Test that regular users cannot see the user list"""
+        user = self.create_user()
+        self.assertFalse(user.can_view_user_list())
+
+
 class UserDirectMessagePermissionTest(ConnectTestMixin, TestCase):
     """Tests for User.can_direct_message_user and User.all_user_messageable"""
     def setUp(self):
@@ -998,34 +1038,31 @@ class TestValidateTwitterHandle(TestCase):
 
 class TestUserAutocomplete(ConnectTestMixin, TestCase):
     """Test UserAutocomplete view."""
-    def test_user_is_staff(self):
-        """Staff user should see users in response."""
-        user = self.create_user(is_staff=True)
-        self.client.login(username=user.email, password='moo')
-        response = self.client.get(
-            reverse('autocomplete_light_autocomplete',
-                    kwargs={'autocomplete': 'UserAutocomplete'})
-        )
-        self.assertContains(response, user.email)
-
-    def test_user_is_superuser(self):
-        """Superuser should see users in response."""
-        user = self.create_superuser()
-        self.client.login(username=user.email, password='moo')
-        response = self.client.get(
-            reverse('autocomplete_light_autocomplete',
-                    kwargs={'autocomplete': 'UserAutocomplete'})
-        )
-        self.assertContains(response, user.email)
-
-    def test_user_is_normal(self):
-        """Normal users should not see anything in response."""
+    def test_regular_user(self):
+        """A regular user should see no content"""
         user = self.create_user()
         self.client.login(username=user.email, password='moo')
         response = self.client.get(
             reverse('autocomplete_light_autocomplete',
                     kwargs={'autocomplete': 'UserAutocomplete'})
         )
+        self.assertContains(response, 'No matches found')
+        self.assertNotContains(response, user.email)
+
+    def test_user_is_superuser(self):
+        """Superuser should see users in response."""
+        user = self.create_superuser(first_name="abcd123", last_name="xyz123")
+        self.client.login(username=user.email, password='moo')
+        response = self.client.get(
+            reverse('autocomplete_light_autocomplete',
+                    kwargs={'autocomplete': 'UserAutocomplete'})
+        )
+
+        # The response should contain the first and last name of the user
+        self.assertContains(response, "abcd123")
+        self.assertContains(response, "xyz123")
+
+        # So we don't expose email address we should never show email
         self.assertNotContains(response, user.email)
 
 
