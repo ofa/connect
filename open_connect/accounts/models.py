@@ -376,6 +376,25 @@ class User(
         else:
             return False
 
+    def can_view_user_list(self):
+        """Who can view a list of users, such as in an autocomplete"""
+        # Staff should always be able to see all users
+        if self.is_staff:
+            return True
+
+        # Anyone who can invite users should be able to see a list of users
+        if self.has_perm('accounts.add_invite'):
+            return True
+
+        # Anyone who can change the "whitelist" in a group edit can see users
+        # including all moderators
+        if (self.has_perm('groups.add_group') or
+                self.has_perm('groups.can_edit_any_group') or
+                self.is_moderator()):
+            return True
+
+        return False
+
     def can_direct_message_user(self, user):
         """Return true if user is allowed to direct message to a user"""
         if user == self:
@@ -530,20 +549,16 @@ class UserAutocomplete(autocomplete_light.AutocompleteModelBase):
 
     def choices_for_request(self):
         """Autocomplete choices for request"""
-        user = self.request.user
-        # Only allow staff or superusers to view this list.
-        if user.is_superuser or user.is_staff:
+        # Only allow those with the relevant permission to view this list
+        if self.request.user.can_view_user_list():
             return super(UserAutocomplete, self).choices_for_request()
+
         return []
 
     # pylint: disable=interface-not-implemented,no-self-use
     def choice_label(self, choice):
         """Autocomplete choice labels"""
-        if choice.last_name:
-            return u'%s %s (%s)' % (
-                choice.first_name, choice.last_name, choice.email)
-        else:
-            return u'%s (%s)' % (choice.first_name, choice.email)
+        return choice.get_real_name()
 
 autocomplete_light.register(User, UserAutocomplete)
 
