@@ -629,6 +629,12 @@ class Message(TimestampModel):
         if self.sender == user:
             return True
 
+        # If the sender is banned, return False. Because this is located after
+        # the "Return True if message is from sender" this will allow us to
+        # "shadow ban" users.
+        if self.sender.is_banned == True:
+            return False
+
         if not self.thread.visible_to_user(user, self):
             return False
 
