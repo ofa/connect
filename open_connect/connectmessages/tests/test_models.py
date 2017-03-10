@@ -727,6 +727,38 @@ class TestVisibleToUser(ConnectTestMixin, TestCase):
         thread = self.create_thread(sender=sender, status='pending')
         self.assertTrue(thread.first_message.visible_to_user(sender))
 
+    def test_reply_from_banned_user(self):
+        """Test replies sent by banned users are visible only to that user"""
+        # Create 2 users. By default neither is banned, but one will be soon
+        viewing_user = self.create_user()
+        banned_user = self.create_user()
+
+        # Create a new group and add both our users to it
+        group = self.create_group()
+        viewing_user.add_to_group(group.pk)
+        banned_user.add_to_group(group.pk)
+
+        # Create a new thread sent to the group we created above
+        thread = self.create_thread(group=group)
+
+        # Create a reply sent by a soon-to-be-banned user
+        message = mommy.make(
+            'connectmessages.Message', thread=thread, sender=banned_user)
+
+        # Confirm both users can see the message, as neither is banned
+        self.assertTrue(message.visible_to_user(viewing_user))
+        self.assertTrue(message.visible_to_user(banned_user))
+
+        # Ban the banned user
+        banned_user.is_banned = True
+        banned_user.save()
+
+        # Confirm the non-banned user can no longer see the banned user's reply
+        # but the banned user can see his or her own message
+        self.assertFalse(message.visible_to_user(viewing_user))
+        self.assertTrue(message.visible_to_user(banned_user))
+
+
     def test_user_is_group_moderator(self):
         """Group moderators should see any message sent to their group."""
         thread = self.create_thread()
