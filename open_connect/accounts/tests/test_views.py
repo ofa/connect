@@ -304,8 +304,8 @@ class UserUpdateViewTest(ConnectTestMixin, TestCase):
             reverse('update_user', args=(self.user.uuid,)), data)
         self.assertRedirects(
             response,
-            reverse('user_profile'),
-            target_status_code=302
+            reverse('user_details',
+                    kwargs={'user_uuid': self.user.uuid})
         )
         user = User.objects.get(pk=self.user.pk)
         data['image'].seek(0)
@@ -326,8 +326,8 @@ class UserUpdateViewTest(ConnectTestMixin, TestCase):
             reverse('update_user', args=(self.user.uuid,)), data)
         self.assertRedirects(
             response,
-            reverse('user_profile'),
-            target_status_code=302
+            reverse('user_details',
+                    kwargs={'user_uuid': self.user.uuid})
         )
         user = User.objects.get(pk=self.user.pk)
         self.assertIsNone(user.image)

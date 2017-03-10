@@ -166,7 +166,8 @@ class UserUpdateView(
 
         forms['user_form'].save()
 
-        return HttpResponseRedirect(reverse('user_profile'))
+        return HttpResponseRedirect(
+            reverse('user_details', kwargs={'user_uuid': self.object.uuid}),)
 
 
 class UpdateUserPermissionView(
