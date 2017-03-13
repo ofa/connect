@@ -385,10 +385,8 @@ class GroupMemberListView(PaginationMixin, ListView):
         if (group.member_list_published
                 or user.is_superuser
                 or group.owners.filter(pk=user.pk).exists()):
-            queryset = super(GroupMemberListView, self).get_queryset().filter(
-                groups__group=group
-            ).exclude(
-                pk__in=group.owners.all().only('pk')).order_by('first_name')
+            queryset = group.get_members_avatar_prioritized().exclude(
+                pk__in=group.owners.all().only('pk'))
             if self.request.GET.get('q'):
                 query = self.request.GET['q']
                 queryset = queryset.filter(
