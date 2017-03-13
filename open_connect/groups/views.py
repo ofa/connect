@@ -409,7 +409,8 @@ class GroupMemberListView(PaginationMixin, ListView):
         context['q'] = self.request.GET.get('q', '')
         context['user_is_owner'] = self.request.user.groups_moderating.filter(
             pk=self.kwargs.get('pk'))
-        context['group_owners'] = group.owners.all().order_by('first_name')
+        context['group_owners'] = group.owners.all().select_related(
+            'image').order_by('first_name')
         return context
 
 
