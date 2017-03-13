@@ -372,6 +372,7 @@ class GroupMemberListView(PaginationMixin, ListView):
     model = get_user_model()
     template_name = 'groups/group_member_list.html'
     context_object_name = 'group_members'
+    paginate_by = 40
 
     def get_queryset(self):
         """Only get members of the current group.
