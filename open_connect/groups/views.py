@@ -404,6 +404,7 @@ class GroupMemberListView(PaginationMixin, ListView):
         context = super(GroupMemberListView, self).get_context_data(**kwargs)
         group = get_object_or_404(Group, pk=self.kwargs.get('pk'))
         context['group'] = group
+        context['total_members'] = group.get_members().count()
         context['q'] = self.request.GET.get('q', '')
         context['user_is_owner'] = self.request.user.groups_moderating.filter(
             pk=self.kwargs.get('pk'))

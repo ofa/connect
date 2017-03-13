@@ -1013,6 +1013,23 @@ class GroupMemberListViewTest(ConnectTestMixin, DjangoTestCase):
         self.assertIn(owner, response.context['group_owners'])
         self.assertNotIn(member, response.context['group_owners'])
 
+    def test_group_member_count(self):
+        """Test that the context contains the total number of members"""
+        group = self.create_group()
+        member1 = self.create_user()
+        member2 = self.create_user()
+        member3 = self.create_user()
+
+        member1.add_to_group(group.pk)
+        member2.add_to_group(group.pk)
+        member3.add_to_group(group.pk)
+
+        self.login(member1)
+        response = self.client.get(
+            reverse('group_members', kwargs={'pk': group.pk}))
+
+        self.assertEqual(3, response.context['total_members'])
+
 
 class TestQuickAddUserToGroup(ConnectMessageTestCase):
     """Tests for group_quick_user_add."""
