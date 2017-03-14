@@ -8,6 +8,7 @@ from django.contrib.auth import get_user_model
 from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
+from django.conf import settings
 from django.db.models import Q
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -372,7 +373,7 @@ class GroupMemberListView(PaginationMixin, ListView):
     model = get_user_model()
     template_name = 'groups/group_member_list.html'
     context_object_name = 'group_members'
-    paginate_by = 40
+    paginate_by = settings.GROUP_MEMBER_LIST_PAGINATION_SIZE
 
     def get_queryset(self):
         """Only get members of the current group.

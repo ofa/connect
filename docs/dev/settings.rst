@@ -298,6 +298,13 @@ Connect offers you the ability to swap-out the standard `Glyphicon`_ library by 
 .. _Glyphicon: http://glyphicons.com/
 
 
+GROUP_MEMBER_LIST_PAGINATION_SIZE
+---------------------------------
+
+Default: ``40`` (Integer)
+
+When a group contains a large number of members the "List Members of the Group" page needs to be paginated to reduce the page size and limit the number of avatars displayed. You can override the default (40) by adjusting this setting.
+
 
 Base
 ====

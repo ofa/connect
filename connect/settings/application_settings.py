@@ -12,7 +12,8 @@ env = environ.Env(
     SYSTEM_USER_EMAIL=(str, 'connect@connect.local'),
     GOOGLE_ANALYTICS_PROPERTY_ID=(str, 'UA-0-0'),
     GOOGLE_ANALYTICS_DEBUG_MODE=(bool, False),
-    ICON_PREFIX=(str, "glyphicon glyphicon-")
+    ICON_PREFIX=(str, "glyphicon glyphicon-"),
+    GROUP_MEMBER_LIST_PAGINATION_SIZE=(int, 40)
 )
 
 
@@ -75,3 +76,6 @@ EMAIL_SECRET_KEY = env('EMAIL_SECRET_KEY')
 # Prefix to be appended to all icons. This allows you to use icons other than
 # glyphicons
 ICON_PREFIX = env('ICON_PREFIX')
+
+# Total number of group members to paginate by on the "Group Member List" page
+GROUP_MEMBER_LIST_PAGINATION_SIZE = env('GROUP_MEMBER_LIST_PAGINATION_SIZE')
