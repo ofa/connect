@@ -9,7 +9,7 @@
 {% block page_content %}
     <h4 class="{{group.category.slug}}"> <a href="{% url "group_details" group.pk %}">{{group}}</a></h4>
     <h1>
-        <span class="count">{{ group_members.count }}</span> member{{ group_members.count|pluralize }}
+        <span class="count">{{ total_members }}</span> member{{ total_members|pluralize }}
         <form class="form-search form" role="form">
                 <input name="q" type="text" class="form-control search-query" value="{{ q|default:"" }}">
                 <button class="btn btn-link btn-search" type="submit"><i class="{{icon_prefix}}search"></i></button>
