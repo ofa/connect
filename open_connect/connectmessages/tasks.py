@@ -98,8 +98,9 @@ def send_message(message_id, shorten=True):
             ]
 
         if userthreads:
-            # Let django batch-insert all the new userthreads
-            UserThread.objects.bulk_create(userthreads)
+            # Let django batch-insert all the new userthreads. Insert in
+            # batches of 250
+            UserThread.objects.bulk_create(userthreads, batch_size=250)
     else:
         UserThread.objects.filter(
             thread=thread, read=True).exclude(user=sender).update(read=False)
