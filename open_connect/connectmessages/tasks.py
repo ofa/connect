@@ -2,6 +2,7 @@
 # pylint: disable=not-callable
 from celery import shared_task
 from django.conf import settings
+from django.db import connection
 
 from open_connect.notifications.tasks import (
     create_group_notifications, send_immediate_notification
@@ -29,7 +30,6 @@ def process_image_attachment(image_id):
 def send_message(message_id, shorten=True):
     """Process a message that is sent to a group."""
     from open_connect.connectmessages.models import Message, UserThread
-    from open_connect.notifications.models import Subscription
 
     message = Message.objects.select_related().only(
         'sender', 'thread', 'sent').get(pk=message_id)
@@ -59,48 +59,61 @@ def send_message(message_id, shorten=True):
 
     # See if this is a new group message
     if thread.thread_type == 'group' and thread.first_message_id == message.pk:
-        # In order to prevent an IntegrityError with
-        # `UserThread.objects.bulk_create()` grab a list of all users with
-        # existing subscriptions should they exist. Django is smart enough to
-        # add this as a subquery for our `Subscription` query below instead of
-        # doing 2 queries. Most of the time this will return only the sender
-        # (who should already have a UserThread for this thread)
-        existing_userthread_userids = UserThread.objects.with_deleted().filter(
-            thread=thread).values_list('user_id', flat=True)
 
-        # Get all users who are subscribed to a group.
-        # We find group members via `Subscription` instead of `Group` as
-        # we need information from `Subscription` and there is no ORM way of
-        # joining the Many-to-Many between `User` and `Group` to `Subscription`
-        group_subscriptions = Subscription.objects.filter(
-            group=thread.group).exclude(
-                user_id__in=existing_userthread_userids)
+        # We need to generate the UserThread objects for each group member. In
+        # order to prevent a bunch of unnecessary talk between python and the
+        # database which results in an INSERT containing almost no data python
+        # was involved in generating, we can do this directly in the database.
+        # This should also significantly speed up this task when sending new
+        # threads to large groups.
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                INSERT INTO connectmessages_userthread (
+                    created_at,
+                    modified_at,
+                    thread_id,
+                    user_id,
+                    subscribed_email,
+                    read,
+                    status)
 
-        # Iterate through each subscription to create a new userthread
-        userthreads = []
-        for subscription in group_subscriptions:
+                SELECT
+                    now(),              -- created_at (timestamp w/timezone)
+                    now(),              -- modified_at (timestamp w/timezone)
+                    %s,                 -- thread_id (integer)
+                    s.user_id,          -- user_id (integer)
+                    -- We base if someone is subscribed to a thread via email
+                    -- through the notification period. Since this is a bool
+                    -- in UserThread and a string in Subscription we need to
+                    -- do a comparison operation here
+                    s.period != 'none', -- subscribed_email (boolean)
+                    False,              -- read (boolean)
+                    'active'            -- status (varchar)
 
-            # Determine if there should be a new email subscription for this
-            # thread
-            if subscription.period == 'none':
-                subscribe_to_thread = False
-            else:
-                subscribe_to_thread = True
+                -- We grab from notifications_subscription instead of from
+                -- accounts_user_groups because we need information from the
+                -- notifications_subscription table and the same data exists
+                -- in both tables
+                FROM notifications_subscription s
 
-            # As we're going to use django's `bulk_create()` method, we'll need
-            # a list of `UserThread` objects for each recipient.
-            userthreads += [
-                UserThread(
-                    thread=thread,
-                    user_id=subscription.user_id,
-                    subscribed_email=subscribe_to_thread
-                )
-            ]
+                WHERE
+                    s.group_id = %s
+                    AND
+                    -- In order to prevent an IntegrityError, grab all users
+                    -- with existing UserThread object and exclude them from
+                    -- this insert. The only users who should have a UserThread
+                    -- is the author and anyone who joined to the group between
+                    -- the time the author posted the thread and the time this
+                    -- task runs (in other words, not many users)
+                    s.user_id NOT IN 
+                        (SELECT user_id 
+                        FROM connectmessages_userthread
+                        WHERE thread_id = %s)
+                """, [
+                    thread.pk,
+                    thread.group.pk,
+                    thread.pk])
 
-        if userthreads:
-            # Let django batch-insert all the new userthreads. Insert in
-            # batches of 250
-            UserThread.objects.bulk_create(userthreads, batch_size=250)
     else:
         UserThread.objects.filter(
             thread=thread, read=True).exclude(user=sender).update(read=False)
