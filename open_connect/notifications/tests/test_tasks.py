@@ -87,12 +87,12 @@ class TestCreateGroupNotifications(TestCase):
         )
 
 
-class TestCreateRecipientNotifications(TestCase):
+class TestCreateRecipientNotifications(ConnectTestMixin, TestCase):
     """Tests for create_recipient_notifications."""
     def setUp(self):
         """Setup the TestCreateRecipientNotifications TestCase"""
-        self.thread = mommy.make('connectmessages.Thread')
-        self.message = mommy.make('connectmessages.Message', thread=self.thread)
+        self.thread = self.create_thread()
+        self.message = self.thread.first_message
 
     def test_notification_created_for_recipient(self):
         """Test create_recipient_notifications."""
@@ -127,14 +127,25 @@ class TestCreateRecipientNotifications(TestCase):
     @patch.object(tasks, 'send_immediate_notification')
     def test_sends_immediate_notification(self, mock_send):
         """User's with a default of immediate notifications should get one."""
-        user = mommy.make(
-            'accounts.User', direct_notification_period='immediate')
-        mommy.make('connectmessages.UserThread', thread=self.thread, user=user)
+        delayed_user = self.create_user(direct_notification_period='daily')
+        delayed_thread = self.create_thread(
+            recipient=delayed_user, direct=True)
 
-        tasks.create_recipient_notifications(self.message.pk)
+        tasks.create_recipient_notifications(
+            delayed_thread.first_message.pk)
+
+        self.assertFalse(mock_send.called)
+
+        immediate_user = self.create_user(
+            direct_notification_period='immediate')
+        immediate_thread = self.create_thread(
+            recipient=immediate_user, direct=True)
+
+        tasks.create_recipient_notifications(
+            immediate_thread.first_message.pk)
 
         notification = Notification.objects.get(
-            recipient=user, message=self.message)
+            recipient=immediate_user, message=immediate_thread.first_message)
         mock_send.delay.assert_called_once_with(notification.pk)
 
 
