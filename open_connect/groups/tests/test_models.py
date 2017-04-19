@@ -441,9 +441,8 @@ class GroupImagesTest(ConnectTestMixin, TestCase):
     def get_images_message(self, group, images=None):
         """Make a message that has the images in the specified group."""
         # Create a message
-        thread = mommy.make('connectmessages.Thread')
-        message = mommy.make(
-            'connectmessages.Message', thread=thread, sender=self.superuser)
+        thread = self.create_thread(group=group, sender=self.superuser)
+        message = thread.first_message
 
         # Default images
         if not images:
@@ -453,15 +452,11 @@ class GroupImagesTest(ConnectTestMixin, TestCase):
         for image in images:
             message.images.add(image)
 
-        # Add message to group
-        message.thread.group = group
-        message.thread.save()
-
         return message
 
     def test_image_posted_to_group_present(self):
         """An image posted to the group should be present."""
-        group = mommy.make('groups.Group')
+        group = self.create_group()
         message = self.get_images_message(group)
         self.assertQuerysetEqual(
             group.images(user=message.sender).all(),
@@ -471,7 +466,7 @@ class GroupImagesTest(ConnectTestMixin, TestCase):
 
     def test_image_posted_to_another_group_not_present(self):
         """An image posted to another group should not be present."""
-        group = mommy.make('groups.Group')
+        group = self.create_group()
         other_group = mommy.make('groups.Group')
         message = self.get_images_message(other_group)
         for image in message.images.all():
@@ -482,8 +477,6 @@ class GroupLinksTest(ConnectTestMixin, TestCase):
     """Test the links method"""
     def setUp(self):
         """Setup the links test"""
-        super(GroupLinksTest, self).setUp()
-
         # Make a popular link and an unpopular link
         self.popular_link = ShortenedURL(url='http://something.com')
         self.popular_link.click_count = 10000
@@ -494,24 +487,16 @@ class GroupLinksTest(ConnectTestMixin, TestCase):
     def get_links_message(self, group, links=None):
         """Make a message that has the links in the specified group."""
         # Create a message
-        thread = mommy.make('connectmessages.Thread')
-        message = mommy.make(
-            'connectmessages.Message',
-            thread=thread,
-            sender=self.create_superuser()
-        )
+        thread = self.create_thread(group=group)
+        message = thread.first_message
 
-        # Default images
+        # Default links
         if not links:
             links = [self.popular_link, self.unpopular_link]
 
-        # Add images to message
+        # Add links to message
         for link in links:
             message.links.add(link)
-
-        # Add message to group
-        message.thread.group = group
-        message.thread.save()
 
         return message
 

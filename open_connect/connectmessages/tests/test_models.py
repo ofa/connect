@@ -438,11 +438,15 @@ class MessageShortenTest(ConnectTestMixin, TestCase):
     """Tests for shortening links in a message."""
     def test_links_in_message_are_shortened(self):
         """Links in a message should be replaced with short code."""
-        thread = mommy.make(Thread)
+        sender = self.create_user()
+        group = self.create_group()
+        sender.add_to_group(group.pk)
+
+        thread = mommy.make(Thread, group=group)
         message = Message(
             text='This is a <a href="http://www.razzmatazz.local">link</a>',
             thread=thread,
-            sender=self.create_user()
+            sender=sender
         )
         message.save()
         self.assertEqual(message.links.count(), 1)
@@ -450,11 +454,15 @@ class MessageShortenTest(ConnectTestMixin, TestCase):
 
     def test_links_in_message_are_not_shortened(self):
         """If shorten=False, links in message should not be replaced."""
-        thread = mommy.make(Thread)
+        sender = self.create_user()
+        group = self.create_group()
+        sender.add_to_group(group.pk)
+
+        thread = mommy.make(Thread, group=group)
         message = Message(
             text='This is a <a href="http://www.razzmatazz.local">link</a>',
             thread=thread,
-            sender=self.create_user()
+            sender=sender
         )
         message.save(shorten=False)
         self.assertEqual(message.links.count(), 0)
@@ -476,11 +484,15 @@ class MessageShortenTest(ConnectTestMixin, TestCase):
 
     def test_non_http_links_not_shortened(self):
         """Non http/s links shouldn't be shortened."""
-        thread = mommy.make(Thread)
+        sender = self.create_user()
+        group = self.create_group()
+        sender.add_to_group(group.pk)
+
+        thread = mommy.make(Thread, group=group)
         message = Message(
             text='This is an email: <a href="mailto:a@b.local">lnk</a>',
             thread=thread,
-            sender=self.create_user()
+            sender=sender
         )
         message.save()
         self.assertEqual(message.links.count(), 0)
@@ -627,7 +639,7 @@ class TestMessagesForUser(ConnectMessageTestCase):
         self.user.add_to_group(group.pk)
         self.sender = mommy.make(USER_MODEL, is_superuser=True)
         self.thread = mommy.make(
-            'connectmessages.Thread', recipients=[self.user])
+            'connectmessages.Thread', recipients=[self.user], group=group)
 
     def test_get_message_new(self):
         """New message should not be marked as read."""
