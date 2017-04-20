@@ -1,4 +1,4 @@
-https://github.com/ofa/heroku-buildpack-pgbouncer.git#nickcat/refactor
+https://github.com/gregburek/heroku-buildpack-pgbouncer.git#no-stunnel
 https://github.com/ryandotsmith/nginx-buildpack.git
 https://github.com/heroku/heroku-buildpack-nodejs.git#v71
 https://github.com/ofa/image-optim-buildpack.git
