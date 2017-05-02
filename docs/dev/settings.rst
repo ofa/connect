@@ -736,10 +736,6 @@ DEFAULT_AUTH_BACKEND
 
 Default: ``social.backends.ngpvan.ActionIDOpenID`` (String)
 
-Also available: ``connect_extras.auth_backends.bsdtools.BSDToolsOAuth2``
-
-You can find out more information about different authentication backends available at :doc:`/dev/deploying/authentication_backends`
-
 
 POST_LOGOUT_PAGE
 ----------------
@@ -748,9 +744,6 @@ Default: ``/`` (String)
 
 
 If ``DEFAULT_AUTH_BACKEND`` is ``social.backends.ngpvan.ActionIDOpenID`` this defaults to ``https://accounts.ngpvan.com/Account/LogOut``
-
-If ``DEFAULT_AUTH_BACKEND`` is ``connect_extras.auth_backends.bsdtools.BSDToolsOAuth2`` this defaults to ``https://{BSDTOOLS_INSTANCE}/page/user/logout``
-
 
 
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL
@@ -785,27 +778,6 @@ USE_SOCIAL_AUTH_AS_ADMIN_LOGIN
 ------------------------------
 
 Default: ``True`` (Boolean)
-
-
-
-OPTIONAL: BSDTOOLS_INSTANCE
----------------------------
-
-Default: (Empty string)
-
-
-
-OPTIONAL: BSDTOOLS_KEY
-----------------------
-
-Default: (Empty string)
-
-
-
-OPTIONAL: BSDTOOLS_SECRET
--------------------------
-
-Default: (Empty string)
 
 
 
