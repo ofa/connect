@@ -45,9 +45,21 @@ class TestConnectProcessor(ConnectTestMixin, ConnectMessageTestCase):
             reverse('update_user', args=(user.uuid,)))
 
         self.assertEqual(
-            response['nav2_items'][2]['label'], 'Logout')
+            response['nav2_items'][2]['label'], 'Update My Email Address')
         self.assertEqual(
-            response['nav2_items'][2]['link'], reverse('logout'))
+            response['nav2_items'][2]['link'],
+            reverse('account_email'))
+
+        self.assertEqual(
+            response['nav2_items'][3]['label'], 'Change My Password')
+        self.assertEqual(
+            response['nav2_items'][3]['link'],
+            reverse('account_change_password'))
+
+        self.assertEqual(
+            response['nav2_items'][4]['label'], 'Logout')
+        self.assertEqual(
+            response['nav2_items'][4]['link'], '/user/logout/')
 
     @override_settings(LOGIN_URL='/login/')
     def test_unauthenticated_nav(self):
@@ -58,7 +70,11 @@ class TestConnectProcessor(ConnectTestMixin, ConnectMessageTestCase):
         self.assertEqual(response['nav_items'], [])
         self.assertEqual(response['nav2_items'][0]['label'], 'Login')
         self.assertEqual(
-            response['nav2_items'][0]['link'], '/login/')
+            response['nav2_items'][0]['link'], '/user/login/')
+
+        self.assertEqual(response['nav2_items'][1]['label'], 'Signup')
+        self.assertEqual(
+            response['nav2_items'][1]['link'], '/user/signup/')
 
     def test_is_moderator(self):
         """Test processor with when user is a moderator."""

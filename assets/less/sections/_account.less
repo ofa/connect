@@ -1,0 +1,61 @@
+.account{
+    .login_image();
+    #main{
+        margin-bottom: 150px;
+    }
+    .form-group{
+        &:last-of-type{
+            margin-bottom: 0;
+        }
+        [type="checkbox"]{
+            margin-right: 10px;
+        }
+        label{
+            font-weight: 500;
+            font-size: .9em;
+        }
+    }
+    .errorlist{
+        font-size: .9em;
+        color: @brand-danger;
+        font-weight: 500;
+    }
+    .account-form{
+        border-top: 10px solid @brand-primary;
+        padding: 50px;
+        background: white;
+        color: @gray-dark;
+        margin-top: 150px;
+        h1{
+            text-align: center;
+            margin: 0 0 40px;
+        }
+        @media (max-width: @screen-xs-max){
+            margin-top: 50px;
+            padding: 25px;
+        }
+    }
+    .help-copy{
+        margin-bottom: 30px;
+    }
+    .account-secondary-action{
+        text-align: center;
+        margin-top: 20px;
+    }
+    .account-alt-action{
+        margin-top: 20px;
+        text-align: center;
+        a{
+            font-size: 1.2em;
+            font-weight: 700;
+            color: white;
+        }
+    }
+    #ft{
+        background: transparent;
+    }
+    input, label {
+        display: block;
+        width: 100%;
+    }
+}

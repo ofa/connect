@@ -12,9 +12,9 @@
 				<i class="{{icon_prefix}}user"></i>
 			</div>
 			<h1 class="connect-logo">{{brand_title}}</h1>
-		    <a class="btn btn-primary login ga" href="{{ login_url }}" data-campaign="Auth Flow" data-action="Click - Login">Log in</a>
+		    <a class="btn btn-primary login ga" href="{% url 'account_login' %}" data-campaign="Auth Flow" data-action="Click - Login">Log in</a>
 		    
-		    <a class="btn btn-info create ga" href="{{ login_url }}" data-campaign="Auth Flow" data-action="Click - Create Account">Create an Account</a>
+		    <a class="btn btn-info create ga" href="{% url 'account_signup' %}" data-campaign="Auth Flow" data-action="Click - Create Account">Create an Account</a>
 		</div>
 	</div>
 {% endblock %}

@@ -75,4 +75,4 @@ ipython==3.1.0
 
 
 # Authentication Libraries
-python-social-auth==0.2.21
+django-allauth==0.31.0

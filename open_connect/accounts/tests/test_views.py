@@ -9,12 +9,13 @@ from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.test import Client, TestCase, RequestFactory
 from django.test.utils import override_settings
-from mock import patch
+from mock import patch, Mock
 from model_mommy import mommy
 
 from open_connect.accounts import views
 from open_connect.accounts.models import Invite, User
 from open_connect.connectmessages.tests import ConnectMessageTestCase
+from open_connect.mailer.models import Unsubscribe
 from open_connect.media.tests import (
     get_in_memory_image_file, get_in_memory_image_instance
 )
@@ -246,6 +247,129 @@ class UserDetailViewTest(ConnectTestMixin, TestCase):
         self.assertRaises(Http404, view.get_object)
 
 
+class SignupViewTest(ConnectTestMixin, TestCase):
+    """Test for the signup form view
+
+    This is ultimately a test of the entire signup process, as most of this is
+    comprised of modifications to the way django-allauth works.
+    """
+    def test_user_created(self):
+        """Test that a simple signup causes a user to be created"""
+        client = Client()
+        response = client.post(
+            reverse('account_signup'),
+            {
+                'first_name': 'Test',
+                'last_name': 'User',
+                'email': 'signupviewtest1@test.local',
+                'password1': 'testpassword',
+                'password2': 'testpassword',
+            })
+
+        self.assertRedirects(
+            response, '/messages/', fetch_redirect_response=False)
+
+        user = User.objects.get(email='signupviewtest1@test.local')
+        self.assertEqual(user.first_name, 'Test')
+        self.assertEqual(user.last_name, 'User')
+        self.assertEqual(user.username, 'signupviewtest1@test.local')
+
+    def test_resubscribes_user(self):
+        """
+        Test that an unsubscribed email is resubscribed during the signup
+        """
+        mommy.make(Unsubscribe, address='signupviewtest2@test.local')
+
+        self.assertTrue(Unsubscribe.objects.filter(
+            address='signupviewtest2@test.local').exists())
+
+        client = Client()
+        response = client.post(
+            reverse('account_signup'),
+            {
+                'first_name': 'Test',
+                'last_name': 'User',
+                'email': 'signupviewtest2@test.local',
+                'password1': 'testpassword',
+                'password2': 'testpassword',
+            })
+
+        self.assertRedirects(
+            response, '/messages/', fetch_redirect_response=False)
+        self.assertFalse(Unsubscribe.objects.filter(
+            address='signupviewtest2@test.local').exists())
+
+    def test_consumes_invite(self):
+        """
+        Test that an unsubscribed email is resubscribed during the signup
+        """
+        new_invite = mommy.make(Invite, email='signupviewtest3@test.local')
+
+        self.assertIsNone(new_invite.consumed_by)
+        self.assertIsNone(new_invite.consumed_at)
+
+        client = Client()
+        response = client.post(
+            reverse('account_signup'),
+            {
+                'first_name': 'Test',
+                'last_name': 'User',
+                'email': 'signupviewtest3@test.local',
+                'password1': 'testpassword',
+                'password2': 'testpassword',
+            })
+
+        self.assertRedirects(
+            response, '/messages/', fetch_redirect_response=False)
+
+        # Pull the invite from the database again
+        used_invite = Invite.objects.get(pk=new_invite.pk)
+
+        new_user = User.objects.get(email='signupviewtest3@test.local')
+
+        self.assertEqual(used_invite.consumed_by, new_user)
+        self.assertIsNotNone(used_invite.consumed_at)
+
+    @patch('open_connect.accounts.adapter.EmailMultiAlternatives')
+    def test_sends_email(self, mock):
+        """Test that signing up sends the new user an email
+
+        This also confirms that django-allauth is set to use our custom adapter
+        """
+        mock_message = Mock()
+        mock.return_value = mock_message
+
+        client = Client()
+        response = client.post(
+            reverse('account_signup'),
+            {
+                'first_name': 'Test',
+                'last_name': 'User',
+                'email': 'signupviewtest4@test.local',
+                'password1': 'testpassword',
+                'password2': 'testpassword',
+            })
+
+        self.assertRedirects(
+            response, '/messages/', fetch_redirect_response=False)
+
+        self.assertEqual(mock.call_count, 1)
+        self.assertEqual(mock_message.attach_alternative.call_count, 1)
+
+        new_user = User.objects.get(email='signupviewtest4@test.local')
+
+        call_kwargs = mock.call_args[1]
+        html_call_kwargs = mock_message.attach_alternative.call_args[1]
+
+        self.assertEqual(call_kwargs['to'], (u'signupviewtest4@test.local',))
+
+        # Confirm the unsubscribe URL is in both emails. This is a quick way to
+        # check that personalization is being passed all the way through to the
+        # email sending system
+        self.assertIn(new_user.unsubscribe_url, call_kwargs['body'])
+        self.assertIn(new_user.unsubscribe_url, html_call_kwargs['content'])
+
+
 class UserUpdateViewTest(ConnectTestMixin, TestCase):
     """Tests for the user update view."""
     def setUp(self):
@@ -281,7 +405,7 @@ class UserUpdateViewTest(ConnectTestMixin, TestCase):
         self.assertEqual(privlidged_result.status_code, 200)
         self.assertContains(privlidged_result, self.user)
 
-    @override_settings(LOGIN_URL=reverse('login'))
+    @override_settings(LOGIN_URL=reverse('account_login'))
     def test_update_anonymous_user(self):
         """Unauthenticated users should be redirected to the login page."""
         client = Client()
@@ -289,7 +413,7 @@ class UserUpdateViewTest(ConnectTestMixin, TestCase):
         response = client.get(update_url)
         self.assertRedirects(
             response,
-            '%s?next=%s' % (reverse('login'), update_url)
+            '%s?next=%s' % (reverse('account_login'), update_url)
         )
 
     def test_with_image(self):
@@ -579,7 +703,7 @@ class UserProfileRedirectTest(ConnectTestMixin, TestCase):
             reverse('user_details', args=[user.uuid]),
         )
 
-    @override_settings(LOGIN_URL=reverse('login'))
+    @override_settings(LOGIN_URL=reverse('account_login'))
     def test_anonymous_user(self):
         """Unauthenticated user should be redirected to login."""
         client = Client()
@@ -587,7 +711,7 @@ class UserProfileRedirectTest(ConnectTestMixin, TestCase):
         response = client.get(user_profile_url)
         self.assertRedirects(
             response,
-            '%s?next=%s' % (reverse('login'), user_profile_url)
+            '%s?next=%s' % (reverse('account_login'), user_profile_url)
         )
 
 
@@ -800,8 +924,8 @@ class BecomeUserViewTest(ConnectMessageTestCase):
         """form_valid should only update the session if user has permission."""
         client = Client()
         client.post(
-            reverse('login'),
-            {'username': 'staffuser@razzmatazz.local', 'password': 'moo'}
+            reverse('account_login'),
+            {'login': 'staffuser@razzmatazz.local', 'password': 'moo'}
         )
         session = client.session
         self.assertNotIn('impersonate_id', session)

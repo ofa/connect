@@ -1,0 +1,8 @@
+{% extends "email/base_wrapper.txt" %}
+
+{% block content %}
+You're receiving this e-mail because user {{ user }} has given yours as an e-mail address to connect their account.
+
+To confirm this is correct, go to
+
+{{ activate_url }}{% endblock content %}

@@ -3,6 +3,7 @@
 from collections import OrderedDict
 import json
 
+from allauth.account.views import SignupView as AllauthSignupView
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Permission
@@ -31,7 +32,8 @@ from open_connect.accounts.forms import (
     BecomeUserForm,
     InviteEntryForm,
     TermsAndConductAcceptForm,
-    UserPermissionForm
+    UserPermissionForm,
+    SignupForm
 )
 from open_connect.accounts.models import User, Invite
 from open_connect.groups.models import Group
@@ -104,6 +106,11 @@ class UserDetailView(SuppressSystemUserMixin, DetailView):
         if self.show_banned_warning():
             messages.warning(self.request, 'This is a banned account.')
         return self.user
+
+
+class SignupView(AllauthSignupView):
+    """Connect Signup View"""
+    form_class = SignupForm
 
 
 class UserUpdateView(

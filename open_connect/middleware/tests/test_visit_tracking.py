@@ -60,7 +60,8 @@ class VisitTrackingMiddlewareTest(ConnectTestMixin, TestCase):
         visit_count = Visit.objects.count()
         User.objects.create_user(username='a@b.local', password='moo')
         self.client.post(
-            reverse('login'), {'username': 'a@b.local', 'password': 'moo'})
+            reverse('account_login'),
+            {'login': 'a@b.local', 'password': 'moo'})
         self.client.get('/')
         self.assertEqual(self.client.cookies.get('visit_logged').value, '1')
         self.assertEqual(Visit.objects.count(), visit_count + 1)
@@ -70,7 +71,8 @@ class VisitTrackingMiddlewareTest(ConnectTestMixin, TestCase):
         visit_count = Visit.objects.count()
         User.objects.create_user(username='a@b.local', password='moo')
         self.client.post(
-            reverse('login'), {'username': 'a@b.local', 'password': 'moo'})
+            reverse('account_login'),
+            {'login': 'a@b.local', 'password': 'moo'})
         self.client.get('/')
         self.assertEqual(Visit.objects.count(), visit_count + 1)
         self.client.get('/')

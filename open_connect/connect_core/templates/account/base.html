@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block foot %}
+<footer id="ft" class="footer">
+    {% block foot_nav %}{% endblock %}
+    <div class="disclaimers container text-center">
+        <div class="disclaimer-license">
+            <small class="disclaimer">Paid for by Organizing for Action </small>
+            <small class="license">&copy; {% now "Y" %} Organizing for Action. All&nbsp;Rights&nbsp;Reserved.</small>
+        </div>
+    </div>
+</footer>
+{% endblock %}

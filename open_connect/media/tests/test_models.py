@@ -363,8 +363,8 @@ class ImagePopularityManagerTest(ConnectTestMixin, TestCase):
 
         client = Client()
         client.post(
-            reverse('login'),
-            {'username': self.banned_user.email, 'password': 'moo'}
+            reverse('account_login'),
+            {'login': self.banned_user.email, 'password': 'moo'}
         )
 
         result = client.get(reverse('admin_gallery'))

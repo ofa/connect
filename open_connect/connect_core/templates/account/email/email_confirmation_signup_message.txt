@@ -1,0 +1,9 @@
+{% extends "email/base_wrapper.txt" %}
+{% load account %}
+
+{% block content %}
+Thank you for signing up to Connect.
+
+Please confirm your email address so you can get started.
+
+{{ activate_url }}{% endblock content %}

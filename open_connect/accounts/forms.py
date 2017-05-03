@@ -1,6 +1,8 @@
 """Forms for accounts app."""
 # pylint: disable=no-init,no-self-use
 
+from allauth.account.forms import SignupForm as AllauthSignupForm
+from allauth.account.utils import setup_user_email
 from django import forms
 from django.contrib.admin import widgets
 from django.contrib.auth.models import Group as AuthGroup
@@ -249,3 +251,24 @@ class UserPermissionForm(forms.ModelForm):
         """Meta options."""
         model = User
         fields = ['user_permissions']
+
+
+class SignupForm(AllauthSignupForm):
+    """Signup form for Connect"""
+    first_name = forms.CharField(max_length=30, label='First name')
+    last_name = forms.CharField(max_length=30, label='Last name')
+
+    def save(self, request):
+        """Save the new signup"""
+        data = self.cleaned_data
+        user = User.objects.create_user(
+            username=data['email'],
+            password=data['password1'],
+            email=data['email'],
+            first_name=data.get('first_name'),
+            last_name=data.get('last_name'))
+
+        # Create the EmailAddress record for Django Allauth
+        setup_user_email(request, user, [])
+
+        return user

@@ -669,9 +669,9 @@ class GroupImagesViewTest(ConnectTestMixin, ConnectMessageTestCase):
 
         self.client2 = Client()
         self.client2.post(
-            reverse('login'),
+            reverse('account_login'),
             {
-                'username': 'gracegrant@razzmatazz.local',
+                'login': 'gracegrant@razzmatazz.local',
                 'password': 'moo'
             })
 
@@ -746,13 +746,14 @@ class GroupImagesViewTest(ConnectTestMixin, ConnectMessageTestCase):
 
     def test_no_images_from_banned_users(self):
         """Test that images posted by banned users are not visible."""
-        banned_user = mommy.make('accounts.User', is_banned=True)
-        group = mommy.make(Group)
-        banned_user.add_to_group(group.pk)
-        self.user2.add_to_group(group.pk)
+        banned_user = self.create_user(is_banned=True)
+        regular_user = self.create_user()
 
-        # Create a new thread and message
-        thread = mommy.make('connectmessages.Thread', group=group)
+        group = self.create_group()
+        banned_user.add_to_group(group.pk)
+        regular_user.add_to_group(group.pk)
+
+        thread = self.create_thread(group=group)
         message = mommy.make(
             'connectmessages.Message', thread=thread, sender=banned_user)
 
@@ -763,19 +764,21 @@ class GroupImagesViewTest(ConnectTestMixin, ConnectMessageTestCase):
         image1.save()
         message.images.add(image1)
 
+        self.login(regular_user)
+
         result = self.client.get(
             reverse('group_images', kwargs={'group_id': group.pk}))
+
         self.assertNotIn(image1, result.context['images'])
 
     def test_images_from_a_banned_user_are_visible_to_banned_user(self):
         """Images posted by banned members are visible to the banned member."""
         banned_user = self.create_user(is_banned=True)
-        group = mommy.make(Group)
-        banned_user.add_to_group(group.pk)
-        self.user2.add_to_group(group.pk)
 
-        # Create a new thread and message
-        thread = mommy.make('connectmessages.Thread', group=group)
+        group = self.create_group()
+        banned_user.add_to_group(group.pk)
+
+        thread = self.create_thread(group=group)
         message = mommy.make(
             'connectmessages.Message', thread=thread, sender=banned_user)
 
@@ -786,13 +789,11 @@ class GroupImagesViewTest(ConnectTestMixin, ConnectMessageTestCase):
         image1.save()
         message.images.add(image1)
 
-        client = Client()
-        client.post(
-            reverse('login'),
-            {'username': banned_user.email, 'password': 'moo'}
-        )
-        result = client.get(
+        self.login(banned_user)
+
+        result = self.client.get(
             reverse('group_images', kwargs={'group_id': group.pk}))
+
         self.assertIn(image1, result.context['images'])
 
 
