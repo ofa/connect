@@ -59,6 +59,7 @@ DEBUG = env('DEBUG')
 ROOT_URLCONF = 'connect.urls'
 WSGI_APPLICATION = 'connect.wsgi.application'
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+SITE_ID = 1
 
 ####
 # Database Settings
