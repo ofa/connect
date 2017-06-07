@@ -1,5 +1,8 @@
 .account{
     .login_image();
+    h2{
+        text-align: center;
+    }
     #main{
         margin-bottom: 150px;
     }
@@ -57,5 +60,31 @@
     input, label {
         display: block;
         width: 100%;
+    }
+    input[type="checkbox"],
+    input[type="radio"]{
+        display: inline-block;
+        width: auto;
+    }
+    .email-form{
+        h2{
+            margin-top: 0;
+        }
+        hr{
+            margin: 40px 0;
+        }
+        .email-list{
+            margin-bottom: 20px;
+        }
+        .primary{
+            background: @brand-info;
+            color: white;
+            padding: 3px;
+            border-radius: 5px;
+        }
+        .verified,
+        .unverified{
+            font-style: italic;
+        }
     }
 }

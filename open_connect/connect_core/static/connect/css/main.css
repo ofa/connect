@@ -6286,16 +6286,6 @@ a.thumbnail.active {
 .alert-danger .alert-link {
   color: #843534;
 }
-@-webkit-keyframes progress-bar-stripes {
-  /* line 11, bower_components/bootstrap/less/progress-bars.less */
-  from {
-    background-position: 40px 0;
-  }
-  /* line 12, bower_components/bootstrap/less/progress-bars.less */
-  to {
-    background-position: 0 0;
-  }
-}
 @keyframes progress-bar-stripes {
   /* line 17, bower_components/bootstrap/less/progress-bars.less */
   from {
@@ -6337,7 +6327,6 @@ a.thumbnail.active {
 /* line 64, bower_components/bootstrap/less/progress-bars.less */
 .progress.active .progress-bar,
 .progress-bar.active {
-  -webkit-animation: progress-bar-stripes 2s linear infinite;
   animation: progress-bar-stripes 2s linear infinite;
 }
 /* line 73, bower_components/bootstrap/less/progress-bars.less */
@@ -7188,15 +7177,12 @@ button.close {
 }
 /* line 32, bower_components/bootstrap/less/modals.less */
 .modal.fade .modal-dialog {
-  -webkit-transform: translate(0, -25%);
   -ms-transform: translate(0, -25%);
   transform: translate(0, -25%);
-  transition: -webkit-transform 0.3s ease-out;
   transition: transform 0.3s ease-out;
 }
 /* line 36, bower_components/bootstrap/less/modals.less */
 .modal.in .modal-dialog {
-  -webkit-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
   transform: translate(0, 0);
 }
@@ -7612,24 +7598,19 @@ button.close {
 @media all and (transform-3d), (-webkit-transform-3d) {
   /* line 29, bower_components/bootstrap/less/carousel.less */
   .carousel-inner > .item {
-    transition: -webkit-transform 0.6s ease-in-out;
     transition: transform 0.6s ease-in-out;
-    -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    -webkit-perspective: 1000px;
     perspective: 1000px;
   }
   /* line 34, bower_components/bootstrap/less/carousel.less */
   .carousel-inner > .item.next,
   .carousel-inner > .item.active.right {
-    -webkit-transform: translate3d(100%, 0, 0);
     transform: translate3d(100%, 0, 0);
     left: 0;
   }
   /* line 39, bower_components/bootstrap/less/carousel.less */
   .carousel-inner > .item.prev,
   .carousel-inner > .item.active.left {
-    -webkit-transform: translate3d(-100%, 0, 0);
     transform: translate3d(-100%, 0, 0);
     left: 0;
   }
@@ -7637,7 +7618,6 @@ button.close {
   .carousel-inner > .item.next.left,
   .carousel-inner > .item.prev.right,
   .carousel-inner > .item.active {
-    -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
     left: 0;
   }
@@ -9323,19 +9303,8 @@ body .redactor-box-fullscreen {
   height: 100%;
   background-color: #3d58a8;
   background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
-  -webkit-animation: progress-bar-stripes 2s linear infinite;
   animation: progress-bar-stripes 2s linear infinite;
   background-size: 40px 40px;
-}
-@-webkit-keyframes progress-bar-stripes {
-  /* line 564, assets/vendor/redactor/redactor.less */
-  from {
-    background-position: 40px 0;
-  }
-  /* line 565, assets/vendor/redactor/redactor.less */
-  to {
-    background-position: 0 0;
-  }
 }
 @keyframes progress-bar-stripes {
   /* line 572, assets/vendor/redactor/redactor.less */
@@ -10312,12 +10281,10 @@ margin: 0 0 0 2.857%;
   cursor: progress; }
 
 .mfp-zoom-out-cur, .mfp-zoom-out-cur .mfp-image-holder .mfp-close {
-  cursor: -webkit-zoom-out;
   cursor: zoom-out; }
 
 .mfp-zoom {
   cursor: pointer;
-  cursor: -webkit-zoom-in;
   cursor: zoom-in; }
 
 .mfp-auto-cursor .mfp-content {
@@ -10581,15 +10548,12 @@ img.mfp-img {
 
 @media all and (max-width: 900px) {
   .mfp-arrow {
-    -webkit-transform: scale(0.75);
     -ms-transform: scale(0.75);
         transform: scale(0.75); }
   .mfp-arrow-left {
-    -webkit-transform-origin: 0;
     -ms-transform-origin: 0;
         transform-origin: 0; }
   .mfp-arrow-right {
-    -webkit-transform-origin: 100%;
     -ms-transform-origin: 100%;
         transform-origin: 100%; }
   .mfp-container {
@@ -10759,7 +10723,6 @@ img.mfp-img {
 }
 /* line 31, assets/less/modules/_isotope.less */
 .isotope .isotope-item {
-  transition-property: -webkit-transform, opacity;
   transition-property: transform, opacity;
 }
 /* line 41, assets/less/modules/_isotope.less */
@@ -10774,7 +10737,6 @@ img.mfp-img {
 .isotope-list .item .left-banner {
   position: absolute;
   display: block;
-  -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
   background: #222222;
@@ -11237,7 +11199,6 @@ img.mfp-img {
 .isotope-list.list .item .right-banner {
   margin-right: -28px;
   margin-top: 6px;
-  -webkit-transform: rotate(32deg);
   -ms-transform: rotate(32deg);
   transform: rotate(32deg);
 }
@@ -12596,7 +12557,6 @@ body.login .connect-logo {
   /* Non standard for webkit */
   word-break: break-word;
   -webkit-hyphens: auto;
-  -moz-hyphens: auto;
   -ms-hyphens: auto;
       hyphens: auto;
   margin-bottom: 1.25em;
@@ -12687,7 +12647,6 @@ body.login .connect-logo {
 }
 /* line 48, assets/less/sections/_new_group.less */
 .group-form .btn-file > input {
-  -webkit-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
   transform: translate(0, 0);
 }
@@ -12883,7 +12842,6 @@ body.login .connect-logo {
 }
 /* line 19, assets/less/sections/_thread_list.less */
 .thread-main {
-  display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   position: relative;
@@ -12929,9 +12887,8 @@ body.login .connect-logo {
 #threads {
   padding-left: 0;
   padding-right: 0;
-  -webkit-flex: 3 0;
-      -ms-flex: 3 0;
-          flex: 3 0;
+  -ms-flex: 3 0;
+      flex: 3 0;
 }
 @media (min-width: 768px) {
   /* line 60, assets/less/sections/_thread_list.less */
@@ -13219,7 +13176,6 @@ body.login .connect-logo {
   color: #333333;
   word-break: break-word;
   -webkit-hyphens: auto;
-  -moz-hyphens: auto;
   -ms-hyphens: auto;
       hyphens: auto;
 }
@@ -13350,9 +13306,8 @@ body.login .connect-logo {
 }
 /* line 2, assets/less/sections/_thread_manager.less */
 .thread-manager {
-  -webkit-flex: 1 0;
-      -ms-flex: 1 0;
-          flex: 1 0;
+  -ms-flex: 1 0;
+      flex: 1 0;
   background: #333333;
   color: white;
   padding: 24px;
@@ -13464,19 +13419,16 @@ body.login .connect-logo {
   border: none;
   background: #555555;
   border-radius: 50%;
-  -webkit-transform-origin: center;
-      -ms-transform-origin: center;
-          transform-origin: center;
-  -webkit-transform: scale(0.00001);
-      -ms-transform: scale(0.00001);
-          transform: scale(0.00001);
+  -ms-transform-origin: center;
+      transform-origin: center;
+  -ms-transform: scale(0.00001);
+      transform: scale(0.00001);
   transition: all 0.3s cubic-bezier(0.895, 0.03, 0.685, 0.22);
 }
 /* line 74, assets/less/sections/_thread_manager.less */
 .thread-filter a.selected:after {
-  -webkit-transform: scale(1);
-      -ms-transform: scale(1);
-          transform: scale(1);
+  -ms-transform: scale(1);
+      transform: scale(1);
 }
 /* line 81, assets/less/sections/_thread_manager.less */
 .thread-filter a.category_8:before {
@@ -14870,7 +14822,6 @@ body.inbox.mobile .thread-detail {
 }
 /* line 28, assets/less/sections/_resource_form.less */
 .resource-form .btn-file > input {
-  -webkit-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
   transform: translate(0, 0);
 }
@@ -14931,29 +14882,33 @@ body.inbox.mobile .thread-detail {
   background-size: cover;
 }
 /* line 3, assets/less/sections/_account.less */
+.account h2 {
+  text-align: center;
+}
+/* line 6, assets/less/sections/_account.less */
 .account #main {
   margin-bottom: 150px;
 }
-/* line 7, assets/less/sections/_account.less */
+/* line 10, assets/less/sections/_account.less */
 .account .form-group:last-of-type {
   margin-bottom: 0;
 }
-/* line 10, assets/less/sections/_account.less */
+/* line 13, assets/less/sections/_account.less */
 .account .form-group [type="checkbox"] {
   margin-right: 10px;
 }
-/* line 13, assets/less/sections/_account.less */
+/* line 16, assets/less/sections/_account.less */
 .account .form-group label {
   font-weight: 500;
   font-size: .9em;
 }
-/* line 18, assets/less/sections/_account.less */
+/* line 21, assets/less/sections/_account.less */
 .account .errorlist {
   font-size: .9em;
   color: #d9534f;
   font-weight: 500;
 }
-/* line 23, assets/less/sections/_account.less */
+/* line 26, assets/less/sections/_account.less */
 .account .account-form {
   border-top: 10px solid #337ab7;
   padding: 50px;
@@ -14961,45 +14916,75 @@ body.inbox.mobile .thread-detail {
   color: #333333;
   margin-top: 150px;
 }
-/* line 29, assets/less/sections/_account.less */
+/* line 32, assets/less/sections/_account.less */
 .account .account-form h1 {
   text-align: center;
   margin: 0 0 40px;
 }
 @media (max-width: 767px) {
-  /* line 33, assets/less/sections/_account.less */
+  /* line 36, assets/less/sections/_account.less */
   .account .account-form {
     margin-top: 50px;
     padding: 25px;
   }
 }
-/* line 38, assets/less/sections/_account.less */
+/* line 41, assets/less/sections/_account.less */
 .account .help-copy {
   margin-bottom: 30px;
 }
-/* line 41, assets/less/sections/_account.less */
+/* line 44, assets/less/sections/_account.less */
 .account .account-secondary-action {
   text-align: center;
   margin-top: 20px;
 }
-/* line 45, assets/less/sections/_account.less */
+/* line 48, assets/less/sections/_account.less */
 .account .account-alt-action {
   margin-top: 20px;
   text-align: center;
 }
-/* line 48, assets/less/sections/_account.less */
+/* line 51, assets/less/sections/_account.less */
 .account .account-alt-action a {
   font-size: 1.2em;
   font-weight: 700;
   color: white;
 }
-/* line 54, assets/less/sections/_account.less */
+/* line 57, assets/less/sections/_account.less */
 .account #ft {
   background: transparent;
 }
-/* line 57, assets/less/sections/_account.less */
+/* line 60, assets/less/sections/_account.less */
 .account input,
 .account label {
   display: block;
   width: 100%;
+}
+/* line 64, assets/less/sections/_account.less */
+.account input[type="checkbox"],
+.account input[type="radio"] {
+  display: inline-block;
+  width: auto;
+}
+/* line 70, assets/less/sections/_account.less */
+.account .email-form h2 {
+  margin-top: 0;
+}
+/* line 73, assets/less/sections/_account.less */
+.account .email-form hr {
+  margin: 40px 0;
+}
+/* line 76, assets/less/sections/_account.less */
+.account .email-form .email-list {
+  margin-bottom: 20px;
+}
+/* line 79, assets/less/sections/_account.less */
+.account .email-form .primary {
+  background: #5bc0de;
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
+}
+/* line 85, assets/less/sections/_account.less */
+.account .email-form .verified,
+.account .email-form .unverified {
+  font-style: italic;
 }

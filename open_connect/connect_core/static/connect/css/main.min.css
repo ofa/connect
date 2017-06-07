@@ -5143,14 +5143,6 @@ a.thumbnail.active {
 .alert-danger .alert-link {
   color: #843534;
 }
-@-webkit-keyframes progress-bar-stripes {
-  from {
-    background-position: 40px 0;
-  }
-  to {
-    background-position: 0 0;
-  }
-}
 @keyframes progress-bar-stripes {
   from {
     background-position: 40px 0;
@@ -5186,7 +5178,6 @@ a.thumbnail.active {
 }
 .progress.active .progress-bar,
 .progress-bar.active {
-  -webkit-animation: progress-bar-stripes 2s linear infinite;
   animation: progress-bar-stripes 2s linear infinite;
 }
 .progress-bar-success {
@@ -5897,14 +5888,11 @@ button.close {
   outline: 0;
 }
 .modal.fade .modal-dialog {
-  -webkit-transform: translate(0, -25%);
   -ms-transform: translate(0, -25%);
   transform: translate(0, -25%);
-  transition: -webkit-transform 0.3s ease-out;
   transition: transform 0.3s ease-out;
 }
 .modal.in .modal-dialog {
-  -webkit-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
   transform: translate(0, 0);
 }
@@ -6262,29 +6250,23 @@ button.close {
 }
 @media all and (transform-3d), (-webkit-transform-3d) {
   .carousel-inner > .item {
-    transition: -webkit-transform 0.6s ease-in-out;
     transition: transform 0.6s ease-in-out;
-    -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
-    -webkit-perspective: 1000px;
     perspective: 1000px;
   }
   .carousel-inner > .item.next,
   .carousel-inner > .item.active.right {
-    -webkit-transform: translate3d(100%, 0, 0);
     transform: translate3d(100%, 0, 0);
     left: 0;
   }
   .carousel-inner > .item.prev,
   .carousel-inner > .item.active.left {
-    -webkit-transform: translate3d(-100%, 0, 0);
     transform: translate3d(-100%, 0, 0);
     left: 0;
   }
   .carousel-inner > .item.next.left,
   .carousel-inner > .item.prev.right,
   .carousel-inner > .item.active {
-    -webkit-transform: translate3d(0, 0, 0);
     transform: translate3d(0, 0, 0);
     left: 0;
   }
@@ -7714,17 +7696,8 @@ body .redactor-box-fullscreen {
   height: 100%;
   background-color: #3d58a8;
   background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
-  -webkit-animation: progress-bar-stripes 2s linear infinite;
   animation: progress-bar-stripes 2s linear infinite;
   background-size: 40px 40px;
-}
-@-webkit-keyframes progress-bar-stripes {
-  from {
-    background-position: 40px 0;
-  }
-  to {
-    background-position: 0 0;
-  }
 }
 @keyframes progress-bar-stripes {
   from {
@@ -8634,12 +8607,10 @@ margin: 0 0 0 2.857%;
   cursor: progress; }
 
 .mfp-zoom-out-cur, .mfp-zoom-out-cur .mfp-image-holder .mfp-close {
-  cursor: -webkit-zoom-out;
   cursor: zoom-out; }
 
 .mfp-zoom {
   cursor: pointer;
-  cursor: -webkit-zoom-in;
   cursor: zoom-in; }
 
 .mfp-auto-cursor .mfp-content {
@@ -8903,15 +8874,12 @@ img.mfp-img {
 
 @media all and (max-width: 900px) {
   .mfp-arrow {
-    -webkit-transform: scale(0.75);
     -ms-transform: scale(0.75);
         transform: scale(0.75); }
   .mfp-arrow-left {
-    -webkit-transform-origin: 0;
     -ms-transform-origin: 0;
         transform-origin: 0; }
   .mfp-arrow-right {
-    -webkit-transform-origin: 100%;
     -ms-transform-origin: 100%;
         transform-origin: 100%; }
   .mfp-container {
@@ -9054,7 +9022,6 @@ img.mfp-img {
   transition-property: height, width;
 }
 .isotope .isotope-item {
-  transition-property: -webkit-transform, opacity;
   transition-property: transform, opacity;
 }
 .isotope.no-transition,
@@ -9067,7 +9034,6 @@ img.mfp-img {
 .isotope-list .item .left-banner {
   position: absolute;
   display: block;
-  -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
   background: #222222;
@@ -9448,7 +9414,6 @@ img.mfp-img {
 .isotope-list.list .item .right-banner {
   margin-right: -28px;
   margin-top: 6px;
-  -webkit-transform: rotate(32deg);
   -ms-transform: rotate(32deg);
   transform: rotate(32deg);
 }
@@ -10550,7 +10515,6 @@ body.login .connect-logo {
   /* Non standard for webkit */
   word-break: break-word;
   -webkit-hyphens: auto;
-  -moz-hyphens: auto;
   -ms-hyphens: auto;
       hyphens: auto;
   margin-bottom: 1.25em;
@@ -10624,7 +10588,6 @@ body.login .connect-logo {
   margin-left: 20px;
 }
 .group-form .btn-file > input {
-  -webkit-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
   transform: translate(0, 0);
 }
@@ -10780,7 +10743,6 @@ body.login .connect-logo {
   overflow-y: scroll;
 }
 .thread-main {
-  display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   position: relative;
@@ -10818,9 +10780,8 @@ body.login .connect-logo {
 #threads {
   padding-left: 0;
   padding-right: 0;
-  -webkit-flex: 3 0;
-      -ms-flex: 3 0;
-          flex: 3 0;
+  -ms-flex: 3 0;
+      flex: 3 0;
 }
 @media (min-width: 768px) {
   #threads {
@@ -11058,7 +11019,6 @@ body.login .connect-logo {
   color: #333333;
   word-break: break-word;
   -webkit-hyphens: auto;
-  -moz-hyphens: auto;
   -ms-hyphens: auto;
       hyphens: auto;
 }
@@ -11167,9 +11127,8 @@ body.login .connect-logo {
   }
 }
 .thread-manager {
-  -webkit-flex: 1 0;
-      -ms-flex: 1 0;
-          flex: 1 0;
+  -ms-flex: 1 0;
+      flex: 1 0;
   background: #333333;
   color: white;
   padding: 24px;
@@ -11263,18 +11222,15 @@ body.login .connect-logo {
   border: none;
   background: #555555;
   border-radius: 50%;
-  -webkit-transform-origin: center;
-      -ms-transform-origin: center;
-          transform-origin: center;
-  -webkit-transform: scale(0.00001);
-      -ms-transform: scale(0.00001);
-          transform: scale(0.00001);
+  -ms-transform-origin: center;
+      transform-origin: center;
+  -ms-transform: scale(0.00001);
+      transform: scale(0.00001);
   transition: all 0.3s cubic-bezier(0.895, 0.03, 0.685, 0.22);
 }
 .thread-filter a.selected:after {
-  -webkit-transform: scale(1);
-      -ms-transform: scale(1);
-          transform: scale(1);
+  -ms-transform: scale(1);
+      transform: scale(1);
 }
 .thread-filter a.category_8:before {
   border-color: #5cb85c;
@@ -12417,7 +12373,6 @@ body.inbox.mobile .thread-detail {
   width: auto;
 }
 .resource-form .btn-file > input {
-  -webkit-transform: translate(0, 0);
   -ms-transform: translate(0, 0);
   transform: translate(0, 0);
 }
@@ -12465,6 +12420,9 @@ body.inbox.mobile .thread-detail {
 .account {
   background: url('../img/login.jpg') no-repeat center black;
   background-size: cover;
+}
+.account h2 {
+  text-align: center;
 }
 .account #main {
   margin-bottom: 150px;
@@ -12524,4 +12482,28 @@ body.inbox.mobile .thread-detail {
 .account label {
   display: block;
   width: 100%;
+}
+.account input[type="checkbox"],
+.account input[type="radio"] {
+  display: inline-block;
+  width: auto;
+}
+.account .email-form h2 {
+  margin-top: 0;
+}
+.account .email-form hr {
+  margin: 40px 0;
+}
+.account .email-form .email-list {
+  margin-bottom: 20px;
+}
+.account .email-form .primary {
+  background: #5bc0de;
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
+}
+.account .email-form .verified,
+.account .email-form .unverified {
+  font-style: italic;
 }
