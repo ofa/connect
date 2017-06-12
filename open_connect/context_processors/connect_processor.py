@@ -25,7 +25,11 @@ def connect_processor(request):
              'link': reverse('user_profile')},
             {'label': 'Manage My Account',
              'link': reverse('update_user', args=(user.uuid,))},
-            {'label': 'Logout', 'link': reverse('logout')},
+            {'label': 'Update My Email Address',
+             'link': reverse('account_email')},
+            {'label': 'Change My Password',
+             'link': reverse('account_change_password')},
+            {'label': 'Logout', 'link': reverse('account_logout')},
         ]
 
         admin_items = []
@@ -82,13 +86,14 @@ def connect_processor(request):
             )
 
     else:
-        login_url = settings.LOGIN_URL
-
         context['nav_items'] = []
         context['nav2_items'] = [{
             'label': 'Login',
-            'link': login_url
+            'link': reverse('account_login')
+        }, {
+            'label': 'Signup',
+            'link': reverse('account_signup')
         }]
-        context['login_url'] = login_url
+        context['login_url'] = reverse('account_login')
 
     return context

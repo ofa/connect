@@ -80,7 +80,8 @@ class ConnectMessageTestCase(ConnectTestCase):
     def setUp(self):
         """Setup the test"""
         self.client.post(
-            reverse('login'), {'username': 'bo@dj.local', 'password': 'moo'})
+            reverse('account_login'),
+            {'login': 'bo@dj.local', 'password': 'moo'})
 
     def message(self, **kwargs):
         """Create a new non-persistent Message."""

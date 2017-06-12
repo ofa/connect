@@ -4,6 +4,7 @@ from django.test.utils import override_settings
 from django.core import mail
 from model_mommy import mommy
 
+import open_connect.mailer.backend
 
 def message_maker(email_to, **kwargs):
     """Email message builder"""
@@ -24,8 +25,8 @@ class TestConnectMailerBackend(TestCase):
         """Setup the mailer backend test"""
         # Because we determine the mailer backend based a setting, we must
         # import the mailer backend after we've already overridden the settings
-        from open_connect.mailer.backend import ConnectMailerBackend
-        self.backend = ConnectMailerBackend
+        reload(open_connect.mailer.backend)
+        self.backend = open_connect.mailer.backend.ConnectMailerBackend
 
         # We need 2 demo email addresses. One of them should be unsubscribed.
         self.valid_address = 'valid-address@example.local'

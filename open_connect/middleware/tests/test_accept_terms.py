@@ -34,7 +34,7 @@ class TestAcceptTermsAndConductMiddleware(TestCase):
         """If url is exempt from checking, carry on."""
         user = mommy.make(
             'accounts.User', tos_accepted_at=None, ucoc_accepted_at=None)
-        request = self.factory.get('/accounts/login/')
+        request = self.factory.get('/user/login/')
         request.user = user
         self.assertIsNone(self.mw.process_request(request))
 

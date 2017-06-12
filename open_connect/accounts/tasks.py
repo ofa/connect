@@ -22,9 +22,9 @@ def render_and_send_invite_email(invite_id):
         'origin': settings.ORIGIN
     }
     html = render_to_string(
-        'accounts/email/new_user_invite.html', context)
+        'account/email/new_user_invite.html', context)
     text = render_to_string(
-        'accounts/email/new_user_invite.txt', context)
+        'account/email/new_user_invite.txt', context)
 
     send_email(
         email=invite.email,

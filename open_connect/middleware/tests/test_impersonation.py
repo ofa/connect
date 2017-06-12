@@ -20,8 +20,8 @@ class ImpersonationMiddlewareTest(TestCase):
         self.admin = User.objects.create_user(
             username='admin@dj.local', password='abc')
         self.client.post(
-            reverse('login'),
-            {'username': 'admin@dj.local', 'password': 'abc'}
+            reverse('account_login'),
+            {'login': 'admin@dj.local', 'password': 'abc'}
         )
         self.request_factory = RequestFactory()
 

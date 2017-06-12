@@ -2,6 +2,7 @@
 # pylint: disable=no-value-for-parameter,invalid-name
 from urlparse import urljoin
 
+from allauth.account import views as auth_views
 from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
@@ -12,6 +13,7 @@ from django.views.generic import RedirectView, TemplateView
 from django_bouncy.views import endpoint as bouncy_endpoint
 import autocomplete_light
 
+from open_connect.accounts.views import SignupView as ConnectSignupView
 from open_connect.groups.views import GroupListView
 
 autocomplete_light.autodiscover()
@@ -22,13 +24,14 @@ urlpatterns = patterns(
     '',
     url(r'^$', include('open_connect.welcome.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^accounts/login/',
-        'django.contrib.auth.views.login',
-        name='login'),
-    url(r'^accounts/logout/$',
-        'django.contrib.auth.views.logout',
-        kwargs={'next_page': settings.POST_LOGOUT_PAGE},
-        name='logout'),
+
+    # Because we're overriding django-allauth's signup view with our own view
+    # we need to include it above the include for django-allatuh
+    url(r'^user/signup/$',
+        ConnectSignupView.as_view(),
+        name='account_signup'),
+    url(r'^user/', include('allauth.urls')),
+
     url(r'^accounts/', include('open_connect.accounts.urls')),
     url(r'^groups/', include('open_connect.groups.urls')),
     url(r'^messages/', include('open_connect.connectmessages.urls')),
@@ -55,7 +58,6 @@ urlpatterns = patterns(
         TemplateView.as_view(template_name='terms_and_code_of_conduct.html'),
         name='terms_and_conditions'),
     url(r'^resources/', include('open_connect.resources.urls')),
-    url('', include('social.apps.django_app.urls', namespace='social'))
 )
 
 if settings.DEBUG:

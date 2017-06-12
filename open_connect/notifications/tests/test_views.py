@@ -37,8 +37,8 @@ class SubscriptionsUpdateViewTest(ConnectMessageTestCase):
         """Test that successful post redirects to update subscriptions."""
         client = Client()
         client.post(
-            reverse('login'),
-            {'username': 'gracegrant@razzmatazz.local', 'password': 'moo'}
+            reverse('account_login'),
+            {'login': 'gracegrant@razzmatazz.local', 'password': 'moo'}
         )
         self.assertEqual(self.subscription1.period, 'immediate')
         response = client.post(
@@ -60,8 +60,8 @@ class SubscriptionsUpdateViewTest(ConnectMessageTestCase):
         """If next is provided in the querystring, redirect user to that url."""
         client = Client()
         client.post(
-            reverse('login'),
-            {'username': 'gracegrant@razzmatazz.local', 'password': 'moo'}
+            reverse('account_login'),
+            {'login': 'gracegrant@razzmatazz.local', 'password': 'moo'}
         )
         self.assertEqual(self.subscription1.period, 'immediate')
         next_page = reverse(

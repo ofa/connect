@@ -165,41 +165,41 @@ class ImageViewsTest(ConnectTestMixin, TestCase):
         self.assertEqual(result['status'], 'success')
         self.assertEqual(result['uuid'], image.uuid)
 
-    @override_settings(LOGIN_URL=reverse('login'))
     def test_promote_image_view_no_permission(self):
         """should redirect to login if user doesn't have permission."""
         user = self.create_user()
-        client = Client()
-        client.login(username=user.email, password='moo')
+        self.login(user)
 
-        response = client.post(reverse('promote_image'))
+        response = self.client.post(reverse('promote_image'))
         self.assertRedirects(
-            response, '%s?next=/media/image/promote/' % reverse('login'))
+            response,
+            'http://testserver/user/login/?next=/media/image/promote/',
+            fetch_redirect_response=False)
 
-    @override_settings(LOGIN_URL=reverse('login'))
     def test_demote_image_view_no_permission(self):
         """should redirect to login if user doesn't have permission."""
         user = self.create_user()
-        client = Client()
-        client.login(username=user.email, password='moo')
+        self.login(user)
 
-        response = client.post(reverse('demote_image'))
+        response = self.client.post(reverse('demote_image'))
         self.assertRedirects(
-            response, '%s?next=/media/image/demote/' % reverse('login'))
+            response,
+            'http://testserver/user/login/?next=/media/image/demote/',
+            fetch_redirect_response=False)
 
-    @override_settings(LOGIN_URL=reverse('login'))
+    @override_settings(LOGIN_URL=reverse('account_login'))
     def test_promote_image_view_requires_post(self):
         """promote image view should return 405 if http method is get."""
         response = self.client.get(reverse('promote_image'))
         self.assertEqual(response.status_code, 405)
 
-    @override_settings(LOGIN_URL=reverse('login'))
+    @override_settings(LOGIN_URL=reverse('account_login'))
     def test_demote_image_view_requires_post(self):
         """demote image view should return 405 if http method is get."""
         response = self.client.get(reverse('demote_image'))
         self.assertEqual(response.status_code, 405)
 
-    @override_settings(LOGIN_URL=reverse('login'))
+    @override_settings(LOGIN_URL=reverse('account_login'))
     def test_admin_gallery_requires_permission(self):
         """admin gallery should return 403 if user doesn't have permission."""
         user = self.create_user()

@@ -1,0 +1,90 @@
+.account{
+    .login_image();
+    h2{
+        text-align: center;
+    }
+    #main{
+        margin-bottom: 150px;
+    }
+    .form-group{
+        &:last-of-type{
+            margin-bottom: 0;
+        }
+        [type="checkbox"]{
+            margin-right: 10px;
+        }
+        label{
+            font-weight: 500;
+            font-size: .9em;
+        }
+    }
+    .errorlist{
+        font-size: .9em;
+        color: @brand-danger;
+        font-weight: 500;
+    }
+    .account-form{
+        border-top: 10px solid @brand-primary;
+        padding: 50px;
+        background: white;
+        color: @gray-dark;
+        margin-top: 150px;
+        h1{
+            text-align: center;
+            margin: 0 0 40px;
+        }
+        @media (max-width: @screen-xs-max){
+            margin-top: 50px;
+            padding: 25px;
+        }
+    }
+    .help-copy{
+        margin-bottom: 30px;
+    }
+    .account-secondary-action{
+        text-align: center;
+        margin-top: 20px;
+    }
+    .account-alt-action{
+        margin-top: 20px;
+        text-align: center;
+        a{
+            font-size: 1.2em;
+            font-weight: 700;
+            color: white;
+        }
+    }
+    #ft{
+        background: transparent;
+    }
+    input, label {
+        display: block;
+        width: 100%;
+    }
+    input[type="checkbox"],
+    input[type="radio"]{
+        display: inline-block;
+        width: auto;
+    }
+    .email-form{
+        h2{
+            margin-top: 0;
+        }
+        hr{
+            margin: 40px 0;
+        }
+        .email-list{
+            margin-bottom: 20px;
+        }
+        .primary{
+            background: @brand-info;
+            color: white;
+            padding: 3px;
+            border-radius: 5px;
+        }
+        .verified,
+        .unverified{
+            font-style: italic;
+        }
+    }
+}

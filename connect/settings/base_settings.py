@@ -59,6 +59,7 @@ DEBUG = env('DEBUG')
 ROOT_URLCONF = 'connect.urls'
 WSGI_APPLICATION = 'connect.wsgi.application'
 ALLOWED_HOSTS = env('ALLOWED_HOSTS')
+SITE_ID = 1
 
 ####
 # Database Settings
@@ -108,6 +109,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'django_s3_collectstatic',
 
@@ -136,7 +138,9 @@ INSTALLED_APPS = (
     'seacucumber',
     'django_bouncy',
 
-    'social.apps.django_app.default',
+    'allauth',
+    'allauth.account',
+
     'taggit',
 
     'debug_toolbar',
@@ -145,10 +149,6 @@ INSTALLED_APPS = (
 # If the user is using a custom Connect app add it to INSTALLED_APPS
 if env('CONNECT_APP'):
     INSTALLED_APPS = INSTALLED_APPS + (env('CONNECT_APP'),)
-
-####
-# Custom authentication model setting
-AUTH_USER_MODEL = 'accounts.User'
 
 
 ####
@@ -161,7 +161,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
     'open_connect.middleware.login_required.LoginRequiredMiddleware',
     'open_connect.middleware.impersonation.ImpersonationMiddleware',
     'open_connect.middleware.timezone.TimezoneMiddleware',
@@ -275,8 +274,6 @@ TEMPLATES = [
                 'open_connect.context_processors.active_url_name.add_active_url_name',
                 'open_connect.context_processors.connect_processor.connect_processor',
                 'open_connect.context_processors.google_analytics.google_analytics',
-                'social.apps.django_app.context_processors.backends',
-                'social.apps.django_app.context_processors.login_redirect',
             ],
         },
     },

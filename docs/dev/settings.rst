@@ -436,7 +436,7 @@ Included serializers are:
 * ``'django.contrib.sessions.serializers.JSONSerializer'``
 
 .. note::
-    While not optimal, we use ``PickleSerializer`` for Connect to handle some edge cases that have cropepd up in the past using the ``JSONSerializer``.
+    While not optimal, we use ``PickleSerializer`` for Connect to handle some edge cases that have cropped up in the past using the ``JSONSerializer``.
 
 
 
@@ -446,10 +446,6 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE
 Default: ``False`` (String)
 
 Whether to expire the session when the user closes their browser.
-
-.. note::
-    There is significant advantage to setting this to ``True`` when using authentication backends which will "Trust" Connect and immediately authenticate users coming from Connect if the user is logged into the authentication provider.
-    That way if the user logs out of their account with the authentication provider they're also logged out of Connect.
 
 
 
@@ -726,37 +722,11 @@ Considering ``BOUNCY_AUTO_SUBSCRIBE`` is set to ``False`` Connect should never s
 Authentication
 ==============
 
-Connect relies heavily on `Python Social Auth`_ for authentication.
-
-.. _Python Social Auth: http://psa.matiasaguirre.net/
-
-
-DEFAULT_AUTH_BACKEND
---------------------
-
-Default: ``social.backends.ngpvan.ActionIDOpenID`` (String)
-
-Also available: ``connect_extras.auth_backends.bsdtools.BSDToolsOAuth2``
-
-You can find out more information about different authentication backends available at :doc:`/dev/deploying/authentication_backends`
-
 
 POST_LOGOUT_PAGE
 ----------------
 
 Default: ``/`` (String)
-
-
-If ``DEFAULT_AUTH_BACKEND`` is ``social.backends.ngpvan.ActionIDOpenID`` this defaults to ``https://accounts.ngpvan.com/Account/LogOut``
-
-If ``DEFAULT_AUTH_BACKEND`` is ``connect_extras.auth_backends.bsdtools.BSDToolsOAuth2`` this defaults to ``https://{BSDTOOLS_INSTANCE}/page/user/logout``
-
-
-
-SOCIAL_AUTH_NEW_USER_REDIRECT_URL
----------------------------------
-
-Default: ``/explore/`` (String)
 
 
 
@@ -767,46 +737,12 @@ Default: ``/messages/`` (String)
 
 
 
-LOGIN_ERROR_URL
----------------
-
-Default: ``/`` (String)
-
-
-
-SOCIAL_AUTH_PROTECTED_FIELDS
-----------------------------
-
-Default: ``username,`` (List)
-
-
-
-USE_SOCIAL_AUTH_AS_ADMIN_LOGIN
-------------------------------
+ACCOUNT_IGNORE_UNSUBSCRIBE
+--------------------------
 
 Default: ``True`` (Boolean)
 
-
-
-OPTIONAL: BSDTOOLS_INSTANCE
----------------------------
-
-Default: (Empty string)
-
-
-
-OPTIONAL: BSDTOOLS_KEY
-----------------------
-
-Default: (Empty string)
-
-
-
-OPTIONAL: BSDTOOLS_SECRET
--------------------------
-
-Default: (Empty string)
-
+If messages such as password resets and email confirmations should respect when a user has unsubscribed. If set to ``True`` this means that users who unsubscribe or bounce will never be able to reset their password, but the password reset page will make it appear that their password reset email is on the way.
 
 
 Celery/Task Queue

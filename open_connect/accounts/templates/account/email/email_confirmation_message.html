@@ -1,0 +1,11 @@
+{% extends "email/base_wrapper.html" %}
+{% load account %}
+
+{% block content %}
+You're receiving this e-mail because user {{ user }} has given yours as an e-mail address to connect their account.<br><br>
+
+To confirm this is correct, go to<br><br>
+
+<a href="{{ activate_url }}"><strong>{{ activate_url }}</strong></a>
+
+{% endblock content %}

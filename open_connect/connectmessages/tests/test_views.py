@@ -59,7 +59,7 @@ class MessageCreateViewTest(ConnectMessageTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, reverse('threads'))
 
-    @override_settings(LOGIN_URL=reverse('login'))
+    @override_settings(LOGIN_URL=reverse('account_login'))
     def test_form_valid_anonymous_user_redirects_to_login(self):
         """Unauthenticated user should be redirected to login."""
         client = Client()
@@ -69,7 +69,7 @@ class MessageCreateViewTest(ConnectMessageTestCase):
         )
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(
-            response, '%s?next=%s' % (reverse('login'),
+            response, '%s?next=%s' % (reverse('account_login'),
                                       reverse('create_message'))
         )
 
@@ -238,8 +238,8 @@ class MessageReplyViewTest(ConnectTestMixin, ConnectMessageTestCase):
         self.create_user(email='test@reply.local', password='test')
         client = Client()
         client.post(
-            reverse('login'),
-            {'username': 'test@reply.local', 'password': 'test'}
+            reverse('account_login'),
+            {'login': 'test@reply.local', 'password': 'test'}
         )
         response = client.get(reverse('create_reply', args=[thread.pk]))
         self.assertRedirects(response, reverse('threads'))
@@ -554,8 +554,8 @@ class DirectMessageCreateViewTest(ConnectTestMixin, DjangoTestCase):
         """UserThread should be read for the person who sent a message."""
         recipient = self.create_user()
         self.client.post(
-            reverse('login'),
-            {'username': self.user1.email, 'password': 'moo'}
+            reverse('account_login'),
+            {'login': self.user1.email, 'password': 'moo'}
         )
         response = self.client.post(
             reverse('create_direct_message',
@@ -572,8 +572,8 @@ class DirectMessageCreateViewTest(ConnectTestMixin, DjangoTestCase):
         """UserThread should be unread for the person receiving a message."""
         recipient = self.create_user()
         self.client.post(
-            reverse('login'),
-            {'username': self.user1.email, 'password': 'moo'}
+            reverse('account_login'),
+            {'login': self.user1.email, 'password': 'moo'}
         )
         response = self.client.post(
             reverse('create_direct_message',

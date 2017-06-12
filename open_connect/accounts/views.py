@@ -3,6 +3,7 @@
 from collections import OrderedDict
 import json
 
+from allauth.account.views import SignupView as AllauthSignupView
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Permission
@@ -31,7 +32,8 @@ from open_connect.accounts.forms import (
     BecomeUserForm,
     InviteEntryForm,
     TermsAndConductAcceptForm,
-    UserPermissionForm
+    UserPermissionForm,
+    SignupForm
 )
 from open_connect.accounts.models import User, Invite
 from open_connect.groups.models import Group
@@ -61,6 +63,7 @@ class UserDetailView(SuppressSystemUserMixin, DetailView):
     """View for displaying a single user."""
     model = User
     context_object_name = 'account'
+    template_name = 'account/user/user_detail.html'
 
     @property
     def user(self):
@@ -106,6 +109,11 @@ class UserDetailView(SuppressSystemUserMixin, DetailView):
         return self.user
 
 
+class SignupView(AllauthSignupView):
+    """Connect Signup View"""
+    form_class = SignupForm
+
+
 class UserUpdateView(
         SuppressSystemUserMixin, SingleObjectMixin, MultipleFormsView):
     """View for updating a user."""
@@ -118,7 +126,7 @@ class UserUpdateView(
     model = User
     slug_field = 'uuid'
     slug_url_kwarg = 'user_uuid'
-    template_name = 'accounts/user_form.html'
+    template_name = 'account/user/user_form.html'
 
     def dispatch(self, request, *args, **kwargs):
         """Dispatch the UserUpdateView View"""
@@ -177,7 +185,7 @@ class UpdateUserPermissionView(
     form_class = UserPermissionForm
     slug_field = 'uuid'
     slug_url_kwarg = 'user_uuid'
-    template_name = 'accounts/user_form_permission_change.html'
+    template_name = 'account/user/user_form_permission_change.html'
     nav_active_item = 'Admin'
     context_object_name = 'account'
 
@@ -295,7 +303,7 @@ class InviteCreateView(CommonViewMixin, FormView):
     """View for inviting a user."""
     form_class = InviteForm
     nav_active_item = 'Admin'
-    template_name = 'accounts/invite_form.html'
+    template_name = 'account/invite/invite_form.html'
 
     def get_form(self, form_class):
         form = super(InviteCreateView, self).get_form(form_class)
@@ -330,6 +338,7 @@ class InviteListView(PaginationMixin, PaginateByMixin, SortableListMixin,
     default_order_by = 'created_at'
     paginate_by = 20
     context_object_name = 'invites'
+    template_name = 'account/invite/invite_list.html'
 
     def get_queryset(self):
         """Get the queryset."""
@@ -417,7 +426,7 @@ class BanUnBanViewBase(FormView):
 class BanUserView(BanUnBanViewBase):
     """View for banning a user."""
     form_class = BanUserForm
-    template_name = 'accounts/ban_form.html'
+    template_name = 'account/ban/ban_form.html'
 
     def form_valid(self, form):
         """Process the valid form."""
@@ -433,7 +442,7 @@ class BanUserView(BanUnBanViewBase):
 class UnBanUserView(BanUnBanViewBase):
     """View for unbanning a user."""
     form_class = UnBanUserForm
-    template_name = 'accounts/unban_form.html'
+    template_name = 'account/ban/unban_form.html'
 
     def form_valid(self, form):
         """Process the valid form."""
@@ -449,7 +458,7 @@ class UnBanUserView(BanUnBanViewBase):
 class BecomeUserView(FormView):
     """View for becoming another user."""
     form_class = BecomeUserForm
-    template_name = 'accounts/become_user_form.html'
+    template_name = 'account/user/become_user_form.html'
 
     def get_success_url(self):
         """Returns the url to redirect to on success."""

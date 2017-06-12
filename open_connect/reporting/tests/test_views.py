@@ -47,8 +47,8 @@ class UserReportListViewTest(ConnectMessageTestCase):
         with override_settings(MIDDLEWARE_CLASSES=middleware):
             client = Client()
             client.post(
-                reverse('login'),
-                {'username': 'hjkdhds@12ioavoi3.local', 'password': 'moo'}
+                reverse('account_login'),
+                {'login': 'hjkdhds@12ioavoi3.local', 'password': 'moo'}
             )
 
         # Get the queryset

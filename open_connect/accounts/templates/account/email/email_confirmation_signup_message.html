@@ -1,0 +1,8 @@
+{% extends "email/base_wrapper.html" %}
+{% load account %}
+
+{% block content %}
+Thank you for signing up to Connect.<br><br>
+
+<a href="{{ activate_url }}"><strong>Please confirm your email address so you can get started.</strong></a><br><br>
+{% endblock content %}

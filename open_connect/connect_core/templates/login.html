@@ -1,0 +1,51 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account %}
+
+{% block bodyclass %}account{% endblock %}
+
+{% block head_title %}Sign In{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-xs-11 col-xs-offset-0-h">
+            <div class="account-form">
+                <h1>Sign In</h1>
+                <form class="login" method="POST" action="{% url 'account_login' %}">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="form-group">
+                        <label for="{{ form.login.id_for_label }}">{{form.login.label}}</label>
+                        {{ form.login }}
+                        {{ form.login.errors }}
+                    </div>
+                    <div class="form-group">
+                        <label for="{{ form.password.id_for_label }}">{{form.password.label}}</label>
+                        {{ form.password }}
+                        {{ form.password.errors }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.remember }}<label for="{{ form.remember.id_for_label }}">{{form.remember.label}}</label>
+                    </div>
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+                    <div class="form-group">
+                        <button class="primaryAction btn btn-primary btn-block" type="submit">Sign In</button>
+                    </div>
+                </form>
+                <div class="account-secondary-action">
+                    <a class="button secondaryAction" href="{% url 'account_reset_password' %}">Forgot Password?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-xs-10 col-xs-offset-1">
+            <div class="account-alt-action">
+                <p><a href="{{ signup_url }}">New to Connect? Create an account</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
