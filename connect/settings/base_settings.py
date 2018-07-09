@@ -24,7 +24,7 @@ env = environ.Env(
     KEY_PREFIX=(str, ''),
     USE_SES=(bool, False),
 
-    EMAIL_BACKEND=(str, 'django.core.mail.backends.dummy.EmailBackend'),
+    EMAIL_BACKEND=(str, 'django.core.mail.backends.console.EmailBackend'),
 
     # SMTP related configuration vars
     EMAIL_HOST=(str, 'localhost'),
@@ -44,6 +44,8 @@ env = environ.Env(
 
     AWS_ACCESS_KEY_ID=(str, ''),
     AWS_SECRET_ACCESS_KEY=(str, ''),
+
+    PASSWORD_RESET_TIMEOUT_DAYS=(int, 3)
 )
 
 ####
@@ -99,6 +101,8 @@ CACHES = {
 
 KEY_PREFIX = env('KEY_PREFIX')
 
+SITE_ID = 1
+
 ####
 # Installed Apps Settings
 
@@ -143,13 +147,39 @@ INSTALLED_APPS = (
 
     'taggit',
 
+    'rest_framework',
+    'connect_api',
+    'rest_auth.registration',
+    'rest_framework.authtoken',
     'debug_toolbar',
 )
+
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+PASSWORD_RESET_TIMEOUT_DAYS = env('PASSWORD_RESET_TIMEOUT_DAYS')
 
 # If the user is using a custom Connect app add it to INSTALLED_APPS
 if env('CONNECT_APP'):
     INSTALLED_APPS = INSTALLED_APPS + (env('CONNECT_APP'),)
 
+####
+# Custom authentication model setting
+AUTH_USER_MODEL = 'accounts.User'
+
+####
+# REST API CONF
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+    ],
+    'PAGE_SIZE': 10
+}
 
 ####
 # Middleware Settings
@@ -278,7 +308,6 @@ TEMPLATES = [
         },
     },
 ]
-
 
 ####
 # Timezone & Localization Settings

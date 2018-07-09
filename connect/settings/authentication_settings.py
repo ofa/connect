@@ -33,7 +33,8 @@ LOGIN_EXEMPT_URLS = [
     r'^mail/*',
     r'^media/image/*',
     r'^robots\.txt$',
-    r'^favicon\.ico$'
+    r'^favicon\.ico$',
+    r'^api/*'
 ]
 
 

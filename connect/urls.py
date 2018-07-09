@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.http import HttpResponse
 from django.views.generic import RedirectView, TemplateView
@@ -17,6 +18,7 @@ from open_connect.accounts.views import SignupView as ConnectSignupView
 from open_connect.groups.views import GroupListView
 
 autocomplete_light.autodiscover()
+admin.site.login = login_required(admin.site.login)
 admin.autodiscover()
 
 
@@ -32,6 +34,7 @@ urlpatterns = patterns(
         name='account_signup'),
     url(r'^user/', include('allauth.urls')),
 
+    url(r'^connect/', include('private_connect.urls')),
     url(r'^accounts/', include('open_connect.accounts.urls')),
     url(r'^groups/', include('open_connect.groups.urls')),
     url(r'^messages/', include('open_connect.connectmessages.urls')),
@@ -58,6 +61,7 @@ urlpatterns = patterns(
         TemplateView.as_view(template_name='terms_and_code_of_conduct.html'),
         name='terms_and_conditions'),
     url(r'^resources/', include('open_connect.resources.urls')),
+    url(r'^api/', include('connect_api.urls')),
 )
 
 if settings.DEBUG:
